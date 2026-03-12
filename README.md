@@ -2,10 +2,6 @@
 
 ## Team: Commit & Conquer
 
-**Members** - Rupesh Varshney - Prakhar Saxena - Austin Varshney - Aryan
-Parashar - Bhomik Varshney
-
-**Institution** Zakir Husain College of Engineering & Technology
 
 ------------------------------------------------------------------------
 
@@ -36,6 +32,10 @@ Urban traffic management systems face several critical challenges:
 -   Lack of real-time traffic analysis
 -   Increased fuel consumption and emissions
 
+<p align="center">
+	<img src="https://github.com/user-attachments/assets/5b59e714-6f07-4e70-9e3e-f59813470338" alt="Current Situation" width="100%" />
+</p>
+
 Current systems are **static and manual**, whereas modern smart cities
 require **intelligent and real-time adaptive traffic control**.
 
@@ -61,41 +61,11 @@ data, perform AI analysis, and control traffic signals.
 
 ### Architecture Flow
 
-Traffic Cameras / CCTV\
-↓\
-Video Stream Processing (OpenCV)\
-↓\
-AI Computer Vision Module (YOLOv8 Vehicle Detection)\
-↓\
-Traffic Density Analyzer\
-↓\
-Signal Optimization Engine\
-↓\
-Traffic Light Control API
 
-Parallel Module:
+<p align="center">
+	<img src="https://github.com/user-attachments/assets/0a38dc83-bca4-4d5a-9978-90c38ff5d758" alt="Architecture Flow" width="100%" />
+</p>
 
-Emergency Vehicle Detection\
-↓\
-Green Corridor Generator
-
-Both connect to:
-
-Central Traffic Management Server\
-↓\
-Admin Dashboard & City Map
-
-------------------------------------------------------------------------
-
-## 📊 Architecture Diagram
-
-*(Insert Architecture Diagram Here in GitHub or Documentation)*
-
-------------------------------------------------------------------------
-
-# 🔄 System Flowchart
-
-*(Insert System Flowchart Here)*
 
 ------------------------------------------------------------------------
 
@@ -114,6 +84,10 @@ Steps:
 
 This score determines signal timing decisions.
 
+<p align="center">
+	<img src="https://github.com/user-attachments/assets/80cccfe5-fa6a-417c-a6ba-8c74f8293a8b" alt="Traffic Input" width="100%" />
+</p>
+
 ------------------------------------------------------------------------
 
 # ⏱ Adaptive Signal Timing Engine
@@ -128,7 +102,6 @@ Signal Logic:
 
 -   More vehicles → Longer green time
 -   Fewer vehicles → Shorter green time
--   Balanced lanes → Optimized rotation
 
 Future versions can implement **Reinforcement Learning for adaptive
 signal control**.
@@ -139,10 +112,6 @@ signal control**.
 
 The system prioritizes emergency vehicles using two approaches.
 
-### GPS Based Detection
-
--   Ambulances share GPS location
--   When within a defined range, emergency mode activates
 
 ### AI Detection
 
@@ -159,6 +128,10 @@ When an emergency vehicle is detected:
 2.  Signals along the path automatically turn green.
 3.  Cross traffic temporarily stops.
 4.  A synchronized **green corridor** is created.
+
+<p align="center">
+	<img src="https://github.com/user-attachments/assets/18fba86a-6562-47f4-87ce-daba5c862425" alt="Green Corridor" width="100%" />
+</p>
 
 This ensures **rapid emergency response and potentially saves lives**.
 
@@ -218,12 +191,18 @@ single interface.
 
 # ⭐ Key Features
 
--   AI-based real-time traffic monitoring
--   Dynamic traffic signal timing optimization
--   Automatic emergency vehicle green corridor
--   Centralized traffic monitoring dashboard
--   Traffic congestion heatmaps
--   Data-driven traffic analytics
+- Dynamic AI Signal Timing
+Traffic lights automatically adjust green time based on real-time traffic density, eliminating inefficient fixed timers.
+
+- Emergency Vehicle Green Corridor
+The system detects ambulances and fire trucks and creates an instant green corridor by synchronizing signals along the route.
+
+- AI-Based Vehicle Detection
+Using YOLO computer vision, the system accurately detects cars, buses, bikes, and trucks from existing CCTV feeds.
+
+- Predictive Traffic Analytics
+Historical traffic data can be analyzed to predict peak congestion hours and optimize signal plans.
+
 
 ------------------------------------------------------------------------
 
@@ -232,10 +211,9 @@ single interface.
 SmartFlow AI introduces several innovations:
 
 -   AI + Computer Vision for traffic monitoring
--   Dynamic signal coordination across intersections
 -   Emergency-first traffic intelligence
 -   Data-driven governance insights
--   Smart traffic analytics for urban planning
+
 
 ------------------------------------------------------------------------
 
@@ -251,22 +229,13 @@ The system is designed to scale easily.
 
 ------------------------------------------------------------------------
 
-# ⚙ Feasibility & Implementation
+# ⚙ Feasibility
 
 The solution is practical because it leverages existing infrastructure.
 
--   Uses current **CCTV cameras**
 -   No need for expensive road sensors
 -   Modular architecture for easy development
--   Cloud deployment for scalability
 
-### Hackathon Execution Plan
-
-1.  Setup traffic simulation using SUMO
-2.  Implement YOLO vehicle detection
-3.  Build traffic density calculation
-4.  Implement adaptive signal timing logic
-5.  Demonstrate emergency corridor system
 
 ------------------------------------------------------------------------
 
@@ -291,12 +260,20 @@ https://www.eclipse.org/sumo/
 
 YOLOv8\
 https://github.com/ultralytics/ultralytics
+Object Detection
 
 OpenCV\
 https://opencv.org/
 
 Traffic Datasets\
-https://detrac-db.rit.albany.edu/
+Vehicles Detection And Counting (YOLOv8): A dataset focused on traffic density estimation using
+YOLOv8, containing 536 training and 90 validation images (640x640 pixels). 
+[Online]. Available:
+https://www.kaggle.com/code/hakim11/vehicles-detection-and-counting
+
+Olafenawa Moses,
+“TrafficNet Dataset,” GitHub. [Online]. Available:
+https://github.com/OlafenwaMoses/Traffic-Net
 
 Google Maps Platform\
 https://developers.google.com/maps
@@ -307,12 +284,13 @@ https://developers.google.com/maps
 
 **Commit & Conquer**
 
--   Rupesh Varshney
--   Prakhar Saxena
--   Austin Varshney
--   Aryan Parashar
--   Bhomik Varshney
+-   Rupesh Varshney – B.Tech Computer Engg
+-   Austin Varshney – B.Tech Computer Engg
+-   Bhomik Varshney – B.Tech Computer Engg
+-   Aryan Parashar – B.Tech AI
+-   Prakhar Saxena – B.Tech AI
 
+**Institution** Zakir Husain College of Engineering & Technology, Aligarh Muslim University, Aligarh
 ------------------------------------------------------------------------
 
 # ⭐ Hackathon Project
