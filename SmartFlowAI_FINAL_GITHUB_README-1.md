@@ -33,7 +33,7 @@ Urban traffic management systems face several critical challenges:
 -   Increased fuel consumption and emissions
 
 <p align="center">
-	<img src="https://github.com/user-attachments/assets/2051981d-a7ad-4239-bceb-bdfb0943539c" alt="Current Situation" width="100%" />
+	<img src="https://github.com/user-attachments/assets/5b59e714-6f07-4e70-9e3e-f59813470338" alt="Current Situation" width="100%" />
 </p>
 
 Current systems are **static and manual**, whereas modern smart cities
@@ -63,7 +63,7 @@ data, perform AI analysis, and control traffic signals.
 
 
 <p align="center">
-	<img src="https://github.com/user-attachments/assets/d4ddeec2-485f-48bb-93c7-35b49292e6e0" alt="Architecture Flow" width="100%" />
+	<img src="https://github.com/user-attachments/assets/0a38dc83-bca4-4d5a-9978-90c38ff5d758" alt="Architecture Flow" width="100%" />
 </p>
 
 
@@ -130,7 +130,7 @@ When an emergency vehicle is detected:
 4.  A synchronized **green corridor** is created.
 
 <p align="center">
-	<img src="https://github.com/user-attachments/assets/ebf740db-8de4-4fe5-8f4e-1fa0d018bc33" alt="Green Corridor" width="100%" />
+	<img src="https://github.com/user-attachments/assets/18fba86a-6562-47f4-87ce-daba5c862425" alt="Green Corridor" width="100%" />
 </p>
 
 This ensures **rapid emergency response and potentially saves lives**.
