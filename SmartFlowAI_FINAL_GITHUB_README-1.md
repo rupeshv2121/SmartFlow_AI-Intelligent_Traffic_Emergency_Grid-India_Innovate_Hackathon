@@ -32,7 +32,9 @@ Urban traffic management systems face several critical challenges:
 -   Lack of real-time traffic analysis
 -   Increased fuel consumption and emissions
 
-![Current Situation](https://github.com/user-attachments/assets/2051981d-a7ad-4239-bceb-bdfb0943539c)
+<p align="center">
+	<img src="https://github.com/user-attachments/assets/2051981d-a7ad-4239-bceb-bdfb0943539c" alt="Current Situation" width="100%" />
+</p>
 
 Current systems are **static and manual**, whereas modern smart cities
 require **intelligent and real-time adaptive traffic control**.
@@ -60,7 +62,9 @@ data, perform AI analysis, and control traffic signals.
 ### Architecture Flow
 
 
-![alt text](https://github.com/user-attachments/assets/d4ddeec2-485f-48bb-93c7-35b49292e6e0)
+<p align="center">
+	<img src="https://github.com/user-attachments/assets/d4ddeec2-485f-48bb-93c7-35b49292e6e0" alt="Architecture Flow" width="100%" />
+</p>
 
 
 ------------------------------------------------------------------------
@@ -80,7 +84,9 @@ Steps:
 
 This score determines signal timing decisions.
 
-(![input]("https://github.com/user-attachments/assets/80cccfe5-fa6a-417c-a6ba-8c74f8293a8b"))
+<p align="center">
+	<img src="https://github.com/user-attachments/assets/80cccfe5-fa6a-417c-a6ba-8c74f8293a8b" alt="Traffic Input" width="100%" />
+</p>
 
 ------------------------------------------------------------------------
 
@@ -123,7 +129,9 @@ When an emergency vehicle is detected:
 3.  Cross traffic temporarily stops.
 4.  A synchronized **green corridor** is created.
 
-![Green Corridor](https://github.com/user-attachments/assets/ebf740db-8de4-4fe5-8f4e-1fa0d018bc33)
+<p align="center">
+	<img src="https://github.com/user-attachments/assets/ebf740db-8de4-4fe5-8f4e-1fa0d018bc33" alt="Green Corridor" width="100%" />
+</p>
 
 This ensures **rapid emergency response and potentially saves lives**.
 
@@ -203,10 +211,9 @@ Historical traffic data can be analyzed to predict peak congestion hours and opt
 SmartFlow AI introduces several innovations:
 
 -   AI + Computer Vision for traffic monitoring
--   Dynamic signal coordination across intersections
 -   Emergency-first traffic intelligence
 -   Data-driven governance insights
--   Smart traffic analytics for urban planning
+
 
 ------------------------------------------------------------------------
 
@@ -260,8 +267,10 @@ https://opencv.org/
 
 Traffic Datasets\
 Vehicles Detection And Counting (YOLOv8): A dataset focused on traffic density estimation using
-YOLOv8, containing 536 training and 90 validation images (640x640 pixels). [Online]. Available:
+YOLOv8, containing 536 training and 90 validation images (640x640 pixels). 
+[Online]. Available:
 https://www.kaggle.com/code/hakim11/vehicles-detection-and-counting
+
 Olafenawa Moses,
 “TrafficNet Dataset,” GitHub. [Online]. Available:
 https://github.com/OlafenwaMoses/Traffic-Net
