@@ -36,6 +36,8 @@ Urban traffic management systems face several critical challenges:
 -   Lack of real-time traffic analysis
 -   Increased fuel consumption and emissions
 
+![Current Situation](https://github.com/user-attachments/assets/2051981d-a7ad-4239-bceb-bdfb0943539c)
+
 Current systems are **static and manual**, whereas modern smart cities
 require **intelligent and real-time adaptive traffic control**.
 
@@ -82,7 +84,7 @@ Steps:
 
 This score determines signal timing decisions.
 
-(![input]("C:\Users\LENOVO\Downloads\image.png"))
+(![input]("https://github.com/user-attachments/assets/80cccfe5-fa6a-417c-a6ba-8c74f8293a8b"))
 
 ------------------------------------------------------------------------
 
@@ -129,6 +131,8 @@ When an emergency vehicle is detected:
 2.  Signals along the path automatically turn green.
 3.  Cross traffic temporarily stops.
 4.  A synchronized **green corridor** is created.
+
+![Green Corridor](https://github.com/user-attachments/assets/0423a608-2062-4fc5-a8c6-b9dfb4017ec1)
 
 This ensures **rapid emergency response and potentially saves lives**.
 
