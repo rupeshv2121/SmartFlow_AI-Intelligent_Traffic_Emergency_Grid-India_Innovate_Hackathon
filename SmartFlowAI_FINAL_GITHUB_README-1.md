@@ -61,35 +61,8 @@ data, perform AI analysis, and control traffic signals.
 
 ### Architecture Flow
 
-Traffic Cameras / CCTV\
-↓\
-Video Stream Processing (OpenCV)\
-↓\
-AI Computer Vision Module (YOLOv8 Vehicle Detection)\
-↓\
-Traffic Density Analyzer\
-↓\
-Signal Optimization Engine\
-↓\
-Traffic Light Control API
 
-Parallel Module:
-
-Emergency Vehicle Detection\
-↓\
-Green Corridor Generator
-
-Both connect to:
-
-Central Traffic Management Server\
-↓\
-Admin Dashboard & City Map
-
-------------------------------------------------------------------------
-
-## 📊 Architecture Diagram
-
-(![alt text](image.png))
+![alt text](https://github.com/user-attachments/assets/d4ddeec2-485f-48bb-93c7-35b49292e6e0)
 
 
 ------------------------------------------------------------------------
