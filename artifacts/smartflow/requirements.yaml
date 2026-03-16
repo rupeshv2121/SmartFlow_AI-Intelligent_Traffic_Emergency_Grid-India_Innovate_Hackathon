@@ -1,0 +1,14 @@
+packages:
+  "recharts": "For dark-themed traffic data visualizations and metrics"
+  "framer-motion": "For futuristic UI animations, glassmorphism transitions, and simulated live camera feeds"
+  "clsx": "Utility for constructing className strings"
+  "tailwind-merge": "Utility for merging tailwind classes safely"
+  "date-fns": "For formatting timestamps in logs and charts"
+  "@radix-ui/react-dialog": "For accessible intersection camera feed modals"
+  "@radix-ui/react-slot": "For accessible component slots"
+
+images: []
+
+notes:
+  - The frontend uses the provided @workspace/api-client-react hooks.
+  - All queries are configured with a 3000ms refetchInterval to simulate a live real-time dashboard.

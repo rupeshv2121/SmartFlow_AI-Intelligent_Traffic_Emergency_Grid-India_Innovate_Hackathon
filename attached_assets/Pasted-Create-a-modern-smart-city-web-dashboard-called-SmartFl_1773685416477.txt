@@ -1,0 +1,175 @@
+Create a modern smart-city web dashboard called SmartFlow AI – Intelligent Traffic Flow Optimizer & Emergency Grid.
+
+The system simulates an AI-powered traffic control platform that monitors traffic density, optimizes signal timings, and creates emergency green corridors.
+
+Use a dark mode theme with blue accents, similar to a smart city command center UI.
+
+TECH STACK:
+Frontend: React + Tailwind CSS
+Charts: Recharts or Chart.js
+Maps: Custom 2D city grid map using SVG or Canvas
+Backend: Node.js / Express (mock APIs allowed)
+Real-time updates: WebSockets or simulated data
+
+MAIN NAVIGATION (Left Sidebar):
+
+Dashboard Overview
+Live Traffic Monitoring
+Signal Optimization
+Emergency Corridor
+Traffic Analytics
+Settings
+
+PAGE 1 — DASHBOARD OVERVIEW
+
+Display summary cards:
+
+Total Vehicles Detected
+Active Intersections
+Congested Lanes
+Emergency Alerts
+
+Include:
+
+Traffic density chart
+City congestion heatmap
+Recent emergency events list
+
+PAGE 2 — LIVE TRAFFIC MONITORING
+
+Purpose: visualize AI vehicle detection results.
+
+Components:
+
+Traffic Camera Feed Panel
+Display a video container labeled:
+"AI Vehicle Detection Feed"
+
+Overlay simulated bounding boxes representing detected vehicles.
+
+Vehicle Count Panel
+
+Cars
+Bikes
+Buses
+Trucks
+
+Lane Traffic Density Indicator
+
+Show lanes with density levels using blue-shaded color indicators:
+
+Low Traffic → Light Blue-Green
+Medium Traffic → Blue-Yellow
+High Traffic → Blue-Red
+
+These colors should be blended with blue tones to match the dark smart-city theme.
+
+Example:
+
+Low → #1ec8ff
+Medium → #ffcc33 with blue overlay
+High → #ff4d4d with blue overlay
+
+Traffic Density Chart
+
+Line chart showing vehicle count trends over time.
+
+PAGE 3 — SIGNAL OPTIMIZATION
+
+Show dynamic signal timing decisions.
+
+Components:
+
+Signal Control Table
+
+Intersection | Vehicles | Density | Green Time
+
+Example rows:
+
+Signal A | 45 | High | 60 sec
+Signal B | 20 | Medium | 40 sec
+Signal C | 10 | Low | 20 sec
+
+Traffic Light Status Indicators
+
+Display signals switching between:
+
+GREEN
+YELLOW
+RED
+
+Traffic Flow Analytics Chart
+
+Bar chart showing congestion levels per intersection.
+
+PAGE 4 — EMERGENCY GREEN CORRIDOR
+
+Simulate emergency vehicle prioritization.
+
+Components:
+
+Emergency Alert Banner
+
+"Emergency Vehicle Detected – Activating Green Corridor"
+
+City Route Map
+
+Display route:
+
+Intersection A → Intersection B → Intersection C → Hospital
+
+Corridor Status Panel
+
+Signal A = GREEN
+Signal B = GREEN
+Signal C = GREEN
+
+Emergency Event Log
+
+List previous corridor activations.
+
+CITY MAP SIMULATION (IMPORTANT FEATURE)
+
+Create a dummy 2D city map grid with intersections (nodes) connected by roads.
+
+Use circles to represent intersections.
+
+When a user clicks on an intersection node:
+
+Open a popup panel showing:
+
+Traffic camera video feed for that intersection.
+
+The video should load dynamically from a database or mock API endpoint such as:
+
+/api/intersection-video/{intersection_id}
+
+Display the video inside a modal or side panel.
+
+This allows users to visually inspect traffic at each intersection.
+
+The city grid should look similar to a simplified traffic network map with connected nodes and roads.
+
+UI DESIGN
+
+Dark theme background
+Blue neon accents
+Card-based dashboard layout
+Smooth animated charts
+Glowing indicators for traffic signals
+Responsive layout suitable for a smart city command center
+
+Use modern smart city visualization style similar to traffic control center dashboards.
+
+DATA
+
+Use mock API endpoints such as:
+
+/api/traffic-density
+/api/intersection-video
+/api/signal-timing
+/api/emergency-events
+
+Populate the UI with simulated traffic data and example vehicle counts.
+
+Ensure the application feels like a real smart traffic command platform prototype suitable for a hackathon demo.
