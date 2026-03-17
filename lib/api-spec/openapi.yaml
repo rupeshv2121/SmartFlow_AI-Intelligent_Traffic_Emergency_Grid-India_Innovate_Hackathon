@@ -1,0 +1,546 @@
+openapi: 3.1.0
+info:
+  title: Api
+  version: 0.1.0
+  description: SmartFlow AI Traffic Management API
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+    description: Health operations
+  - name: traffic
+    description: Traffic monitoring and density
+  - name: signals
+    description: Signal optimization
+  - name: emergency
+    description: Emergency corridor management
+  - name: intersections
+    description: Intersection data and video feeds
+  - name: analytics
+    description: Traffic analytics
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+
+  /traffic-density:
+    get:
+      operationId: getTrafficDensity
+      tags: [traffic]
+      summary: Get current traffic density across all lanes
+      responses:
+        "200":
+          description: Traffic density data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TrafficDensityResponse"
+
+  /traffic-density/history:
+    get:
+      operationId: getTrafficDensityHistory
+      tags: [traffic]
+      summary: Get historical traffic density chart data
+      responses:
+        "200":
+          description: Historical density data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TrafficHistoryResponse"
+
+  /vehicle-counts:
+    get:
+      operationId: getVehicleCounts
+      tags: [traffic]
+      summary: Get vehicle type counts
+      responses:
+        "200":
+          description: Vehicle counts by type
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VehicleCountsResponse"
+
+  /dashboard-stats:
+    get:
+      operationId: getDashboardStats
+      tags: [traffic]
+      summary: Get dashboard summary statistics
+      responses:
+        "200":
+          description: Dashboard stats
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardStatsResponse"
+
+  /signal-timing:
+    get:
+      operationId: getSignalTiming
+      tags: [signals]
+      summary: Get current signal timing for all intersections
+      responses:
+        "200":
+          description: Signal timing data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SignalTimingResponse"
+
+  /congestion-analytics:
+    get:
+      operationId: getCongestionAnalytics
+      tags: [analytics]
+      summary: Get congestion levels per intersection for bar chart
+      responses:
+        "200":
+          description: Congestion analytics
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CongestionAnalyticsResponse"
+
+  /emergency-events:
+    get:
+      operationId: getEmergencyEvents
+      tags: [emergency]
+      summary: Get list of emergency corridor events
+      responses:
+        "200":
+          description: Emergency events list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EmergencyEventsResponse"
+
+  /emergency-corridor/active:
+    get:
+      operationId: getActiveEmergencyCorridor
+      tags: [emergency]
+      summary: Get active emergency corridor status
+      responses:
+        "200":
+          description: Active corridor status
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ActiveCorridorResponse"
+
+  /intersections:
+    get:
+      operationId: getIntersections
+      tags: [intersections]
+      summary: Get all city intersections with positions for the map
+      responses:
+        "200":
+          description: List of intersections
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/IntersectionsResponse"
+
+  /intersection-video/{intersectionId}:
+    get:
+      operationId: getIntersectionVideo
+      tags: [intersections]
+      summary: Get video feed info for a specific intersection
+      parameters:
+        - name: intersectionId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Intersection video feed data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/IntersectionVideoResponse"
+
+  /lane-density:
+    get:
+      operationId: getLaneDensity
+      tags: [traffic]
+      summary: Get lane-by-lane traffic density
+      responses:
+        "200":
+          description: Lane density data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LaneDensityResponse"
+
+  /heatmap:
+    get:
+      operationId: getCityHeatmap
+      tags: [traffic]
+      summary: Get city congestion heatmap data
+      responses:
+        "200":
+          description: Heatmap data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HeatmapResponse"
+
+components:
+  schemas:
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+      required: [status]
+
+    TrafficDensityResponse:
+      type: object
+      properties:
+        lanes:
+          type: array
+          items:
+            $ref: "#/components/schemas/LaneDensityItem"
+        timestamp:
+          type: string
+      required: [lanes, timestamp]
+
+    LaneDensityItem:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        density:
+          type: string
+          enum: [low, medium, high]
+        vehicleCount:
+          type: integer
+        speed:
+          type: number
+      required: [id, name, density, vehicleCount, speed]
+
+    TrafficHistoryResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/TrafficHistoryPoint"
+      required: [data]
+
+    TrafficHistoryPoint:
+      type: object
+      properties:
+        time:
+          type: string
+        vehicles:
+          type: integer
+        congestion:
+          type: number
+      required: [time, vehicles, congestion]
+
+    VehicleCountsResponse:
+      type: object
+      properties:
+        cars:
+          type: integer
+        bikes:
+          type: integer
+        buses:
+          type: integer
+        trucks:
+          type: integer
+        total:
+          type: integer
+        timestamp:
+          type: string
+      required: [cars, bikes, buses, trucks, total, timestamp]
+
+    DashboardStatsResponse:
+      type: object
+      properties:
+        totalVehicles:
+          type: integer
+        activeIntersections:
+          type: integer
+        congestedLanes:
+          type: integer
+        emergencyAlerts:
+          type: integer
+        avgSpeed:
+          type: number
+        systemStatus:
+          type: string
+      required: [totalVehicles, activeIntersections, congestedLanes, emergencyAlerts, avgSpeed, systemStatus]
+
+    SignalTimingResponse:
+      type: object
+      properties:
+        signals:
+          type: array
+          items:
+            $ref: "#/components/schemas/SignalData"
+        timestamp:
+          type: string
+      required: [signals, timestamp]
+
+    SignalData:
+      type: object
+      properties:
+        id:
+          type: string
+        intersection:
+          type: string
+        vehicles:
+          type: integer
+        density:
+          type: string
+          enum: [low, medium, high]
+        greenTime:
+          type: integer
+        currentPhase:
+          type: string
+          enum: [green, yellow, red]
+        phaseElapsed:
+          type: integer
+        cycleTime:
+          type: integer
+      required: [id, intersection, vehicles, density, greenTime, currentPhase, phaseElapsed, cycleTime]
+
+    CongestionAnalyticsResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/CongestionPoint"
+        hourlyTrend:
+          type: array
+          items:
+            $ref: "#/components/schemas/HourlyTrendPoint"
+      required: [data, hourlyTrend]
+
+    CongestionPoint:
+      type: object
+      properties:
+        intersection:
+          type: string
+        congestion:
+          type: number
+        vehicles:
+          type: integer
+        avgSpeed:
+          type: number
+      required: [intersection, congestion, vehicles, avgSpeed]
+
+    HourlyTrendPoint:
+      type: object
+      properties:
+        hour:
+          type: string
+        congestion:
+          type: number
+        throughput:
+          type: integer
+      required: [hour, congestion, throughput]
+
+    EmergencyEventsResponse:
+      type: object
+      properties:
+        events:
+          type: array
+          items:
+            $ref: "#/components/schemas/EmergencyEvent"
+        recentCount:
+          type: integer
+      required: [events, recentCount]
+
+    EmergencyEvent:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+        route:
+          type: string
+        timestamp:
+          type: string
+        duration:
+          type: integer
+        status:
+          type: string
+          enum: [active, completed, cancelled]
+        vehicleId:
+          type: string
+      required: [id, type, route, timestamp, duration, status, vehicleId]
+
+    ActiveCorridorResponse:
+      type: object
+      properties:
+        active:
+          type: boolean
+        corridorId:
+          type: string
+          nullable: true
+        route:
+          type: array
+          items:
+            type: string
+        signals:
+          type: array
+          items:
+            $ref: "#/components/schemas/CorridorSignalStatus"
+        vehicleType:
+          type: string
+          nullable: true
+        estimatedClearTime:
+          type: integer
+          nullable: true
+      required: [active, corridorId, route, signals, vehicleType, estimatedClearTime]
+
+    CorridorSignalStatus:
+      type: object
+      properties:
+        signalId:
+          type: string
+        intersection:
+          type: string
+        status:
+          type: string
+          enum: [green, yellow, red, standby]
+      required: [signalId, intersection, status]
+
+    IntersectionsResponse:
+      type: object
+      properties:
+        intersections:
+          type: array
+          items:
+            $ref: "#/components/schemas/Intersection"
+        roads:
+          type: array
+          items:
+            $ref: "#/components/schemas/Road"
+      required: [intersections, roads]
+
+    Intersection:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        x:
+          type: number
+        y:
+          type: number
+        density:
+          type: string
+          enum: [low, medium, high]
+        vehicles:
+          type: integer
+        signalPhase:
+          type: string
+          enum: [green, yellow, red]
+      required: [id, name, x, y, density, vehicles, signalPhase]
+
+    Road:
+      type: object
+      properties:
+        from:
+          type: string
+        to:
+          type: string
+        density:
+          type: string
+          enum: [low, medium, high]
+      required: [from, to, density]
+
+    IntersectionVideoResponse:
+      type: object
+      properties:
+        intersectionId:
+          type: string
+        intersectionName:
+          type: string
+        streamUrl:
+          type: string
+        vehicles:
+          type: integer
+        density:
+          type: string
+          enum: [low, medium, high]
+        detectedObjects:
+          type: array
+          items:
+            $ref: "#/components/schemas/DetectedObject"
+        fps:
+          type: integer
+        resolution:
+          type: string
+      required: [intersectionId, intersectionName, streamUrl, vehicles, density, detectedObjects, fps, resolution]
+
+    DetectedObject:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+        x:
+          type: number
+        y:
+          type: number
+        width:
+          type: number
+        height:
+          type: number
+        confidence:
+          type: number
+      required: [id, type, x, y, width, height, confidence]
+
+    LaneDensityResponse:
+      type: object
+      properties:
+        lanes:
+          type: array
+          items:
+            $ref: "#/components/schemas/LaneDensityItem"
+      required: [lanes]
+
+    HeatmapResponse:
+      type: object
+      properties:
+        cells:
+          type: array
+          items:
+            $ref: "#/components/schemas/HeatmapCell"
+        maxValue:
+          type: number
+      required: [cells, maxValue]
+
+    HeatmapCell:
+      type: object
+      properties:
+        x:
+          type: integer
+        y:
+          type: integer
+        value:
+          type: number
+        zone:
+          type: string
+      required: [x, y, value, zone]
