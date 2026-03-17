@@ -1,0 +1,49 @@
+import { ReactNode } from "react";
+import { Sidebar } from "./Sidebar";
+import { Bell, Search, User } from "lucide-react";
+import { motion } from "framer-motion";
+
+export function AppLayout({ children }: { children: ReactNode }) {
+  return (
+    <div className="min-h-screen bg-background text-foreground flex">
+      <Sidebar />
+      <div className="flex-1 ml-64 flex flex-col h-screen overflow-hidden">
+        {/* Header */}
+        <header className="h-16 border-b border-border bg-background/80 backdrop-blur-md flex items-center justify-between px-8 z-40 sticky top-0">
+          <div className="flex items-center bg-black/40 border border-white/10 rounded-full px-4 py-1.5 w-64 focus-within:border-primary/50 transition-colors">
+            <Search className="w-4 h-4 text-muted-foreground mr-2" />
+            <input 
+              type="text" 
+              placeholder="Search intersection..." 
+              className="bg-transparent border-none outline-none text-sm w-full font-mono placeholder:text-muted-foreground/50"
+            />
+          </div>
+          
+          <div className="flex items-center gap-4">
+            <button className="relative p-2 rounded-full hover:bg-white/5 transition-colors cursor-pointer">
+              <Bell className="w-5 h-5 text-muted-foreground" />
+              <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-destructive rounded-full shadow-[0_0_8px_rgba(255,42,42,0.8)]" />
+            </button>
+            <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-primary to-secondary p-[1px]">
+              <div className="w-full h-full bg-background rounded-full flex items-center justify-center">
+                <User className="w-4 h-4 text-foreground" />
+              </div>
+            </div>
+          </div>
+        </header>
+
+        {/* Main Content */}
+        <main className="flex-1 overflow-y-auto p-8 relative">
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4 }}
+            className="max-w-7xl mx-auto"
+          >
+            {children}
+          </motion.div>
+        </main>
+      </div>
+    </div>
+  );
+}
