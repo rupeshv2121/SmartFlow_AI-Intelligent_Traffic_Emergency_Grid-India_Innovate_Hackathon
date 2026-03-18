@@ -1,14 +1,16 @@
-import { Link, useLocation } from "wouter";
-import { 
-  LayoutDashboard, 
-  Video, 
-  TrafficCone, 
-  Ambulance, 
-  LineChart, 
-  Settings,
-  Hexagon
-} from "lucide-react";
+import { CityMap } from "@/components/CityMap";
+import { getTrafficDensityByCount, useLiveIntersections, useLiveSimVehicles } from "@/hooks/use-smartflow";
 import { cn } from "@/lib/utils";
+import {
+  Ambulance,
+  Hexagon,
+  LayoutDashboard,
+  LineChart,
+  Settings,
+  TrafficCone,
+  Video
+} from "lucide-react";
+import { Link, useLocation } from "wouter";
 
 const NAV_ITEMS = [
   { href: "/", label: "Dashboard", icon: LayoutDashboard },
@@ -21,6 +23,16 @@ const NAV_ITEMS = [
 
 export function Sidebar() {
   const [location] = useLocation();
+  const { data: mapData } = useLiveIntersections();
+  const { data: simVehicles = [] } = useLiveSimVehicles();
+  const simDensity = getTrafficDensityByCount(simVehicles.length);
+
+  const densityColor =
+    simDensity.level === "low"
+      ? "text-success"
+      : simDensity.level === "medium"
+        ? "text-warning"
+        : "text-destructive";
 
   return (
     <aside className="w-64 h-screen border-r border-border bg-background/50 backdrop-blur-xl flex flex-col fixed left-0 top-0 z-50">
@@ -59,12 +71,45 @@ export function Sidebar() {
         })}
       </nav>
 
-      <div className="p-6 border-t border-border">
-        <div className="bg-primary/5 border border-primary/20 rounded-lg p-4 flex items-center gap-3">
+      <div className="p-4 border-t border-border space-y-4 flex-shrink-0">
+        {/* Mini Map */}
+        <div>
+          <p className="text-xs font-mono text-muted-foreground mb-2 px-2">LIVE NETWORK</p>
+          <div className="rounded-lg overflow-hidden border border-white/10 bg-black/60 h-32">
+            <CityMap
+              intersections={mapData?.intersections || []}
+              roads={mapData?.roads || []}
+              vehicles={simVehicles}
+              enableZoomPan={false}
+              performanceMode={true}
+            />
+          </div>
+        </div>
+
+        {/* Traffic Status */}
+        <div className="bg-primary/5 border border-primary/20 rounded-lg p-3 space-y-2">
+          <div className="flex justify-between items-center">
+            <span className="text-xs font-mono text-muted-foreground">VEHICLES</span>
+            <span className="text-sm font-bold text-warning">{simVehicles.length}</span>
+          </div>
+          <div className="flex justify-between items-center">
+            <span className="text-xs font-mono text-muted-foreground">DENSITY</span>
+            <span className={cn("text-xs font-mono font-bold", densityColor)}>
+              {simDensity.level.toUpperCase()}
+            </span>
+          </div>
+          <div className="flex justify-between items-center pt-2 border-t border-white/10">
+            <span className="text-xs font-mono text-muted-foreground">NODES</span>
+            <span className="text-sm font-bold text-primary">{mapData?.intersections?.length || 0}</span>
+          </div>
+        </div>
+
+        {/* System Status */}
+        <div className="bg-success/5 border border-success/20 rounded-lg p-3 flex items-center gap-2">
           <div className="w-2 h-2 rounded-full bg-success shadow-[0_0_8px_rgba(0,255,136,0.8)] animate-pulse" />
           <div>
-            <p className="text-xs font-mono text-muted-foreground">SYSTEM STATUS</p>
-            <p className="text-sm font-semibold text-success text-glow-success">OPTIMAL</p>
+            <p className="text-xs font-mono text-muted-foreground">SYSTEM</p>
+            <p className="text-xs font-semibold text-success">OPTIMAL</p>
           </div>
         </div>
       </div>

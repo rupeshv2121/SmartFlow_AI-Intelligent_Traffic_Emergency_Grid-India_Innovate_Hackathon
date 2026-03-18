@@ -1,16 +1,28 @@
-import { AppLayout } from "@/components/layout/AppLayout";
-import { GlassPanel } from "@/components/GlassPanel";
 import { CameraFeed } from "@/components/CameraFeed";
-import { useLiveVehicleCounts, useLiveLaneDensity, useLiveTrafficHistory } from "@/hooks/use-smartflow";
-import { formatNumber, cn } from "@/lib/utils";
-import { CarFront, Bike, Bus, Truck, Video } from "lucide-react";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
-import { format } from "date-fns";
+import { CityMap } from "@/components/CityMap";
+import { GlassPanel } from "@/components/GlassPanel";
+import { AppLayout } from "@/components/layout/AppLayout";
+import { getTrafficDensityByCount, useLiveIntersections, useLiveLaneDensity, useLiveSimVehicles, useLiveTrafficHistory, useLiveVehicleCounts } from "@/hooks/use-smartflow";
+import { cn, formatNumber } from "@/lib/utils";
+import { Bike, Bus, CarFront, Map, Maximize2, Truck } from "lucide-react";
+import { useState } from "react";
+import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
 export default function Traffic() {
+  const [showExpandedMap, setShowExpandedMap] = useState(false);
   const { data: counts } = useLiveVehicleCounts();
   const { data: laneData } = useLiveLaneDensity();
   const { data: history } = useLiveTrafficHistory();
+  const { data: mapData } = useLiveIntersections();
+  const { data: simVehicles = [] } = useLiveSimVehicles();
+  const simDensity = getTrafficDensityByCount(simVehicles.length);
+
+  const densityClass =
+    simDensity.level === "low"
+      ? "bg-success/10 text-success border-success/30"
+      : simDensity.level === "medium"
+        ? "bg-warning/10 text-warning border-warning/30"
+        : "bg-destructive/10 text-destructive border-destructive/30";
 
   const countCards = [
     { label: "CARS", value: counts?.cars || 0, icon: CarFront, color: "text-primary" },
@@ -32,11 +44,59 @@ export default function Traffic() {
         </div>
       </div>
 
+      {/* Live SUMO Traffic Map - Full Width */}
+      <GlassPanel className="p-6 mb-8">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-lg font-display font-semibold flex items-center gap-2">
+            <Map className="w-4 h-4 text-primary" />
+            LIVE TRAFFIC NETWORK
+          </h2>
+          <div className="flex items-center gap-3">
+            <span className="text-[10px] font-mono text-muted-foreground">
+              VEHICLES: {simVehicles.length}
+            </span>
+            <span className={cn("text-[10px] font-mono px-2 py-1 rounded border", densityClass)}>
+              {simDensity.label}
+            </span>
+            <button
+              onClick={() => setShowExpandedMap(!showExpandedMap)}
+              className="text-xs font-mono text-primary flex items-center hover:text-white transition-colors"
+            >
+              {showExpandedMap ? "COLLAPSE" : "EXPAND"}
+              <Maximize2 className="w-3 h-3 ml-1" />
+            </button>
+          </div>
+        </div>
+        <div className={cn("transition-all duration-300", showExpandedMap ? "h-[800px]" : "h-[400px]")}>
+          <div className="w-full h-full flex items-center justify-center">
+            <CityMap
+              intersections={mapData?.intersections || []}
+              roads={mapData?.roads || []}
+              vehicles={simVehicles}
+            />
+          </div>
+        </div>
+        <div className="mt-4 pt-4 border-t border-white/10 grid grid-cols-3 gap-4 text-xs font-mono">
+          <div className="text-center">
+            <div className="text-muted-foreground mb-1">INTERSECTIONS</div>
+            <div className="text-lg font-display font-bold text-primary">{mapData?.intersections?.length || 0}</div>
+          </div>
+          <div className="text-center">
+            <div className="text-muted-foreground mb-1">ROAD SEGMENTS</div>
+            <div className="text-lg font-display font-bold text-primary">{mapData?.roads?.length || 0}</div>
+          </div>
+          <div className="text-center">
+            <div className="text-muted-foreground mb-1">ACTIVE VEHICLES</div>
+            <div className="text-lg font-display font-bold text-warning">{simVehicles.length}</div>
+          </div>
+        </div>
+      </GlassPanel>
+
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-        {/* Main Camera Feed */}
+        {/* Camera Feed & Analysis */}
         <div className="lg:col-span-2 space-y-6">
           <GlassPanel className="p-1">
-            <CameraFeed 
+            <CameraFeed
               name="NODE-ALPHA (DOWNTOWN)"
               density="medium"
               simulateMovement={true}
@@ -47,7 +107,7 @@ export default function Traffic() {
 
           {/* Density Chart */}
           <GlassPanel className="p-6">
-             <h2 className="text-lg font-display font-semibold mb-6 flex items-center gap-2">
+            <h2 className="text-lg font-display font-semibold mb-6 flex items-center gap-2">
               <LineChart className="w-4 h-4 text-primary" />
               THROUGHPUT ANALYSIS
             </h2>
@@ -55,25 +115,25 @@ export default function Traffic() {
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={history?.data || []}>
                   <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} />
-                  <XAxis 
-                    dataKey="time" 
-                    stroke="hsl(var(--muted-foreground))" 
-                    fontSize={12} 
+                  <XAxis
+                    dataKey="time"
+                    stroke="hsl(var(--muted-foreground))"
+                    fontSize={12}
                     tickFormatter={(val) => String(val)}
                     tickLine={false}
                   />
                   <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} />
-                  <Tooltip 
+                  <Tooltip
                     contentStyle={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))' }}
                   />
-                  <Line 
-                    type="monotone" 
-                    dataKey="vehicles" 
-                    stroke="hsl(var(--primary))" 
+                  <Line
+                    type="monotone"
+                    dataKey="vehicles"
+                    stroke="hsl(var(--primary))"
                     strokeWidth={2}
                     dot={false}
                     activeDot={{ r: 4, fill: "hsl(var(--primary))" }}
-                    isAnimationActive={false} // Prevent glitchy updates on fast polling
+                    isAnimationActive={false}
                   />
                 </LineChart>
               </ResponsiveContainer>

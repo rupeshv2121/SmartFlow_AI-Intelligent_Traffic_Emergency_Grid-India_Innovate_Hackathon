@@ -1,12 +1,14 @@
-import { AppLayout } from "@/components/layout/AppLayout";
 import { GlassPanel } from "@/components/GlassPanel";
-import { useLiveCongestionAnalytics } from "@/hooks/use-smartflow";
-import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
-import { Database, Filter } from "lucide-react";
+import { AppLayout } from "@/components/layout/AppLayout";
+import { useLiveCongestionAnalytics, useLiveIntersections, useLiveSimVehicles } from "@/hooks/use-smartflow";
 import { cn } from "@/lib/utils";
+import { Database, Filter } from "lucide-react";
+import { Bar, BarChart, CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
 export default function Analytics() {
   const { data } = useLiveCongestionAnalytics();
+  const { data: mapData } = useLiveIntersections();
+  const { data: simVehicles = [] } = useLiveSimVehicles();
 
   return (
     <AppLayout>

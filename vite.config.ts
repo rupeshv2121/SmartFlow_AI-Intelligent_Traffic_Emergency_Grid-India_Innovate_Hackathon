@@ -34,6 +34,10 @@ export default defineConfig({
         target: apiTarget,
         changeOrigin: true,
       },
+      "/vehicles": {
+        target: apiTarget,
+        changeOrigin: true,
+      },
     },
     fs: {
       strict: true,

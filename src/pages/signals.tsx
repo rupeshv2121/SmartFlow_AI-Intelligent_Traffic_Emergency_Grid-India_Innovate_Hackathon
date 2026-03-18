@@ -1,14 +1,16 @@
-import { AppLayout } from "@/components/layout/AppLayout";
 import { GlassPanel } from "@/components/GlassPanel";
+import { AppLayout } from "@/components/layout/AppLayout";
 import { TrafficLight } from "@/components/TrafficLight";
-import { useLiveSignalTiming, useLiveCongestionAnalytics } from "@/hooks/use-smartflow";
+import { useLiveCongestionAnalytics, useLiveIntersections, useLiveSignalTiming, useLiveSimVehicles } from "@/hooks/use-smartflow";
 import { cn } from "@/lib/utils";
-import { Settings2, ArrowRight } from "lucide-react";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, Cell } from "recharts";
+import { Settings2 } from "lucide-react";
+import { Bar, BarChart, CartesianGrid, Cell, Tooltip as RechartsTooltip, ResponsiveContainer, XAxis, YAxis } from "recharts";
 
 export default function Signals() {
   const { data: signals } = useLiveSignalTiming();
   const { data: analytics } = useLiveCongestionAnalytics();
+  const { data: mapData } = useLiveIntersections();
+  const { data: simVehicles = [] } = useLiveSimVehicles();
 
   return (
     <AppLayout>

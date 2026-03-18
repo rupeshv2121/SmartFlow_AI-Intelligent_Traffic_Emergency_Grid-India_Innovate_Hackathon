@@ -1,22 +1,22 @@
-import { CityMap } from "@/components/CityMap";
 import { GlassPanel } from "@/components/GlassPanel";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { StatCard } from "@/components/StatCard";
 import {
-    useLiveDashboardStats,
-    useLiveEmergencyEvents,
-    useLiveIntersections,
-    useLiveTrafficHistory
+  getTrafficDensityByCount,
+  useLiveDashboardStats,
+  useLiveEmergencyEvents,
+  useLiveIntersections,
+  useLiveSimVehicles,
+  useLiveTrafficHistory
 } from "@/hooks/use-smartflow";
 import { cn, formatNumber } from "@/lib/utils";
 import { format } from "date-fns";
 import {
-    Activity,
-    AlertTriangle,
-    ArrowUpRight,
-    Car,
-    MapPin,
-    Zap
+  Activity,
+  AlertTriangle,
+  Car,
+  MapPin,
+  Zap
 } from "lucide-react";
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
@@ -25,6 +25,15 @@ export default function Dashboard() {
   const { data: history } = useLiveTrafficHistory();
   const { data: mapData } = useLiveIntersections();
   const { data: emergency } = useLiveEmergencyEvents();
+  const { data: simVehicles = [] } = useLiveSimVehicles();
+  const simDensity = getTrafficDensityByCount(simVehicles.length);
+
+  const densityClass =
+    simDensity.level === "low"
+      ? "bg-success/10 text-success border-success/30"
+      : simDensity.level === "medium"
+        ? "bg-warning/10 text-warning border-warning/30"
+        : "bg-destructive/10 text-destructive border-destructive/30";
 
   return (
     <AppLayout>
@@ -118,22 +127,26 @@ export default function Dashboard() {
           </div>
         </GlassPanel>
 
-        {/* Live Map Preview */}
-        <GlassPanel className="p-6 flex flex-col">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-lg font-display font-semibold">CITY GRID</h2>
-            <button className="text-xs font-mono text-primary flex items-center hover:text-white transition-colors cursor-pointer">
-              EXPAND <ArrowUpRight className="w-3 h-3 ml-1" />
-            </button>
-          </div>
-          <div className="flex-1 flex items-center justify-center">
-            {mapData ? (
-              <CityMap intersections={mapData.intersections} roads={mapData.roads} />
-            ) : (
-              <div className="animate-pulse w-full aspect-square bg-white/5 rounded-xl border border-white/10" />
-            )}
-          </div>
-        </GlassPanel>
+        {/* Side Stats Panel */}
+        <div className="space-y-6">
+          <GlassPanel className="p-6">
+            <h3 className="text-sm font-display font-semibold mb-4">QUICK STATS</h3>
+            <div className="space-y-3">
+              <div className="flex justify-between items-center pb-3 border-b border-white/10">
+                <span className="text-xs text-muted-foreground">Total Vehicles</span>
+                <span className="text-lg font-bold text-primary">{simVehicles.length}</span>
+              </div>
+              <div className="flex justify-between items-center pb-3 border-b border-white/10">
+                <span className="text-xs text-muted-foreground">Active Nodes</span>
+                <span className="text-lg font-bold text-success">{mapData?.intersections?.length || 0}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-xs text-muted-foreground">Network Status</span>
+                <span className="text-lg font-bold text-green-400">● LIVE</span>
+              </div>
+            </div>
+          </GlassPanel>
+        </div>
       </div>
 
       {/* Events Log */}

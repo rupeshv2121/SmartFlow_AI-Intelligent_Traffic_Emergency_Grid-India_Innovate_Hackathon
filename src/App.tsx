@@ -1,15 +1,15 @@
-import { Switch, Route, Router as WouterRouter } from "wouter";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Route, Switch, Router as WouterRouter } from "wouter";
 
-import Dashboard from "@/pages/dashboard";
-import Traffic from "@/pages/traffic";
-import Signals from "@/pages/signals";
-import Emergency from "@/pages/emergency";
 import Analytics from "@/pages/analytics";
-import Settings from "@/pages/settings";
+import Dashboard from "@/pages/dashboard";
+import Emergency from "@/pages/emergency";
 import NotFound from "@/pages/not-found";
+import Settings from "@/pages/settings";
+import Signals from "@/pages/signals";
+import Traffic from "@/pages/traffic";
 
 const queryClient = new QueryClient({
   defaultOptions: {

@@ -1,17 +1,26 @@
-import { AppLayout } from "@/components/layout/AppLayout";
-import { GlassPanel } from "@/components/GlassPanel";
 import { CityMap } from "@/components/CityMap";
+import { GlassPanel } from "@/components/GlassPanel";
+import { AppLayout } from "@/components/layout/AppLayout";
 import { TrafficLight } from "@/components/TrafficLight";
-import { useLiveActiveCorridor, useLiveEmergencyEvents, useLiveIntersections } from "@/hooks/use-smartflow";
-import { Ambulance, ShieldAlert, Activity, CheckCircle2 } from "lucide-react";
-import { format } from "date-fns";
+import { getTrafficDensityByCount, useLiveActiveCorridor, useLiveEmergencyEvents, useLiveIntersections, useLiveSimVehicles } from "@/hooks/use-smartflow";
 import { cn } from "@/lib/utils";
-import { motion, AnimatePresence } from "framer-motion";
+import { format } from "date-fns";
+import { AnimatePresence, motion } from "framer-motion";
+import { Activity, Ambulance, CheckCircle2, ShieldAlert } from "lucide-react";
 
 export default function Emergency() {
   const { data: corridor } = useLiveActiveCorridor();
   const { data: events } = useLiveEmergencyEvents();
   const { data: mapData } = useLiveIntersections();
+  const { data: simVehicles = [] } = useLiveSimVehicles();
+  const simDensity = getTrafficDensityByCount(simVehicles.length);
+
+  const densityClass =
+    simDensity.level === "low"
+      ? "bg-success/10 text-success border-success/30"
+      : simDensity.level === "medium"
+        ? "bg-warning/10 text-warning border-warning/30"
+        : "bg-destructive/10 text-destructive border-destructive/30";
 
   const isActive = corridor?.active;
 
@@ -61,16 +70,21 @@ export default function Emergency() {
             <Activity className="w-4 h-4 text-primary" />
             ROUTE TRACKING
           </h2>
+          <div className="mb-4 flex items-center justify-between gap-3">
+            <span className="text-[11px] font-mono text-muted-foreground">
+              LIVE VEHICLES: {simVehicles.length}
+            </span>
+            <span className={cn("text-[10px] font-mono px-2 py-1 rounded border", densityClass)}>
+              DENSITY: {simDensity.label}
+            </span>
+          </div>
           <div className="w-full flex justify-center">
-            {mapData ? (
-               <CityMap 
-                 intersections={mapData.intersections} 
-                 roads={mapData.roads} 
-                 activeRoute={isActive ? corridor?.route : []} 
-               />
-            ) : (
-              <div className="aspect-video w-full bg-white/5 animate-pulse rounded border border-white/10" />
-            )}
+            <CityMap 
+              intersections={mapData?.intersections || []}
+              roads={mapData?.roads || []}
+              activeRoute={isActive ? corridor?.route : []}
+              vehicles={simVehicles}
+            />
           </div>
         </GlassPanel>
 
