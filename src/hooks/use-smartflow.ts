@@ -11,7 +11,7 @@ import {
   useGetTrafficDensity,
   useGetTrafficDensityHistory,
   useGetVehicleCounts,
-} from "@workspace/api-client-react";
+} from "@/lib/api-client";
 
 // Global refetch interval for live dashboard simulation (3 seconds)
 const LIVE_INTERVAL = 3000;

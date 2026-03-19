@@ -1,7 +1,11 @@
-import { useEffect } from "react";
-import { Canvas, useThree } from "@react-three/fiber";
-import { Environment, OrbitControls } from "@react-three/drei";
+import { RealisticAmbulance } from "@/components/vehicles/RealisticAmbulance";
+import { RealisticAuto } from "@/components/vehicles/RealisticAuto";
+import { RealisticBike } from "@/components/vehicles/RealisticBike";
+import { RealisticCar } from "@/components/vehicles/RealisticCar";
 import type { SignalState, SimRoadState, SimVehicle, VehicleType } from "@/types/traffic-sim";
+import { Environment, OrbitControls } from "@react-three/drei";
+import { Canvas, useThree } from "@react-three/fiber";
+import { useEffect } from "react";
 
 interface Intersection3DEnvironmentProps {
   roads: SimRoadState[];
@@ -274,69 +278,75 @@ function CameraRig({ pose }: { pose: IntersectionCameraPose }) {
 }
 
 function VehicleMesh({ vehicle, simplified = false }: { vehicle: SimVehicle; simplified?: boolean }) {
-  const style = VEHICLE_STYLE[vehicle.type as VehicleType] ?? VEHICLE_STYLE.car;
+  // Map vehicle types to realistic 3D models
+  const vehicleType = vehicle.type as VehicleType;
 
-  if (simplified) {
-    return (
-      <group scale={[vehicle.width, 1, vehicle.length]}>
-        <mesh scale={style.bodyScale}>
-          <boxGeometry args={[1, 1, 1]} />
-          <meshStandardMaterial color={style.bodyColor} roughness={0.52} metalness={0.14} />
-        </mesh>
-        <mesh position={style.roofOffset} scale={style.roofScale}>
-          <boxGeometry args={[1, 1, 1]} />
-          <meshStandardMaterial color={style.roofColor} roughness={0.4} metalness={0.12} />
-        </mesh>
-      </group>
-    );
-  }
+  // Calculate scale based on vehicle dimensions
+  const scaleMultiplier = simplified ? 0.8 : 1.0;
+  const baseScale = Math.min(vehicle.width, vehicle.length) * scaleMultiplier;
 
-  return (
-    <group scale={[vehicle.width, 1, vehicle.length]}>
-      <mesh scale={style.bodyScale}>
-        <boxGeometry args={[1, 1, 1]} />
-        <meshStandardMaterial color={style.bodyColor} roughness={0.45} metalness={0.22} />
-      </mesh>
+  // Generate color variety for cars and bikes
+  const carColors = [0x3366AA, 0xCC3333, 0x22AA55, 0xFF9900, 0x9933CC, 0x00CCCC,
+                     0xFF6B9D, 0x4B5563, 0x1E3A8A, 0x991B1B, 0x065F46, 0x7C2D12];
+  const bikeColors = [0xFF4500, 0x000000, 0x0000FF, 0xFF1493, 0x32CD32, 0xFFD700];
 
-      <mesh position={style.roofOffset} scale={style.roofScale}>
-        <boxGeometry args={[1, 1, 1]} />
-        <meshStandardMaterial color={style.roofColor} roughness={0.36} metalness={0.18} />
-      </mesh>
+  // Use vehicle ID to consistently assign colors
+  const colorIndex = parseInt(vehicle.id.slice(-2), 16);
+  const carColor = carColors[colorIndex % carColors.length];
+  const bikeColor = bikeColors[colorIndex % bikeColors.length];
 
-      <mesh position={style.accentOffset} scale={style.accentScale}>
-        <boxGeometry args={[1, 1, 1]} />
-        <meshStandardMaterial
-          color={style.accentColor}
-          emissive={style.accentColor}
-          emissiveIntensity={vehicle.type === "ambulance" ? 0.72 : 0.08}
+  // Render the appropriate realistic vehicle based on type
+  switch (vehicleType) {
+    case "car":
+      return (
+        <RealisticCar
+          position={[0, -0.38, 0]}
+          color={carColor}
+          scale={baseScale * 1.2}
+          animated={!simplified}
         />
-      </mesh>
+      );
 
-      {vehicle.type !== "bike" && (
-        <mesh position={style.windowOffset} scale={style.windowScale}>
-          <boxGeometry args={[1, 1, 1]} />
-          <meshStandardMaterial color="#9ca3af" emissive="#1f2937" emissiveIntensity={0.22} roughness={0.2} metalness={0.45} />
-        </mesh>
-      )}
+    case "bike":
+      return (
+        <RealisticBike
+          position={[0, -0.38, 0]}
+          color={bikeColor}
+          scale={baseScale * 1.0}
+          animated={!simplified}
+        />
+      );
 
-      <mesh position={[style.wheelX, 0.18, style.wheelFrontZ]} rotation={[Math.PI / 2, 0, 0]} scale={[style.wheelRadius, style.wheelWidth, style.wheelRadius]}>
-        <cylinderGeometry args={[1, 1, 1, 14]} />
-        <meshStandardMaterial color="#1b1f27" roughness={0.8} metalness={0.05} />
-      </mesh>
-      <mesh position={[-style.wheelX, 0.18, style.wheelFrontZ]} rotation={[Math.PI / 2, 0, 0]} scale={[style.wheelRadius, style.wheelWidth, style.wheelRadius]}>
-        <cylinderGeometry args={[1, 1, 1, 14]} />
-        <meshStandardMaterial color="#1b1f27" roughness={0.8} metalness={0.05} />
-      </mesh>
-      <mesh position={[style.wheelX, 0.18, style.wheelRearZ]} rotation={[Math.PI / 2, 0, 0]} scale={[style.wheelRadius, style.wheelWidth, style.wheelRadius]}>
-        <cylinderGeometry args={[1, 1, 1, 14]} />
-        <meshStandardMaterial color="#1b1f27" roughness={0.8} metalness={0.05} />
-      </mesh>
-      <mesh position={[-style.wheelX, 0.18, style.wheelRearZ]} rotation={[Math.PI / 2, 0, 0]} scale={[style.wheelRadius, style.wheelWidth, style.wheelRadius]}>
-        <cylinderGeometry args={[1, 1, 1, 14]} />
-        <meshStandardMaterial color="#1b1f27" roughness={0.8} metalness={0.05} />
-      </mesh>
-    </group>
-  );
+    case "ambulance":
+      return (
+        <RealisticAmbulance
+          position={[0, -0.38, 0]}
+          scale={baseScale * 1.2}
+          animated={!simplified}
+        />
+      );
+
+    case "bus":
+      // Map bus type to auto-rickshaw
+      return (
+        <RealisticAuto
+          position={[0, -0.38, 0]}
+          scale={baseScale * 1.1}
+          animated={!simplified}
+        />
+      );
+
+    default:
+      // Fallback to car if type is unknown
+      return (
+        <RealisticCar
+          position={[0, -0.38, 0]}
+          color={carColor}
+          scale={baseScale * 1.2}
+          animated={!simplified}
+        />
+      );
+  }
 }
 
 function SignalHead({ signal, rotationY = 0 }: { signal: SignalState; rotationY?: number }) {

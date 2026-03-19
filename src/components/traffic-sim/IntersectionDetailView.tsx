@@ -1,8 +1,7 @@
-import { ArrowLeft, AlertTriangle } from "lucide-react";
-import type { SimIntersection, SimRoadState } from "@/types/traffic-sim";
-import { TrafficCameraScene } from "@/components/traffic-sim/TrafficCameraScene";
 import { SUMOIntersectionView } from "@/components/traffic-sim/SUMOIntersectionView";
-import { Intersection3DEnvironment } from "@/components/traffic-sim/Intersection3DEnvironment";
+import { TrafficCameraScene } from "@/components/traffic-sim/TrafficCameraScene";
+import type { SimIntersection, SimRoadState } from "@/types/traffic-sim";
+import { ArrowLeft } from "lucide-react";
 
 interface IntersectionDetailViewProps {
   intersection: SimIntersection;
@@ -48,9 +47,9 @@ export function IntersectionDetailView({ intersection, roads, onBack }: Intersec
           </div>
 
           {/* 3D intersection environment mirroring SUMO + camera feed vehicle logic (no pedestrians). */}
-          <div className="h-[360px] md:h-[430px] lg:h-[520px] xl:h-[600px] 2xl:h-[680px]">
+          {/* <div className="h-[360px] md:h-[430px] lg:h-[520px] xl:h-[600px] 2xl:h-[680px]">
             <Intersection3DEnvironment roads={roads} />
-          </div>
+          </div> */}
         </div>
 
         <div className="rounded-lg border border-white/15 bg-black/35 p-4 space-y-4 xl:sticky xl:top-4">

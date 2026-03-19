@@ -1,6 +1,6 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useLiveIntersectionVideo } from "@/hooks/use-smartflow";
-import type { Intersection, Road } from "@workspace/api-client-react";
+import type { Intersection, Road } from "@/lib/api-client";
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { CameraFeed } from "./CameraFeed";

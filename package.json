@@ -3,10 +3,6 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "workspaces": [
-    "lib/*",
-    "scripts"
-  ],
   "scripts": {
     "dev": "vite --config vite.config.ts --host 0.0.0.0",
     "build": "vite build --config vite.config.ts",
@@ -18,12 +14,12 @@
     "@react-three/fiber": "^9.5.0",
     "@react-three/postprocessing": "^3.0.4",
     "@react-three/rapier": "^2.2.0",
-    "@workspace/api-client-react": "*",
     "leaflet": "^1.9.4",
     "postprocessing": "^6.38.3",
     "react-leaflet": "^5.0.0",
     "socket.io-client": "^4.8.3",
-    "three": "^0.183.2"
+    "three": "^0.183.2",
+    "vercel": "^50.33.1"
   },
   "devDependencies": {
     "@hookform/resolvers": "^3.10.0",

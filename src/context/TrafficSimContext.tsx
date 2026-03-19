@@ -1,5 +1,4 @@
-import type { Intersection } from "@workspace/api-client-react";
-import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import type { Intersection } from "@/lib/api-client";
 import type {
   SignalControllerState,
   SignalState,
@@ -9,6 +8,7 @@ import type {
   TrafficSimState,
   VehicleType,
 } from "@/types/traffic-sim";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 
 interface TrafficSimContextValue {
   state: TrafficSimState;

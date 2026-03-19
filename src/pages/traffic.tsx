@@ -1,11 +1,16 @@
-import { AppLayout } from "@/components/layout/AppLayout";
 import { GlassPanel } from "@/components/GlassPanel";
-import { IntersectionMap } from "@/components/traffic-sim/IntersectionMap";
+import { AppLayout } from "@/components/layout/AppLayout";
+import { Intersection3DEnvironment } from "@/components/traffic-sim/Intersection3DEnvironment";
 import { IntersectionDetailView } from "@/components/traffic-sim/IntersectionDetailView";
-import { useLiveIntersections } from "@/hooks/use-smartflow";
 import { useTrafficSim } from "@/context/TrafficSimContext";
-import { useEffect } from "react";
+import { useLiveIntersections } from "@/hooks/use-smartflow";
+import { SimRoadState } from "@/types/traffic-sim";
 import { AlertTriangle, MapPinned, Radar } from "lucide-react";
+import { useEffect } from "react";
+
+interface Intersection3DEnvironmentProps {
+  roads: SimRoadState[];
+}
 
 export default function Traffic() {
   const { data: mapData, isLoading } = useLiveIntersections();
@@ -72,7 +77,7 @@ export default function Traffic() {
             {isLoading && state.intersections.length === 0 ? (
               <div className="h-[560px] rounded-xl border border-white/10 bg-black/40 animate-pulse" />
             ) : (
-              <IntersectionMap intersections={state.intersections} onSelect={selectIntersection} />
+              <Intersection3DEnvironment roads={state.roads} />
             )}
           </>
         ) : (
