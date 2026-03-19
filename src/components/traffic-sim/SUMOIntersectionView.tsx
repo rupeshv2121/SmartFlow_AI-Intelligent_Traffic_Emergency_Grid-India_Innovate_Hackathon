@@ -123,34 +123,46 @@ export function SUMOIntersectionView({ roads }: SUMOIntersectionViewProps) {
       if (insideRaw < TURN_DELAY) {
         const preTurnT = smoothStep(insideRaw / TURN_DELAY);
         const y = lerp(approachEndY, turnStartY, preTurnT);
-        return { x: laneX, y, angleDeg: 12 * preTurnT };
+        return { x: laneX, y, angleDeg: 0 };
       }
 
       const turnT = smoothStep(clamp((insideRaw - TURN_DELAY) / (1 - TURN_DELAY), 0, 1));
-      const turnRadius = ROAD_HALF_WIDTH * TURN_RADIUS_FACTOR;
-      const p0 = { x: laneX, y: turnStartY };
-      const p1 = { x: CENTER_X - turnRadius, y: CENTER_Y + turnRadius };
-      const p2 = { x: APPROACH_START - 8, y: CENTER_Y };
-      const pt = quadBezierPoint(p0, p1, p2, turnT);
-      const tg = quadBezierTangent(p0, p1, p2, turnT);
-      return { x: pt.x, y: pt.y, angleDeg: headingFromVector(tg.dx, tg.dy) };
+      const pivotPhase = 0.55;
+      const laneTargetY = CENTER_Y + laneOffset * 0.35;
+
+      if (turnT < pivotPhase) {
+        const t1 = smoothStep(turnT / pivotPhase);
+        const y = lerp(turnStartY, laneTargetY, t1);
+        const angleDeg = lerp(0, 90, t1);
+        return { x: laneX, y, angleDeg };
+      }
+
+      const t2 = smoothStep((turnT - pivotPhase) / (1 - pivotPhase));
+      const x = lerp(laneX, APPROACH_START - 8, t2);
+      return { x, y: laneTargetY, angleDeg: 90 };
     }
 
     const turnStartY = lerp(approachEndY, CENTER_Y + 8, TURN_DELAY);
     if (insideRaw < TURN_DELAY) {
       const preTurnT = smoothStep(insideRaw / TURN_DELAY);
       const y = lerp(approachEndY, turnStartY, preTurnT);
-      return { x: laneX, y, angleDeg: -12 * preTurnT };
+      return { x: laneX, y, angleDeg: 0 };
     }
 
     const turnT = smoothStep(clamp((insideRaw - TURN_DELAY) / (1 - TURN_DELAY), 0, 1));
-    const turnRadius = ROAD_HALF_WIDTH * TURN_RADIUS_FACTOR;
-    const p0 = { x: laneX, y: turnStartY };
-    const p1 = { x: CENTER_X + turnRadius, y: CENTER_Y + turnRadius };
-    const p2 = { x: VIEW_W - APPROACH_START + 8, y: CENTER_Y };
-    const pt = quadBezierPoint(p0, p1, p2, turnT);
-    const tg = quadBezierTangent(p0, p1, p2, turnT);
-    return { x: pt.x, y: pt.y, angleDeg: headingFromVector(tg.dx, tg.dy) };
+    const pivotPhase = 0.55;
+    const laneTargetY = CENTER_Y - laneOffset * 0.35;
+
+    if (turnT < pivotPhase) {
+      const t1 = smoothStep(turnT / pivotPhase);
+      const y = lerp(turnStartY, laneTargetY, t1);
+      const angleDeg = lerp(0, -90, t1);
+      return { x: laneX, y, angleDeg };
+    }
+
+    const t2 = smoothStep((turnT - pivotPhase) / (1 - pivotPhase));
+    const x = lerp(laneX, VIEW_W - APPROACH_START + 8, t2);
+    return { x, y: laneTargetY, angleDeg: -90 };
   }
 
   function outgoingVehiclePose(progress: number, laneOffset: number): LocalPose {
