@@ -30,12 +30,13 @@ interface RoadUpdateResult {
 
 const GREEN_DURATION = 25;
 const YELLOW_DURATION = 3;
+const ENABLE_ROAD_TRANSFERS = false;
 const OUTGOING_ENTRY_ZONE = 0.12;
-const OUTGOING_ENTRY_SPEED_FACTOR = 0.48;
-const OUTGOING_CRUISE_SPEED_FACTOR = 1.08;
-const TURNING_SPEED_FACTOR_GREEN = 0.36;
-const TURNING_SPEED_FACTOR_NON_GREEN = 0.3;
-const OUTGOING_TRANSFER_TRIGGER_PROGRESS = 0.9;
+const OUTGOING_ENTRY_SPEED_FACTOR = 0.72;
+const OUTGOING_CRUISE_SPEED_FACTOR = 0.78;
+const TURNING_SPEED_FACTOR_GREEN = 1.0;
+const TURNING_SPEED_FACTOR_NON_GREEN = 0.7;
+const OUTGOING_TRANSFER_TRIGGER_PROGRESS = 0.995;
 
 // Critical positions (progress is 0 to 1, where 1 is fully through)
 const STOP_LINE = 0.85;  // Where vehicles must stop (z = -1.8 in world coords)
@@ -45,23 +46,23 @@ const INCOMING_LANES = [1, 3];
 const OUTGOING_LANES = [-3, -1];
 
 const VEHICLE_CONFIG: Record<VehicleType, { speed: number; length: number; width: number }> = {
-  car: { speed: 0.158, length: 1.9, width: 1 },
-  bus: { speed: 0.11, length: 2.8, width: 1.2 },
-  bike: { speed: 0.2, length: 1.2, width: 0.6 },
-  ambulance: { speed: 0.232, length: 2, width: 1 },
+  car: { speed: 0.082, length: 1.9, width: 1 },
+  bus: { speed: 0.062, length: 2.8, width: 1.2 },
+  bike: { speed: 0.102, length: 1.2, width: 0.6 },
+  ambulance: { speed: 0.124, length: 2, width: 1 },
 };
 
 const DENSITY_SPAWN_RATE = {
-  low: 0.14,
-  medium: 0.24,
-  high: 0.38,
+  low: 0.08,
+  medium: 0.14,
+  high: 0.22,
 };
 
 const SPAWN_ENTRY_PROGRESS = 0.01;
-const SPAWN_BLOCK_PROGRESS = 0.09;
-const SPAWN_MIN_HEADWAY = 0.055;
-const INCOMING_MIN_GAP = 0.048;
-const OUTGOING_MIN_GAP = 0.04;
+const SPAWN_BLOCK_PROGRESS = 0.2;
+const SPAWN_MIN_HEADWAY = 0.16;
+const INCOMING_MIN_GAP = 0.1;
+const OUTGOING_MIN_GAP = 0.18;
 
 const LANE_POSITIONS = [-3, -1, 1, 3];
 
@@ -91,9 +92,9 @@ const TrafficSimContext = createContext<TrafficSimContextValue | null>(null);
 
 function randomVehicleType(): VehicleType {
   const n = Math.random();
-  if (n < 0.01) return "ambulance";
-  if (n < 0.16) return "bus";
-  if (n < 0.42) return "bike";
+  if (n < 0.15) return "ambulance";
+  if (n < 0.20) return "bus";
+  if (n < 0.46) return "bike";
   return "car";
 }
 
@@ -123,13 +124,18 @@ function createVehicleInLane(laneCenter: number, isOutgoing = false): SimVehicle
 
 function createSeedVehicles(count: number): SimVehicle[] {
   const vehicles: SimVehicle[] = [];
+  const laneCounts = new Map<number, number>();
 
   const incomingCount = count;
 
   for (let i = 0; i < incomingCount; i += 1) {
     const laneCenter = INCOMING_LANES[i % INCOMING_LANES.length] ?? 1;
     const vehicle = createVehicleInLane(laneCenter, false);
-    const progress = Math.min(0.2, 0.01 + i * 0.015 + Math.random() * 0.01);
+    const laneIndex = laneCounts.get(laneCenter) ?? 0;
+    laneCounts.set(laneCenter, laneIndex + 1);
+
+    // Seed with queue-like spacing so vehicles start one behind another in each lane.
+    const progress = Math.min(0.8, SPAWN_ENTRY_PROGRESS + laneIndex * 0.18 + Math.random() * 0.015);
     vehicle.progress = progress;
     vehicle.enteredZone = progress >= DETECTION_ZONE;
     vehicles.push(vehicle);
@@ -153,7 +159,7 @@ function createRoads(): SimRoadState[] {
       label,
       signal: index === 0 ? "green" : "red",
       signalTimeLeft: index === 0 ? GREEN_DURATION : 0,
-      vehicles: index === 0 ? createSeedVehicles(12 + Math.floor(Math.random() * 4)) : [],
+      vehicles: createSeedVehicles(6 + Math.floor(Math.random() * 3)),
       vehicleCount: 0,
       ambulanceDetected: false,
     };
@@ -222,11 +228,8 @@ function toSimIntersections(intersections: Intersection[]): SimIntersection[] {
 }
 
 function headwayJitter(vehicleId: string) {
-  let hash = 0;
-  for (let i = 0; i < vehicleId.length; i += 1) {
-    hash = (hash * 31 + vehicleId.charCodeAt(i)) >>> 0;
-  }
-  return ((hash % 1000) / 1000 - 0.5) * 0.006;
+  void vehicleId;
+  return 0;
 }
 
 function vehicleTurnBucket(vehicleId: string) {
@@ -245,17 +248,15 @@ function selectOutgoingLane(vehicleId: string) {
 
 function transferStartProgress(vehicleId: string, overflowProgress: number) {
   const bucket = vehicleTurnBucket(vehicleId);
-  // Vehicles appear right at outgoing entry line, then continue forward.
-  const baseProgress = bucket >= 8 ? 0.08 : 0.06;
-  return Math.min(0.26, baseProgress + overflowProgress * 0.62);
+  // Continue from near outgoing lane entry after completing the turn.
+  const baseProgress = bucket >= 8 ? 0.12 : 0.1;
+  return Math.min(0.24, baseProgress + overflowProgress * 0.45);
 }
 
 function outgoingSpeedFactor(progress: number) {
-  if (progress <= 0) return OUTGOING_ENTRY_SPEED_FACTOR;
-  if (progress >= OUTGOING_ENTRY_ZONE) return OUTGOING_CRUISE_SPEED_FACTOR;
-
-  const t = progress / OUTGOING_ENTRY_ZONE;
-  return OUTGOING_ENTRY_SPEED_FACTOR + (OUTGOING_CRUISE_SPEED_FACTOR - OUTGOING_ENTRY_SPEED_FACTOR) * t;
+  // Maintain near-constant speed after crossing; spacing logic still governs safety.
+  if (progress <= OUTGOING_ENTRY_ZONE) return OUTGOING_ENTRY_SPEED_FACTOR;
+  return OUTGOING_CRUISE_SPEED_FACTOR;
 }
 
 function routeTargetRoadIndex(sourceRoadIndex: number, vehicleId: string, laneCount: number) {
@@ -274,7 +275,12 @@ function updateRoad(
   density: SimIntersection["density"],
 ): RoadUpdateResult {
   const signal = road.signal;
-  const spawnRate = DENSITY_SPAWN_RATE[density];
+  const spawnHeadwayByDensity: Record<SimIntersection["density"], number> = {
+    low: 0.34,
+    medium: 0.24,
+    high: 0.18,
+  };
+  const spawnHeadway = spawnHeadwayByDensity[density];
   let vehicles = [...road.vehicles];
   const transfers: RoadTransfer[] = [];
 
@@ -287,11 +293,19 @@ function updateRoad(
     }
   };
 
-  // Dynamic spawning for incoming vehicles ONLY
+  // Deterministic sequential spawning for incoming vehicles ONLY.
+  // Vehicles are injected when lane entry headway permits, which avoids bursty/batch movement.
   for (const lane of INCOMING_LANES) {
-    if (Math.random() < spawnRate * dt && !isSpawnLaneBlocked(vehicles, lane)) {
+    const nearestInLane = vehicles
+      .filter((v) => !v.isOutgoing && Math.abs(nearestLaneCenter(v.laneOffset) - lane) < 0.6)
+      .reduce<number>((min, v) => Math.min(min, v.progress), Number.POSITIVE_INFINITY);
+
+    if (
+      !isSpawnLaneBlocked(vehicles, lane) &&
+      (!Number.isFinite(nearestInLane) || nearestInLane >= SPAWN_ENTRY_PROGRESS + spawnHeadway)
+    ) {
       const newVehicle = createVehicleInLane(lane, false);
-      newVehicle.progress = SPAWN_ENTRY_PROGRESS; // Start just entering the road
+      newVehicle.progress = SPAWN_ENTRY_PROGRESS;
       vehicles.push(newVehicle);
     }
   }
@@ -324,23 +338,15 @@ function updateRoad(
       const distToStop = STOP_LINE - vehicle.progress;
 
       if (signal === "green") {
-        if (vehicle.progress >= STOP_LINE) {
-          targetSpeed = vehicle.speed * TURNING_SPEED_FACTOR_GREEN;
-        } else {
-          targetSpeed = vehicle.speed;
-        }
+        targetSpeed = vehicle.speed * TURNING_SPEED_FACTOR_GREEN;
       } else if (signal === "yellow") {
-        if (distToStop < 0.1) {
-          targetSpeed = vehicle.speed * 0.75;
-        } else {
-          targetSpeed = vehicle.speed * 0.62;
-          maxAllowedProgress = STOP_LINE;
-        }
+        targetSpeed = vehicle.speed * 0.8;
+        if (distToStop > 0.02) maxAllowedProgress = STOP_LINE;
       } else {
         if (vehicle.progress >= STOP_LINE) {
           targetSpeed = vehicle.speed * TURNING_SPEED_FACTOR_NON_GREEN;
         } else {
-          targetSpeed = vehicle.speed * 0.48;
+          targetSpeed = vehicle.speed * 0.42;
           maxAllowedProgress = STOP_LINE - 0.02;
         }
       }
@@ -355,7 +361,7 @@ function updateRoad(
         }
       }
       newProgress = Math.min(newProgress, maxAllowedProgress);
-      vehicle.progress = Math.max(vehicle.progress, newProgress);
+      vehicle.progress = Math.max(0, newProgress);
       vehicleAheadPosition = vehicle.progress;
       markEntered(vehicle);
     }
@@ -390,14 +396,19 @@ function updateRoad(
         }
       }
 
-      vehicle.progress = Math.max(vehicle.progress, Math.min(newProgress, 1.0));
+      vehicle.progress = Math.max(0, Math.min(newProgress, 1.0));
       vehicleAheadPosition = vehicle.progress;
     }
   }
 
   const retainedIncoming: SimVehicle[] = [];
   for (const vehicle of incomingVehicles) {
-    if (vehicle.progress >= OUTGOING_TRANSFER_TRIGGER_PROGRESS) {
+    // One-pass traversal: once a vehicle has fully crossed, remove it from this local model.
+    if (vehicle.progress >= 1.0) {
+      continue;
+    }
+
+    if (ENABLE_ROAD_TRANSFERS && vehicle.progress >= OUTGOING_TRANSFER_TRIGGER_PROGRESS) {
       const overflowProgress = Math.max(0, vehicle.progress - OUTGOING_TRANSFER_TRIGGER_PROGRESS);
       const transferred: SimVehicle = {
         ...vehicle,
@@ -451,7 +462,7 @@ function applyRoadTransfers(roads: SimRoadState[], transfers: RoadTransfer[]): S
         (vehicle) => vehicle.isOutgoing && Math.abs(vehicle.laneOffset - lane) < 0.62,
       );
 
-      const safeGap = 0.085 + transfer.vehicle.length * 0.014;
+      const safeGap = SPAWN_MIN_HEADWAY + transfer.vehicle.length * 0.02;
       const nearestStartProgress = sameLaneOutgoing.length > 0
         ? Math.min(...sameLaneOutgoing.map((vehicle) => vehicle.progress))
         : Number.POSITIVE_INFINITY;
@@ -466,9 +477,10 @@ function applyRoadTransfers(roads: SimRoadState[], transfers: RoadTransfer[]): S
       }
     }
 
-    // Avoid inserting into immediate overlap zone when lane entry is saturated.
-    if (bestProgress <= SPAWN_ENTRY_PROGRESS + SPAWN_MIN_HEADWAY * 0.25) {
-      continue;
+    // Never drop transfers. If this lane is saturated, keep the transfer close to
+    // its computed continuation point instead of snapping to lane entry.
+    if (bestProgress <= SPAWN_ENTRY_PROGRESS + SPAWN_MIN_HEADWAY * 0.8) {
+      bestProgress = transfer.vehicle.progress;
     }
 
     targetRoad.vehicles.push({

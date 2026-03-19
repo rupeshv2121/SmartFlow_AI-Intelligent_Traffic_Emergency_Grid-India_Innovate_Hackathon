@@ -7,9 +7,21 @@ interface Intersection3DEnvironmentProps {
   roads: SimRoadState[];
 }
 
+export interface IntersectionCameraPose {
+  position: [number, number, number];
+  lookAt: [number, number, number];
+}
+
+export const INTERSECTION_CAMERA_POSES: IntersectionCameraPose[] = [
+  { position: [42, 30, 42], lookAt: [0, 1.8, 0] },
+  { position: [0, 26, -46], lookAt: [0, 1.4, -8] },
+  { position: [46, 24, 0], lookAt: [8, 1.4, 0] },
+  { position: [0, 26, 46], lookAt: [0, 1.4, 8] },
+  { position: [-46, 24, 0], lookAt: [-8, 1.4, 0] },
+];
+
 const STOP_PROGRESS = 0.85;
 const TURN_DELAY = 0.52;
-const MAX_RENDERED_VEHICLES = 160;
 
 const VEHICLE_STYLE: Record<
   VehicleType,
@@ -114,6 +126,13 @@ function smoothStep(t: number) {
   return c * c * (3 - 2 * c);
 }
 
+function lerpAngle(a: number, b: number, t: number) {
+  let delta = b - a;
+  while (delta > Math.PI) delta -= Math.PI * 2;
+  while (delta < -Math.PI) delta += Math.PI * 2;
+  return a + delta * t;
+}
+
 function quadBezierPoint(
   p0: { x: number; z: number },
   p1: { x: number; z: number },
@@ -215,22 +234,22 @@ function getLocalVehiclePose(vehicle: SimVehicle): VehiclePose {
   }
 
   const turnT = smoothStep(clamp((insideRaw - TURN_DELAY) / (1 - TURN_DELAY), 0, 1));
+  const laneTargetZ = laneMagnitude * 0.9;
+  const targetYaw = turnType === "left" ? -Math.PI / 2 : Math.PI / 2;
+  const targetX = turnType === "left" ? -56 : 56;
+  const pivotZ = turnType === "left" ? laneTargetZ : -laneTargetZ;
+  const pivotPhase = 0.55;
 
-  if (turnType === "left") {
-    const p0 = { x, z: turnStartZ };
-    const p1 = { x: -7, z: 8 };
-    const p2 = { x: -44, z: 22 };
-    const pt = quadBezierPoint(p0, p1, p2, turnT);
-    const tg = quadBezierTangent(p0, p1, p2, turnT);
-    return { x: pt.x, z: pt.z, yaw: headingFromXZ(tg.dx, tg.dz) };
+  if (turnT < pivotPhase) {
+    const t1 = smoothStep(turnT / pivotPhase);
+    const z1 = lerp(turnStartZ, pivotZ, t1);
+    const yaw1 = lerpAngle(Math.PI, targetYaw, t1);
+    return { x, z: z1, yaw: yaw1 };
   }
 
-  const p0 = { x, z: turnStartZ };
-  const p1 = { x: 7, z: 8 };
-  const p2 = { x: 44, z: 22 };
-  const pt = quadBezierPoint(p0, p1, p2, turnT);
-  const tg = quadBezierTangent(p0, p1, p2, turnT);
-  return { x: pt.x, z: pt.z, yaw: headingFromXZ(tg.dx, tg.dz) };
+  const t2 = smoothStep((turnT - pivotPhase) / (1 - pivotPhase));
+  const x2 = lerp(x, targetX, t2);
+  return { x: x2, z: pivotZ, yaw: targetYaw };
 }
 
 function signalColor(current: SignalState, lamp: SignalState) {
@@ -242,14 +261,14 @@ function signalColor(current: SignalState, lamp: SignalState) {
   return "#2f2f2f";
 }
 
-function CameraRig() {
+function CameraRig({ pose }: { pose: IntersectionCameraPose }) {
   const { camera } = useThree();
 
   useEffect(() => {
-    camera.position.set(56, 36, 56);
-    camera.lookAt(0, 2, 0);
+    camera.position.set(pose.position[0], pose.position[1], pose.position[2]);
+    camera.lookAt(pose.lookAt[0], pose.lookAt[1], pose.lookAt[2]);
     camera.updateProjectionMatrix();
-  }, [camera]);
+  }, [camera, pose]);
 
   return null;
 }
@@ -414,29 +433,19 @@ function Buildings() {
 
 function Vehicles({ roads }: { roads: SimRoadState[] }) {
   const totalQueued = roads.reduce((sum, road) => sum + road.vehicles.length, 0);
-  const roadCount = Math.max(roads.length, 1);
-  const perRoadLimit = Math.max(18, Math.floor(MAX_RENDERED_VEHICLES / roadCount));
   const useSimplifiedVehicles = totalQueued > 220;
 
   return (
     <>
       {roads.map((road, roadIndex) => {
         const roadAngle = roadIndex * (Math.PI / 2);
-        const prioritizedVehicles = [...road.vehicles]
-          .sort((a, b) => {
-            const aPriority = Math.abs(STOP_PROGRESS - a.progress);
-            const bPriority = Math.abs(STOP_PROGRESS - b.progress);
-            return aPriority - bPriority;
-          })
-          .slice(0, perRoadLimit);
-
-        return prioritizedVehicles.map((vehicle) => {
+        return road.vehicles.map((vehicle) => {
           const local = getLocalVehiclePose(vehicle);
           const world = rotateXZ(local.x, local.z, roadAngle);
 
           return (
             <group
-              key={`${road.id}-${vehicle.id}`}
+              key={vehicle.id}
               position={[world.x, 0.38, world.z]}
               rotation={[0, local.yaw + roadAngle, 0]}
             >
@@ -475,7 +484,7 @@ function SignalHeads({ roads }: { roads: SimRoadState[] }) {
   );
 }
 
-function IntersectionWorld({ roads }: { roads: SimRoadState[] }) {
+export function IntersectionWorld({ roads, cameraPose = INTERSECTION_CAMERA_POSES[0] }: { roads: SimRoadState[]; cameraPose?: IntersectionCameraPose }) {
   return (
     <>
       <color attach="background" args={["#93a6b8"]} />
@@ -483,7 +492,7 @@ function IntersectionWorld({ roads }: { roads: SimRoadState[] }) {
       <ambientLight intensity={1.05} />
       <directionalLight position={[26, 36, 16]} intensity={1.55} />
       <directionalLight position={[-18, 24, -22]} intensity={0.72} color="#d0e6ff" />
-      <CameraRig />
+      <CameraRig pose={cameraPose} />
 
       <mesh position={[0, -0.25, 0]} receiveShadow>
         <boxGeometry args={[170, 0.3, 170]} />
@@ -541,6 +550,7 @@ function IntersectionWorld({ roads }: { roads: SimRoadState[] }) {
 export function Intersection3DEnvironment({ roads }: Intersection3DEnvironmentProps) {
   const totalVehicles = roads.reduce((sum, road) => sum + road.vehicles.length, 0);
   const flowRate = roads.reduce((sum, road) => sum + road.vehicleCount, 0);
+  const defaultPose = INTERSECTION_CAMERA_POSES[0];
 
   return (
     <div className="relative h-full w-full overflow-hidden rounded-xl border border-cyan-300/25 bg-slate-950 p-3 shadow-[0_0_0_1px_rgba(12,74,110,0.4),0_18px_38px_rgba(2,6,23,0.62)]">
@@ -562,22 +572,22 @@ export function Intersection3DEnvironment({ roads }: Intersection3DEnvironmentPr
           shadows={false}
           gl={{ antialias: true, powerPreference: "high-performance" }}
           dpr={[0.75, 1.2]}
-          camera={{ position: [43, 26, 38], fov: 38 }}
+          camera={{ position: defaultPose.position, fov: 40 }}
         >
-          <IntersectionWorld roads={roads} />
+          <IntersectionWorld roads={roads} cameraPose={defaultPose} />
           <OrbitControls
             makeDefault
             enableDamping
             dampingFactor={0.08}
-            enablePan
-            enableZoom
-            minDistance={12}
-            maxDistance={260}
-            minPolarAngle={0.01}
-            maxPolarAngle={Math.PI - 0.01}
-            rotateSpeed={0.95}
-            panSpeed={0.85}
-            zoomSpeed={0.9}
+            enablePan={false}
+            enableZoom={false}
+            minDistance={55}
+            maxDistance={55}
+            minPolarAngle={Math.PI / 4}
+            maxPolarAngle={Math.PI / 2.35}
+            minAzimuthAngle={-Math.PI / 2.8}
+            maxAzimuthAngle={Math.PI / 2.8}
+            rotateSpeed={0.55}
             target={[0, 2, 0]}
           />
         </Canvas>
