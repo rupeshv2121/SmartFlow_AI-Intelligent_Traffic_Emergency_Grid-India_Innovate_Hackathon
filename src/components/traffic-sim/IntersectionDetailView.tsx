@@ -1,10 +1,7 @@
 import { SUMOIntersectionView } from "@/components/traffic-sim/SUMOIntersectionView";
 import { TrafficCameraScene } from "@/components/traffic-sim/TrafficCameraScene";
-import { IntersectionMapView } from "@/components/traffic-sim/IntersectionMapView";
-import { LaneDetailView } from "@/components/traffic-sim/LaneDetailView";
 import type { SimIntersection, SimRoadState } from "@/types/traffic-sim";
 import { ArrowLeft } from "lucide-react";
-import { useState } from "react";
 
 interface IntersectionDetailViewProps {
   intersection: SimIntersection;
@@ -13,23 +10,9 @@ interface IntersectionDetailViewProps {
 }
 
 export function IntersectionDetailView({ intersection, roads, onBack }: IntersectionDetailViewProps) {
-  const [selectedLane, setSelectedLane] = useState<number | null>(null);
   const emergencyActive = roads.some((road) => road.ambulanceDetected);
   const totalQueueVehicles = roads.reduce((sum, road) => sum + road.vehicles.length, 0);
   const totalEnteredVehicles = roads.reduce((sum, road) => sum + road.vehicleCount, 0);
-
-  const handleLaneClick = (laneIndex: number) => {
-    setSelectedLane(laneIndex);
-  };
-
-  const handleBackToMap = () => {
-    setSelectedLane(null);
-  };
-
-  // If a lane is selected, show lane detail view
-  if (selectedLane !== null) {
-    return <LaneDetailView roads={roads} laneIndex={selectedLane} onBack={handleBackToMap} />;
-  }
 
   return (
     <div className="space-y-4">
@@ -50,15 +33,23 @@ export function IntersectionDetailView({ intersection, roads, onBack }: Intersec
 
       <div className="grid grid-cols-1 xl:grid-cols-[3fr_1fr] gap-4 items-start">
         <div className="space-y-4">
-          {/* Intersection Map View with clickable lanes */}
-          <div className="h-[500px] md:h-[600px] lg:h-[700px]">
-            <IntersectionMapView roads={roads} onLaneClick={handleLaneClick} />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {roads.map((road, index) => (
+              <div key={road.id} className="h-[300px]">
+                <TrafficCameraScene roads={roads} cameraIndex={index} cameraLabel={`Lane ${index + 1}`} />
+              </div>
+            ))}
           </div>
 
           {/* SUMO-style 2D intersection overview */}
           <div className="h-[340px] md:h-[430px] lg:h-[540px] xl:h-[620px] 2xl:h-[700px]">
             <SUMOIntersectionView roads={roads} />
           </div>
+
+          {/* 3D intersection environment mirroring SUMO + camera feed vehicle logic (no pedestrians). */}
+          {/* <div className="h-[360px] md:h-[430px] lg:h-[520px] xl:h-[600px] 2xl:h-[680px]">
+            <Intersection3DEnvironment roads={roads} />
+          </div> */}
         </div>
 
         <div className="rounded-lg border border-white/15 bg-black/35 p-4 space-y-4 xl:sticky xl:top-4">
@@ -73,11 +64,7 @@ export function IntersectionDetailView({ intersection, roads, onBack }: Intersec
             <div className="text-xs uppercase tracking-wide text-muted-foreground font-mono mb-2">Lane Metrics</div>
             <div className="space-y-2">
               {roads.map((road, index) => (
-                <button
-                  key={`metrics-${road.id}`}
-                  onClick={() => handleLaneClick(index)}
-                  className="w-full rounded-md border border-white/10 bg-white/5 px-3 py-2 text-xs font-mono hover:bg-white/10 hover:border-cyan-400/40 transition-all cursor-pointer"
-                >
+                <div key={`metrics-${road.id}`} className="rounded-md border border-white/10 bg-white/5 px-3 py-2 text-xs font-mono">
                   <div className="flex justify-between text-white/90">
                     <span>Lane {index + 1}</span>
                     <span className={road.signal === "green" ? "text-green-400" : road.signal === "yellow" ? "text-yellow-300" : "text-red-400"}>
@@ -88,8 +75,7 @@ export function IntersectionDetailView({ intersection, roads, onBack }: Intersec
                   <div className={road.ambulanceDetected ? "mt-1 text-red-400" : "mt-1 text-white/70"}>
                     Ambulance: {road.ambulanceDetected ? "YES" : "NO"}
                   </div>
-                  <div className="mt-1 text-cyan-400/60 text-[10px]">Click to view details →</div>
-                </button>
+                </div>
               ))}
             </div>
           </div>
