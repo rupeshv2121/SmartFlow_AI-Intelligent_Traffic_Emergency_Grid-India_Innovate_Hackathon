@@ -1,9 +1,10 @@
-import { AppLayout } from "@/components/layout/AppLayout";
 import { GlassPanel } from "@/components/GlassPanel";
+import { AppLayout } from "@/components/layout/AppLayout";
+import { VehicleLeafletMap } from "@/components/VehicleLeafletMap";
 import { useLiveCongestionAnalytics } from "@/hooks/use-smartflow";
-import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
-import { Database, Filter } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Database, Filter } from "lucide-react";
+import { Bar, BarChart, CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
 export default function Analytics() {
   const { data } = useLiveCongestionAnalytics();
@@ -23,7 +24,7 @@ export default function Analytics() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         <GlassPanel className="p-6">
           <h2 className="text-lg font-display font-semibold mb-6 text-white/90">HOURLY CONGESTION TREND</h2>
-          <div className="h-[300px]">
+          <div className="h-75">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={data?.hourlyTrend || []}>
                 <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} />
@@ -41,7 +42,7 @@ export default function Analytics() {
 
         <GlassPanel className="p-6">
           <h2 className="text-lg font-display font-semibold mb-6 text-white/90">NODE COMPARISON</h2>
-          <div className="h-[300px]">
+          <div className="h-75">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={data?.data || []}>
                 <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} />
@@ -57,6 +58,14 @@ export default function Analytics() {
           </div>
         </GlassPanel>
       </div>
+
+      <GlassPanel className="p-6 mb-8">
+        <h2 className="text-lg font-display font-semibold mb-2 text-white/90">LIVE OSM VEHICLE MAP (DELHI)</h2>
+        <p className="text-xs font-mono text-muted-foreground mb-4">
+          Updates every 2 seconds from /api/vehicles. Rendering capped at 20 vehicles for smooth UI.
+        </p>
+        <VehicleLeafletMap />
+      </GlassPanel>
 
       <GlassPanel className="p-6">
         <h2 className="text-lg font-display font-semibold mb-6 flex items-center gap-2">
