@@ -1,6 +1,5 @@
 import { GlassPanel } from "@/components/GlassPanel";
 import { AppLayout } from "@/components/layout/AppLayout";
-import { Intersection3DEnvironment } from "@/components/traffic-sim/Intersection3DEnvironment";
 import { IntersectionDetailView } from "@/components/traffic-sim/IntersectionDetailView";
 import { useTrafficSim } from "@/context/TrafficSimContext";
 import { useLiveIntersections } from "@/hooks/use-smartflow";

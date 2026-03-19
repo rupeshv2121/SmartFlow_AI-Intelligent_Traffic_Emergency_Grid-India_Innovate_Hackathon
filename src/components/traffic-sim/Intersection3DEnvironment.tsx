@@ -199,13 +199,13 @@ function getLocalVehiclePose(vehicle: SimVehicle): VehiclePose {
 
   if (vehicle.isOutgoing) {
     return {
-      x: -laneMagnitude,
-      z: lerp(8, -72, clamp(vehicle.progress, 0, 1)),
+      x: laneMagnitude,
+      z: lerp(-8, 72, clamp(vehicle.progress, 0, 1)),
       yaw: 0,
     };
   }
 
-  const x = laneMagnitude;
+  const x = -laneMagnitude;
   const approachStartZ = -68;
   // Keep the queue stopped near boundary edge instead of inside junction core.
   const approachEndZ = -12.6;
@@ -215,7 +215,7 @@ function getLocalVehiclePose(vehicle: SimVehicle): VehiclePose {
     return {
       x,
       z: lerp(approachStartZ, approachEndZ, smoothStep(t / STOP_PROGRESS)),
-      yaw: Math.PI,
+      yaw: 0,
     };
   }
 
@@ -224,7 +224,7 @@ function getLocalVehiclePose(vehicle: SimVehicle): VehiclePose {
   const turnType = vehicleTurnType(vehicle.id);
 
   if (turnType === "straight") {
-    return { x, z: lerp(approachEndZ, 52, insideT), yaw: Math.PI };
+    return { x, z: lerp(approachEndZ, 52, insideT), yaw: 0 };
   }
 
   const turnStartZ = lerp(approachEndZ, -9.6, TURN_DELAY);
@@ -233,13 +233,13 @@ function getLocalVehiclePose(vehicle: SimVehicle): VehiclePose {
     return {
       x,
       z: lerp(approachEndZ, turnStartZ, smoothStep(insideRaw / TURN_DELAY)),
-      yaw: Math.PI,
+      yaw: 0,
     };
   }
 
   const turnT = smoothStep(clamp((insideRaw - TURN_DELAY) / (1 - TURN_DELAY), 0, 1));
   const laneTargetZ = laneMagnitude * 0.9;
-  const targetYaw = turnType === "left" ? -Math.PI / 2 : Math.PI / 2;
+  const targetYaw = turnType === "left" ? Math.PI / 2 : -Math.PI / 2;
   const targetX = turnType === "left" ? -56 : 56;
   const pivotZ = turnType === "left" ? laneTargetZ : -laneTargetZ;
   const pivotPhase = 0.55;
@@ -247,7 +247,7 @@ function getLocalVehiclePose(vehicle: SimVehicle): VehiclePose {
   if (turnT < pivotPhase) {
     const t1 = smoothStep(turnT / pivotPhase);
     const z1 = lerp(turnStartZ, pivotZ, t1);
-    const yaw1 = lerpAngle(Math.PI, targetYaw, t1);
+    const yaw1 = lerpAngle(0, targetYaw, t1);
     return { x, z: z1, yaw: yaw1 };
   }
 
