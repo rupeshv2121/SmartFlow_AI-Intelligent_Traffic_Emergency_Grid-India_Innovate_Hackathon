@@ -530,10 +530,34 @@ export function TrafficSimProvider({ children }: { children: ReactNode }) {
     }));
   }, []);
 
-  const selectedIntersection = useMemo(
-    () => state.intersections.find((intersection) => intersection.id === state.selectedIntersectionId) ?? null,
-    [state.intersections, state.selectedIntersectionId],
-  );
+  const selectedIntersection = useMemo(() => {
+    if (!state.selectedIntersectionId) return null;
+
+    // Try to find the intersection from API data
+    const foundIntersection = state.intersections.find(
+      (intersection) => intersection.id === state.selectedIntersectionId
+    );
+
+    if (foundIntersection) return foundIntersection;
+
+    // Create a fallback intersection for simulation-generated IDs
+    const intersectionNames: Record<string, string> = {
+      'main-intersection': 'Main Intersection',
+      'intersection-east-1': 'East Intersection 1',
+      'intersection-west-1': 'West Intersection 1',
+      'intersection-north-1': 'North Intersection 1',
+      'intersection-south-1': 'South Intersection 1',
+    };
+
+    return {
+      id: state.selectedIntersectionId,
+      name: intersectionNames[state.selectedIntersectionId] || state.selectedIntersectionId,
+      density: 'medium' as const,
+      x: 0,
+      y: 0,
+      vehicles: 0,
+    };
+  }, [state.intersections, state.selectedIntersectionId]);
 
   // ============================================================================
   // CONTINUOUS SIMULATION - Runs for ALL intersections, always

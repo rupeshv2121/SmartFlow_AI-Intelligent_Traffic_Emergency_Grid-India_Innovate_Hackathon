@@ -6,7 +6,7 @@ import { useTrafficSim } from "@/context/TrafficSimContext";
 import { useLiveIntersections } from "@/hooks/use-smartflow";
 import { SimRoadState } from "@/types/traffic-sim";
 import { AlertTriangle, MapPinned, Radar } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 interface Intersection3DEnvironmentProps {
   roads: SimRoadState[];
@@ -15,12 +15,27 @@ interface Intersection3DEnvironmentProps {
 export default function Traffic() {
   const { data: mapData, isLoading } = useLiveIntersections();
   const { state, selectedIntersection, setIntersectionsFromApi, selectIntersection, backToMap } = useTrafficSim();
+  const [isSimLoading, setIsSimLoading] = useState(true);
+  const simulationUrl = import.meta.env.VITE_SIMULATIONS_URL || "http://localhost:8081";
 
   useEffect(() => {
     if (mapData?.intersections?.length) {
       setIntersectionsFromApi(mapData.intersections);
     }
   }, [mapData, setIntersectionsFromApi]);
+
+  // Listen for intersection selection from the simulation iframe
+  useEffect(() => {
+    const handleMessage = (event: MessageEvent) => {
+      // Verify message is from our simulation
+      if (event.data?.type === 'INTERSECTION_SELECTED' && event.data?.intersectionId) {
+        selectIntersection(event.data.intersectionId);
+      }
+    };
+
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
+  }, [selectIntersection]);
 
   const activeAmbulanceLanes = state.roads.filter((road) => road.ambulanceDetected).length;
   const totalEnteredVehicles = state.roads.reduce((sum, road) => sum + road.vehicleCount, 0);
@@ -68,17 +83,31 @@ export default function Traffic() {
         {!selectedIntersection ? (
           <>
             <div className="mb-4">
-              <h2 className="text-xl font-display font-bold">City Intersections Map</h2>
+              <h2 className="text-xl font-display font-bold">Live Traffic Intersection</h2>
               <p className="text-sm text-muted-foreground font-mono">
-                Hover to inspect intersection ID/name. Click a marker to open 4-way CCTV simulation.
+                Click on the red floating markers at intersections to view 4-way dashcam feeds. Interactive 3D emergency vehicle routing with real-time traffic light control.
               </p>
             </div>
 
-            {isLoading && state.intersections.length === 0 ? (
-              <div className="h-[560px] rounded-xl border border-white/10 bg-black/40 animate-pulse" />
-            ) : (
-              <Intersection3DEnvironment roads={state.roads} />
-            )}
+            <div className="bg-black/20 border border-white/10 rounded-lg overflow-hidden relative" style={{ height: "560px" }}>
+              {isSimLoading && (
+                <div className="absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm z-10">
+                  <div className="text-center">
+                    <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+                    <p className="text-sm font-mono text-muted-foreground">Loading simulation...</p>
+                  </div>
+                </div>
+              )}
+              <iframe
+                src={simulationUrl}
+                className="w-full h-full"
+                title="Live Traffic Intersection"
+                onLoad={() => setIsSimLoading(false)}
+                onError={() => setIsSimLoading(false)}
+                style={{ border: "none" }}
+                allow="accelerometer; gyroscope"
+              />
+            </div>
           </>
         ) : (
           <IntersectionDetailView intersection={selectedIntersection} roads={state.roads} onBack={backToMap} />
