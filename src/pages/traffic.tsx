@@ -16,6 +16,7 @@ export default function Traffic() {
   const { state, selectedIntersection, setIntersectionsFromApi, selectIntersection, backToMap } = useTrafficSim();
   const [isSimLoading, setIsSimLoading] = useState(true);
   const simulationUrl = import.meta.env.VITE_SIMULATIONS_URL || "http://localhost:8081";
+  const aiApiUrl = import.meta.env.VITE_AI_API_URL || "http://localhost:8000";
 
   useEffect(() => {
     if (mapData?.intersections?.length) {
@@ -109,7 +110,12 @@ export default function Traffic() {
             </div>
           </>
         ) : (
-          <IntersectionDetailView intersection={selectedIntersection} roads={state.roads} onBack={backToMap} />
+          <IntersectionDetailView
+            intersection={selectedIntersection}
+            roads={state.roads}
+            onBack={backToMap}
+            mlDetectionApiUrl={aiApiUrl}
+          />
         )}
       </GlassPanel>
     </AppLayout>
