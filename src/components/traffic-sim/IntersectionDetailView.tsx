@@ -202,7 +202,10 @@ export function IntersectionDetailView({ intersection, roads, onBack, mlDetectio
         {/* CCTV Camera Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {roads.map((road, index) => (
-            <div key={`camera-${road.id}`} className="h-[300px] relative">
+            <div
+              key={`camera-${road.id}`}
+              className="relative h-[300px] transition-[height] duration-300 group-data-[sidebar-expanded=false]/app:h-[370px]"
+            >
               <div className="absolute inset-0 z-0">
                 <TrafficCameraScene
                   roads={roads}
