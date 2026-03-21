@@ -5,6 +5,10 @@ import { useTrafficSim } from "@/context/TrafficSimContext";
 import type { VehicleType } from "@/types/traffic-sim";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { Environment } from "@react-three/drei";
+import { RealisticAmbulance } from "@/components/vehicles/RealisticAmbulance";
+import { RealisticAuto } from "@/components/vehicles/RealisticAuto";
+import { RealisticBike } from "@/components/vehicles/RealisticBike";
+import { RealisticCar } from "@/components/vehicles/RealisticCar";
 import { Database, Download, Camera, Tag, CarFront, Bus, Bike, Ambulance } from "lucide-react";
 
 const VEHICLE_CLASSES: Array<{
@@ -21,146 +25,38 @@ const VEHICLE_CLASSES: Array<{
   { type: "ambulance", label: "Ambulance", color: "#f3f4f6", sizeHint: "medium", detectorClassId: 3, icon: Ambulance },
 ];
 
-const PREVIEW_STYLE: Record<
-  VehicleType,
-  {
-    bodyColor: string;
-    roofColor: string;
-    accentColor: string;
-    bodyScale: [number, number, number];
-    roofScale: [number, number, number];
-    roofOffset: [number, number, number];
-    accentScale: [number, number, number];
-    accentOffset: [number, number, number];
-    wheelRadius: number;
-    wheelWidth: number;
-    wheelX: number;
-    wheelFrontZ: number;
-    wheelRearZ: number;
-  }
-> = {
-  car: {
-    bodyColor: "#4b5563",
-    roofColor: "#6b7280",
-    accentColor: "#d1d5db",
-    bodyScale: [1.04, 0.46, 1.02],
-    roofScale: [0.66, 0.24, 0.56],
-    roofOffset: [0, 0.34, -0.05],
-    accentScale: [0.76, 0.03, 0.13],
-    accentOffset: [0, 0.21, 0.46],
-    wheelRadius: 0.16,
-    wheelWidth: 0.08,
-    wheelX: 0.48,
-    wheelFrontZ: 0.43,
-    wheelRearZ: -0.38,
-  },
-  bus: {
-    bodyColor: "#d97706",
-    roofColor: "#92400e",
-    accentColor: "#111827",
-    bodyScale: [1.18, 0.62, 1.26],
-    roofScale: [0.9, 0.2, 1.02],
-    roofOffset: [0, 0.4, 0],
-    accentScale: [0.9, 0.04, 0.24],
-    accentOffset: [0, 0.22, 0.5],
-    wheelRadius: 0.2,
-    wheelWidth: 0.1,
-    wheelX: 0.56,
-    wheelFrontZ: 0.56,
-    wheelRearZ: -0.52,
-  },
-  bike: {
-    bodyColor: "#374151",
-    roofColor: "#1f2937",
-    accentColor: "#a3e635",
-    bodyScale: [0.48, 0.2, 0.72],
-    roofScale: [0.2, 0.18, 0.15],
-    roofOffset: [0, 0.25, -0.05],
-    accentScale: [0.22, 0.04, 0.3],
-    accentOffset: [0, 0.12, 0.18],
-    wheelRadius: 0.17,
-    wheelWidth: 0.06,
-    wheelX: 0.28,
-    wheelFrontZ: 0.45,
-    wheelRearZ: -0.45,
-  },
-  ambulance: {
-    bodyColor: "#f3f4f6",
-    roofColor: "#ffffff",
-    accentColor: "#dc2626",
-    bodyScale: [1.02, 0.56, 1.05],
-    roofScale: [0.72, 0.24, 0.6],
-    roofOffset: [0, 0.37, -0.02],
-    accentScale: [0.96, 0.07, 0.14],
-    accentOffset: [0, 0.52, 0.08],
-    wheelRadius: 0.17,
-    wheelWidth: 0.09,
-    wheelX: 0.5,
-    wheelFrontZ: 0.45,
-    wheelRearZ: -0.42,
-  },
-};
-
 function VehiclePreviewMesh({ type }: { type: VehicleType }) {
-  const style = PREVIEW_STYLE[type];
-
   useFrame((state) => {
     state.scene.rotation.y = Math.sin(state.clock.getElapsedTime() * 0.35) * 0.5;
   });
 
-  return (
-    <group scale={[1.9, 1.9, 1.9]}>
-      <mesh position={[0, -0.02, 0]} scale={style.bodyScale}>
-        <boxGeometry args={[1, 1, 1]} />
-        <meshStandardMaterial color={style.bodyColor} roughness={0.45} metalness={0.2} />
-      </mesh>
-
-      <mesh position={style.roofOffset} scale={style.roofScale}>
-        <boxGeometry args={[1, 1, 1]} />
-        <meshStandardMaterial color={style.roofColor} roughness={0.36} metalness={0.18} />
-      </mesh>
-
-      <mesh position={style.accentOffset} scale={style.accentScale}>
-        <boxGeometry args={[1, 1, 1]} />
-        <meshStandardMaterial color={style.accentColor} emissive={style.accentColor} emissiveIntensity={type === "ambulance" ? 0.62 : 0.1} />
-      </mesh>
-
-      <mesh position={[style.wheelX, 0.14, style.wheelFrontZ]} rotation={[Math.PI / 2, 0, 0]} scale={[style.wheelRadius, style.wheelWidth, style.wheelRadius]}>
-        <cylinderGeometry args={[1, 1, 1, 14]} />
-        <meshStandardMaterial color="#171717" roughness={0.84} metalness={0.06} />
-      </mesh>
-      <mesh position={[-style.wheelX, 0.14, style.wheelFrontZ]} rotation={[Math.PI / 2, 0, 0]} scale={[style.wheelRadius, style.wheelWidth, style.wheelRadius]}>
-        <cylinderGeometry args={[1, 1, 1, 14]} />
-        <meshStandardMaterial color="#171717" roughness={0.84} metalness={0.06} />
-      </mesh>
-      <mesh position={[style.wheelX, 0.14, style.wheelRearZ]} rotation={[Math.PI / 2, 0, 0]} scale={[style.wheelRadius, style.wheelWidth, style.wheelRadius]}>
-        <cylinderGeometry args={[1, 1, 1, 14]} />
-        <meshStandardMaterial color="#171717" roughness={0.84} metalness={0.06} />
-      </mesh>
-      <mesh position={[-style.wheelX, 0.14, style.wheelRearZ]} rotation={[Math.PI / 2, 0, 0]} scale={[style.wheelRadius, style.wheelWidth, style.wheelRadius]}>
-        <cylinderGeometry args={[1, 1, 1, 14]} />
-        <meshStandardMaterial color="#171717" roughness={0.84} metalness={0.06} />
-      </mesh>
-    </group>
-  );
+  switch (type) {
+    case "car":
+      return <RealisticCar position={[0, -0.2, 0]} color={0x4b5563} scale={0.5} animated />;
+    case "bike":
+      return <RealisticBike position={[0, -0.13, 0]} color={0x374151} scale={0.75} animated />;
+    case "ambulance":
+      return <RealisticAmbulance position={[0, -0.21, 0]} scale={0.45} animated />;
+    case "bus":
+      // Bus class uses the updated 3D auto-rickshaw model used in simulation scenes.
+      return <RealisticAuto position={[0, -0.17, 0]} color={0xd97706} scale={0.65} animated />;
+    default:
+      return <RealisticCar position={[0, -0.2, 0]} color={0x4b5563} scale={0.5} animated />;
+  }
 }
 
 function Vehicle3DPhoto({ type }: { type: VehicleType }) {
   return (
-    <div className="h-[170px] w-full overflow-hidden rounded-lg border border-white/10 bg-slate-950/80">
+    <div className="h-[170px] w-full overflow-hidden rounded-lg border border-white/10 bg-gradient-to-b from-[#27466d] via-[#4f76a8] to-[#7ea0cb]">
       <Canvas dpr={[0.8, 1.2]} camera={{ position: [2.8, 1.7, 3], fov: 35 }}>
-        <color attach="background" args={["#0b1220"]} />
-        <ambientLight intensity={0.75} />
-        <directionalLight position={[3.4, 4.5, 2.5]} intensity={1.25} />
-        <directionalLight position={[-2.6, 2.2, -2.6]} intensity={0.42} color="#9ad2ff" />
-
-        <mesh position={[0, -0.28, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-          <planeGeometry args={[8, 8]} />
-          <meshStandardMaterial color="#132136" roughness={0.95} />
-        </mesh>
+        <color attach="background" args={["#7ea0cb"]} />
+        <hemisphereLight intensity={0.55} color="#d9ecff" groundColor="#35557d" />
+        <ambientLight intensity={0.65} />
+        <directionalLight position={[3.4, 4.5, 2.5]} intensity={1.1} />
+        <directionalLight position={[-2.6, 2.2, -2.6]} intensity={0.35} color="#c6e5ff" />
 
         <VehiclePreviewMesh type={type} />
-        <Environment preset="studio" />
+        <Environment preset="sunset" />
       </Canvas>
     </div>
   );
@@ -278,6 +174,7 @@ export default function Dataset() {
         </div>
       </GlassPanel>
 
+      {/*
       <GlassPanel className="p-6 mb-6">
         <div className="flex items-center gap-2 mb-4">
           <Database className="w-4 h-4 text-primary" />
@@ -313,6 +210,7 @@ export default function Dataset() {
           </table>
         </div>
       </GlassPanel>
+      */}
     </AppLayout>
   );
 }
