@@ -1,13 +1,19 @@
 import { ReactNode } from "react";
+import { useState } from "react";
 import { Sidebar } from "./Sidebar";
 import { Bell, Search, User } from "lucide-react";
 import { motion } from "framer-motion";
 
 export function AppLayout({ children }: { children: ReactNode }) {
+  const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
+
   return (
-    <div className="min-h-screen bg-background text-foreground flex">
-      <Sidebar />
-      <div className="flex-1 ml-64 flex flex-col h-screen overflow-hidden">
+    <div
+      className="group/app min-h-screen bg-background text-foreground flex"
+      data-sidebar-expanded={isSidebarExpanded}
+    >
+      <Sidebar onExpandedChange={setIsSidebarExpanded} />
+      <div className="flex-1 flex flex-col h-screen overflow-hidden min-w-0">
         {/* Header */}
         <header className="h-16 border-b border-border bg-background/80 backdrop-blur-md flex items-center justify-between px-8 z-40 sticky top-0">
           <div className="flex items-center bg-black/40 border border-white/10 rounded-full px-4 py-1.5 w-64 focus-within:border-primary/50 transition-colors">
