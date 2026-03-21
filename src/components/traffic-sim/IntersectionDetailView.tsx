@@ -3,7 +3,7 @@ import { TrafficCameraScene } from "@/components/traffic-sim/TrafficCameraScene"
 import { useTrafficSim } from "@/context/TrafficSimContext";
 import type { SimIntersection, SimRoadState } from "@/types/traffic-sim";
 import { ArrowLeft, Zap } from "lucide-react";
-import { useState, useRef, useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface IntersectionDetailViewProps {
   intersection: SimIntersection;
@@ -149,7 +149,7 @@ export function IntersectionDetailView({ intersection, roads, onBack, mlDetectio
           </div>
           <button
             onClick={() => setEnableMLDetection(!enableMLDetection)}
-            className={`inline-flex items-center gap-2 px-4 py-2 rounded-md border font-medium text-sm transition-all ${
+            className={`cursor-pointer inline-flex items-center gap-2 px-4 py-2 rounded-md border font-medium text-sm transition-all ${
               enableMLDetection
                 ? "border-purple-500/50 bg-purple-500/20 text-purple-300 hover:bg-purple-500/30"
                 : "border-white/20 bg-black/35 text-slate-400 hover:bg-black/50"
@@ -202,7 +202,7 @@ export function IntersectionDetailView({ intersection, roads, onBack, mlDetectio
         {/* CCTV Camera Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {roads.map((road, index) => (
-            <div key={`camera-${road.id}`} className="h-[300px] relative">
+            <div key={`camera-${road.id}`} className="h-75 relative">
               <div className="absolute inset-0 z-0">
                 <TrafficCameraScene
                   roads={roads}
@@ -227,7 +227,7 @@ export function IntersectionDetailView({ intersection, roads, onBack, mlDetectio
         </div>
 
         {/* SUMO-style 2D intersection overview */}
-        <div className="h-[340px] md:h-[430px] lg:h-[540px] xl:h-[620px] 2xl:h-[700px]">
+        <div className="h-85 md:h-107.5 lg:h-135 xl:h-155 2xl:h-175">
           <SUMOIntersectionView roads={roads} />
         </div>
       </div>
