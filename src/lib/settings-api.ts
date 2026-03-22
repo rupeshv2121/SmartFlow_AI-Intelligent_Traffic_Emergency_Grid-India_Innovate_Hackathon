@@ -18,6 +18,15 @@ export interface SystemSettings {
     maxGreenTime: number;
     minGreenTime: number;
     emergencyOverride: boolean;
+    algorithm: {
+      baseTime: number;
+      factor: number;
+      w1: number;
+      w2: number;
+      waitScale: number;
+      starvationThreshold: number;
+      maxWait: number;
+    };
   };
   display: {
     refreshInterval: number;

@@ -15,7 +15,7 @@ interface IntersectionDetailViewProps {
 
 export function IntersectionDetailView({ intersection, roads, onBack, mlDetectionApiUrl = "http://localhost:8000" }: IntersectionDetailViewProps) {
   const emergencyActive = roads.some((road) => road.ambulanceDetected);
-  const { updateLaneDetectionCount } = useTrafficSim();
+  const { updateLaneDetectionCount, updateLaneEmergencyDetected, algorithmConfig } = useTrafficSim();
   const enableMLDetection = true; // AI Detection always enabled
   const [detectionCounts, setDetectionCounts] = useState<Map<number, number>>(new Map());
   const [detectionOverlays, setDetectionOverlays] = useState<
@@ -103,6 +103,15 @@ export function IntersectionDetailView({ intersection, roads, onBack, mlDetectio
                 setRequestCount((prev) => prev + 1);
                 setLastPollTime(new Date().toLocaleTimeString("en-IN", { hour12: false }));
 
+                const emergencyDetected = result.detections.some((d: { type?: string; class_name?: string }) => {
+                  const kind = (d.class_name ?? d.type ?? "").toLowerCase();
+                  return kind === "ambulance" || kind === "fire_truck" || kind === "police" || kind === "emergency";
+                });
+
+                setTimeout(() => {
+                  updateLaneEmergencyDetected(cameraIndex, emergencyDetected);
+                }, 0);
+
                 setDetectionCounts((prev) => {
                   const newMap = new Map(prev);
                   const frameCount = result.detection_count ?? 0;
@@ -144,7 +153,7 @@ export function IntersectionDetailView({ intersection, roads, onBack, mlDetectio
       clearInterval(interval);
       processingRef.current = false;
     };
-  }, [enableMLDetection, mlDetectionApiUrl, updateLaneDetectionCount]);
+  }, [enableMLDetection, mlDetectionApiUrl, updateLaneDetectionCount, updateLaneEmergencyDetected]);
   // const totalQueueVehicles = roads.reduce((sum, road) => sum + road.vehicles.length, 0);
   // const totalEnteredVehicles = roads.reduce((sum, road) => sum + road.vehicleCount, 0);
 
@@ -227,6 +236,7 @@ export function IntersectionDetailView({ intersection, roads, onBack, mlDetectio
                   showDetectionOverlay={enableMLDetection}
                   detectionOverlay={detectionOverlays.get(index)}
                   ambulanceDetected={road.ambulanceDetected}
+                  algorithmConfig={algorithmConfig}
                   onCanvasReady={(canvas) => {
                     canvasRefsMap.current.set(index, canvas);
                   }}
@@ -234,7 +244,7 @@ export function IntersectionDetailView({ intersection, roads, onBack, mlDetectio
               </div>
 
               {enableMLDetection && (
-                <div className="absolute top-2 right-2 z-20 rounded border border-cyan-400/40 bg-cyan-500/15 px-2 py-0.5 text-[10px] font-mono text-cyan-100 pointer-events-none">
+                <div className="absolute top-2 right-2 z-20 rounded border border-cyan-400/40 bg-cyan-500/15 px-2 py-0.5 text-[10px] font-mono text-cyan-100 pointer-events-none mt-[40px] mr-[10px]">
                   AI LIVE
                 </div>
               )}

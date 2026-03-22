@@ -1,6 +1,7 @@
 import { ArrowLeft, AlertTriangle } from "lucide-react";
 import type { SimRoadState } from "@/types/traffic-sim";
 import { TrafficCameraScene } from "@/components/traffic-sim/TrafficCameraScene";
+import { useTrafficSim } from "@/context/TrafficSimContext";
 
 interface LaneDetailViewProps {
   roads: SimRoadState[];
@@ -13,6 +14,7 @@ const LANE_LABELS = ["North", "East", "South", "West"];
 export function LaneDetailView({ roads, laneIndex, onBack }: LaneDetailViewProps) {
   const lane = roads[laneIndex];
   const laneName = LANE_LABELS[laneIndex];
+  const { algorithmConfig } = useTrafficSim();
 
   if (!lane) {
     return (
@@ -50,7 +52,12 @@ export function LaneDetailView({ roads, laneIndex, onBack }: LaneDetailViewProps
         {/* Camera Feed */}
         <div className="space-y-4">
           <div className="h-[400px] md:h-[500px] lg:h-[600px]">
-            <TrafficCameraScene roads={roads} cameraIndex={laneIndex} cameraLabel={`${laneName} Lane`} />
+            <TrafficCameraScene
+              roads={roads}
+              cameraIndex={laneIndex}
+              cameraLabel={`${laneName} Lane`}
+              algorithmConfig={algorithmConfig}
+            />
           </div>
 
           {/* Vehicle Queue */}
