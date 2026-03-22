@@ -19,7 +19,7 @@ const NAV_ITEMS = [
   { href: "/emergency", label: "Emergency Grid", icon: Ambulance },
   // { href: "/simulations", label: "Simulations", icon: Boxes },
   { href: "/analytics", label: "Analytics", icon: LineChart },
-  { href: "/dataset", label: "ML Dataset", icon: Database },
+  { href: "/dataset", label: "Vehicle Details", icon: Database },
   { href: "/settings", label: "Settings", icon: Settings },
 ];
 

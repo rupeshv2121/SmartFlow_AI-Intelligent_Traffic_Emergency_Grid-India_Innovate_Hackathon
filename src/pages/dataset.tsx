@@ -9,7 +9,7 @@ import { RealisticAmbulance } from "@/components/vehicles/RealisticAmbulance";
 import { RealisticAuto } from "@/components/vehicles/RealisticAuto";
 import { RealisticBike } from "@/components/vehicles/RealisticBike";
 import { RealisticCar } from "@/components/vehicles/RealisticCar";
-import { Database, Download, Camera, Tag, CarFront, Bus, Bike, Ambulance } from "lucide-react";
+import { Database, Camera, Tag, CarFront, Bus, Bike, Ambulance } from "lucide-react";
 
 const VEHICLE_CLASSES: Array<{
   type: VehicleType;
@@ -91,7 +91,6 @@ export default function Dataset() {
 
   const datasetPayload = useMemo(() => {
     return {
-      exportedAt: new Date().toISOString(),
       source: "smartflow-simulation",
       classes: VEHICLE_CLASSES.map((cls) => ({
         classId: cls.detectorClassId,
@@ -104,32 +103,13 @@ export default function Dataset() {
     };
   }, [liveVehicles]);
 
-  function exportDatasetJson() {
-    const blob = new Blob([JSON.stringify(datasetPayload, null, 2)], { type: "application/json" });
-    const url = window.URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = `smartflow-vehicle-dataset-${Date.now()}.json`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    window.URL.revokeObjectURL(url);
-  }
-
   return (
     <AppLayout>
-      <div className="mb-8 flex items-end justify-between">
+      <div className="mb-8">
         <div>
-          <h1 className="text-3xl font-display font-bold text-foreground mb-2">MODEL DATASET HUB</h1>
-          <p className="text-muted-foreground font-mono text-sm">SIMULATION VEHICLE CLASSES + LIVE SAMPLES FOR DETECTION TRAINING</p>
+          <h1 className="text-3xl font-display font-bold text-foreground mb-2">Vehicle Details</h1>
+          <p className="text-muted-foreground font-mono text-sm">We are using different vehicles and classifying them as normal vehicles and emergency vehicles, some of them are:</p>
         </div>
-        <button
-          onClick={exportDatasetJson}
-          className="inline-flex items-center gap-2 rounded-md border border-primary/30 bg-primary/10 px-4 py-2 text-sm font-medium text-primary hover:bg-primary/20 transition-colors cursor-pointer"
-        >
-          <Download className="w-4 h-4" />
-          Export Dataset JSON
-        </button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 mb-6">

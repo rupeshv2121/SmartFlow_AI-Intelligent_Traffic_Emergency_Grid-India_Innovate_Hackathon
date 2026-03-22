@@ -232,63 +232,18 @@ export default function Settings() {
                 AI VEHICLE DETECTION
               </h2>
 
-              <div className="space-y-6">
-                <div>
-                  <label className="block text-sm font-medium text-white/80 mb-2">Model Architecture</label>
-                  <select
-                    value={formData.aiModel.architecture}
-                    onChange={(e) => updateFormData('aiModel', 'architecture', e.target.value)}
-                    className="w-full bg-black/40 border border-white/10 rounded-md p-3 text-sm text-white focus:outline-none focus:border-primary/50 transition-colors"
-                  >
-                    <option value="yolov8">YOLOv8 - Real-time Optimized (Recommended)</option>
-                    <option value="yolov5">YOLOv5 - Stable Performance</option>
-                    <option value="efficientdet">EfficientDet - Balanced Accuracy</option>
-                  </select>
-                  <p className="text-xs text-muted-foreground mt-2">
-                    YOLOv8 provides the best real-time performance for your 4-camera system.
-                  </p>
-                </div>
+              <div className="space-y-4 text-sm text-muted-foreground leading-relaxed">
+                <p>
+                  Our SmartFlow YOLO-based model, trained on a custom dataset of 300 images, delivers real-time vehicle detection using an optimized asynchronous inference pipeline with fixed frame skipping, ensuring continuous and efficient processing.
+                </p>
 
-                <div>
-                  <label className="block text-sm font-medium text-white/80 mb-2">Detection Confidence Threshold</label>
-                  <div className="flex items-center gap-4">
-                    <input
-                      type="range"
-                      min="50"
-                      max="95"
-                      value={Math.round(formData.aiModel.confidenceThreshold * 100)}
-                      onChange={(e) => updateFormData('aiModel', 'confidenceThreshold', parseInt(e.target.value) / 100)}
-                      className="flex-1 accent-primary"
-                    />
-                    <span className="font-mono text-primary bg-primary/10 px-2 py-1 rounded text-sm min-w-12">
-                      {Math.round(formData.aiModel.confidenceThreshold * 100)}%
-                    </span>
-                  </div>
-                  <p className="text-xs text-muted-foreground mt-2">
-                    Higher values = fewer false positives, Lower values = better detection coverage
-                  </p>
-                </div>
+                <p>
+                  It achieves sub-50 ms latency, processes multiple camera streams in parallel using 4 workers, and detects an average of 4–10 vehicles per frame depending on traffic density.
+                </p>
 
-                <div>
-                  <label className="block text-sm font-medium text-white/80 mb-2">Processing Interval (ms)</label>
-                  <div className="flex items-center gap-4">
-                    <input
-                      type="range"
-                      min="100"
-                      max="1000"
-                      step="50"
-                      value={formData.aiModel.processingInterval}
-                      onChange={(e) => updateFormData('aiModel', 'processingInterval', parseInt(e.target.value))}
-                      className="flex-1 accent-primary"
-                    />
-                    <span className="font-mono text-primary bg-primary/10 px-2 py-1 rounded text-sm min-w-16">
-                      {formData.aiModel.processingInterval}ms
-                    </span>
-                  </div>
-                  <p className="text-xs text-muted-foreground mt-2">
-                    Time between detection frames. Lower = more frequent detection, higher CPU usage
-                  </p>
-                </div>
+                <p>
+                  The model classifies vehicles into two categories: normal vehicles (marked in green) and emergency vehicles (marked in red), enabling intelligent traffic prioritization and responsive urban traffic management.
+                </p>
               </div>
             </GlassPanel>
           )}
