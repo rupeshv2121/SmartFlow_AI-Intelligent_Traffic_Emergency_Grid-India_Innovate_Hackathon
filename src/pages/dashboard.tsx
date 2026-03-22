@@ -315,58 +315,98 @@ export default function Dashboard() {
       <GlassPanel className="p-6 mb-8">
         <h2 className="text-lg font-display font-semibold mb-6 flex items-center gap-2">
           <Activity className="w-4 h-4 text-primary" />
-          LIVE LANE STATUS
-          <span className="text-xs font-mono text-primary/80">(Camera Feed Sync)</span>
+          LIVE LANE STATUS - ALGORITHM VERIFICATION
+          <span className="text-xs font-mono text-primary/80">(Camera Feed Sync + Priority Calculation)</span>
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          {state.roads.map((road, index) => (
-            <div
-              key={road.id}
-              className={cn(
-                "p-4 rounded-lg border transition-all",
-                road.signal === 'green' ? "border-success/50 bg-success/5" :
-                road.signal === 'yellow' ? "border-warning/50 bg-warning/5" :
-                "border-destructive/50 bg-destructive/5"
-              )}
-            >
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-mono font-bold text-white">{road.label}</span>
-                <div className={cn(
-                  "w-3 h-3 rounded-full",
-                  road.signal === 'green' ? "bg-success animate-pulse" :
-                  road.signal === 'yellow' ? "bg-warning animate-pulse" :
-                  "bg-destructive"
-                )} />
-              </div>
-              <div className="space-y-1 text-xs font-mono">
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Vehicles:</span>
-                  <span className="text-white font-bold">{road.detectionCount}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Queue:</span>
-                  <span className="text-white">{road.vehicles.filter(v => !v.isOutgoing && v.progress < 0.85).length}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Signal:</span>
-                  <span className={cn(
-                    "font-bold uppercase",
-                    road.signal === 'green' ? "text-success" :
-                    road.signal === 'yellow' ? "text-warning" :
-                    "text-destructive"
-                  )}>{road.signal}</span>
-                </div>
-                {road.ambulanceDetected && (
-                  <div className="pt-1 mt-1 border-t border-destructive/30">
-                    <span className="text-destructive font-bold flex items-center gap-1">
-                      <AlertTriangle className="w-3 h-3" />
-                      AMBULANCE
-                    </span>
-                  </div>
+          {state.roads.map((road, index) => {
+            // Calculate priority using the same formula from TrafficSimContext
+            const ENHANCED_W1 = 1.0;
+            const ENHANCED_W2 = 1.0;
+            const ENHANCED_WAIT_SCALE = 0.1;
+            const ENHANCED_MAX_WAIT = 300;
+
+            const scaledWait = Math.min(road.waitingTime, ENHANCED_MAX_WAIT) * ENHANCED_WAIT_SCALE;
+            const priority = road.detectionCount * ENHANCED_W1 + scaledWait * ENHANCED_W2;
+
+            return (
+              <div
+                key={road.id}
+                className={cn(
+                  "p-4 rounded-lg border transition-all",
+                  road.signal === 'green' ? "border-success/50 bg-success/5" :
+                  road.signal === 'yellow' ? "border-warning/50 bg-warning/5" :
+                  "border-destructive/50 bg-destructive/5"
                 )}
+              >
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm font-mono font-bold text-white">{road.label}</span>
+                  <div className={cn(
+                    "w-3 h-3 rounded-full",
+                    road.signal === 'green' ? "bg-success animate-pulse" :
+                    road.signal === 'yellow' ? "bg-warning animate-pulse" :
+                    "bg-destructive"
+                  )} />
+                </div>
+                <div className="space-y-1 text-xs font-mono">
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Vehicles:</span>
+                    <span className="text-white font-bold">{road.detectionCount}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Queue:</span>
+                    <span className="text-white">{road.vehicles.filter(v => !v.isOutgoing && v.progress < 0.85).length}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Signal:</span>
+                    <span className={cn(
+                      "font-bold uppercase",
+                      road.signal === 'green' ? "text-success" :
+                      road.signal === 'yellow' ? "text-warning" :
+                      "text-destructive"
+                    )}>{road.signal}</span>
+                  </div>
+
+                  {/* NEW: Priority Value */}
+                  <div className="flex justify-between items-center pt-1 mt-1 border-t border-primary/20">
+                    <span className="text-primary/90">Priority:</span>
+                    <span className="text-primary font-bold">{priority.toFixed(2)}</span>
+                  </div>
+
+                  {/* NEW: Waiting Time */}
+                  <div className="flex justify-between items-center">
+                    <span className="text-cyan-400/80">Wait Time:</span>
+                    <span className={cn(
+                      "font-bold",
+                      road.waitingTime > 180 ? "text-destructive animate-pulse" :
+                      road.waitingTime > 60 ? "text-warning" :
+                      "text-cyan-400"
+                    )}>{road.waitingTime.toFixed(1)}s</span>
+                  </div>
+
+                  {road.ambulanceDetected && (
+                    <div className="pt-1 mt-1 border-t border-destructive/30">
+                      <span className="text-destructive font-bold flex items-center gap-1">
+                        <AlertTriangle className="w-3 h-3" />
+                        AMBULANCE
+                      </span>
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
+        </div>
+
+        {/* Algorithm Explanation */}
+        <div className="mt-4 p-3 rounded-lg bg-primary/5 border border-primary/20">
+          <div className="text-xs font-mono text-primary/90">
+            <strong className="text-primary">Algorithm:</strong> Priority = (Vehicles × 1.0) + (Wait Time × 0.1)
+            <br />
+            <span className="text-muted-foreground">
+              Higher priority = selected next for green signal. Emergency vehicles get +1000 boost. Starvation prevention at 180s.
+            </span>
+          </div>
         </div>
       </GlassPanel>
 

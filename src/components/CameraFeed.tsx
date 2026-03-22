@@ -20,9 +20,22 @@ interface CameraFeedProps {
   fps?: number;
   className?: string;
   simulateMovement?: boolean;
+  priority?: number;
+  waitingTime?: number;
+  vehicleCount?: number;
 }
 
-export function CameraFeed({ name, density, objects = [], fps = 30, className, simulateMovement = false }: CameraFeedProps) {
+export function CameraFeed({
+  name,
+  density,
+  objects = [],
+  fps = 30,
+  className,
+  simulateMovement = false,
+  priority,
+  waitingTime,
+  vehicleCount
+}: CameraFeedProps) {
   // If objects are provided via API, use them. 
   // Otherwise, if simulateMovement is true, generate random local ones.
   const [localObjects, setLocalObjects] = useState<DetectedObject[]>([]);
@@ -139,6 +152,35 @@ export function CameraFeed({ name, density, objects = [], fps = 30, className, s
             <span>{fps} FPS</span>
             <span className={densityColor[density]}>DENSITY: {density.toUpperCase()}</span>
           </div>
+
+          {/* Algorithm Data - Priority & Waiting Time */}
+          {(priority !== undefined || waitingTime !== undefined) && (
+            <div className="mt-2 space-y-1">
+              {priority !== undefined && (
+                <div className="flex items-center gap-2 text-xs font-mono">
+                  <span className="text-primary/80">PRIORITY:</span>
+                  <span className="text-primary font-bold">{priority.toFixed(2)}</span>
+                </div>
+              )}
+              {waitingTime !== undefined && (
+                <div className="flex items-center gap-2 text-xs font-mono">
+                  <span className="text-cyan-400/80">WAIT:</span>
+                  <span className={cn(
+                    "font-bold",
+                    waitingTime > 180 ? "text-destructive animate-pulse" :
+                    waitingTime > 60 ? "text-warning" :
+                    "text-cyan-400"
+                  )}>{waitingTime.toFixed(1)}s</span>
+                </div>
+              )}
+              {vehicleCount !== undefined && (
+                <div className="flex items-center gap-2 text-xs font-mono">
+                  <span className="text-white/70">VEHICLES:</span>
+                  <span className="text-white font-bold">{vehicleCount}</span>
+                </div>
+              )}
+            </div>
+          )}
         </div>
         <div className="text-xs font-mono text-primary bg-primary/10 px-2 py-1 rounded border border-primary/30 backdrop-blur-md">
           AI ACTIVE

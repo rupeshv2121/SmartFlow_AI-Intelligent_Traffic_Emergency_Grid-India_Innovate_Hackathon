@@ -2,6 +2,29 @@ import { IntersectionWorld, type IntersectionCameraPose } from "@/components/tra
 import type { SignalState, SimRoadState } from "@/types/traffic-sim";
 import { Canvas } from "@react-three/fiber";
 
+interface DetectionObject {
+  type: string;
+  class_name?: string;
+  bbox?: number[];
+  x1?: number;
+  y1?: number;
+  x2?: number;
+  y2?: number;
+  confidence?: number;
+}
+
+interface AlgorithmConfig {
+  baseTime: number;
+  factor: number;
+  minGreen: number;
+  maxGreen: number;
+  w1: number;
+  w2: number;
+  waitScale: number;
+  starvationThreshold: number;
+  maxWait?: number;
+}
+
 interface TrafficCameraSceneProps {
   roads: SimRoadState[];
   cameraIndex: number;
@@ -9,11 +32,12 @@ interface TrafficCameraSceneProps {
   onCanvasReady?: (canvas: HTMLCanvasElement) => void;
   showDetectionOverlay?: boolean;
   detectionOverlay?: {
-    detections: Array<{ type: string; bbox: number[] }>;
+    detections: Array<DetectionObject>;
     frameWidth: number;
     frameHeight: number;
   };
   ambulanceDetected?: boolean;
+  algorithmConfig?: AlgorithmConfig;
 }
 
 const CAMERA_POSES: IntersectionCameraPose[] = [
@@ -61,6 +85,7 @@ export function TrafficCameraScene({
   showDetectionOverlay = false,
   detectionOverlay,
   ambulanceDetected = false,
+  algorithmConfig,
 }: TrafficCameraSceneProps) {
   const focusRoad = roads[cameraIndex] ?? roads[0];
   const cameraPose = CAMERA_POSES[cameraIndex] ?? CAMERA_POSES[0];
@@ -98,32 +123,115 @@ export function TrafficCameraScene({
         <span className="text-slate-300">{timestamp}</span>
       </div>
 
-      <div className="absolute bottom-3 left-3 right-3 z-30 flex items-center justify-between rounded-md border border-cyan-300/20 bg-slate-950/75 px-3 py-2 font-mono text-[11px] text-slate-200 backdrop-blur-sm">
-        <div className="flex items-center gap-2">
-          <span className="text-slate-400">FEED</span>
-          <span className="font-semibold tracking-wide text-white">{cameraLabel}</span>
-          <span className={`rounded border px-2 py-0.5 text-[10px] font-semibold ${signalBadgeClass(focusRoad.signal)}`}>
-            {focusRoad.signal.toUpperCase()}
-          </span>
-          {ambulanceDetected && (
-            <span className="px-2 py-0.5 rounded border border-red-500/60 bg-red-500/20 text-red-300 text-[10px] font-semibold">🚑 AMBULANCE</span>
-          )}
+      <div className="absolute bottom-3 left-3 right-3 z-30 flex flex-col gap-1.5 rounded-md border border-cyan-300/20 bg-slate-950/75 px-3 py-2 font-mono text-[11px] text-slate-200 backdrop-blur-sm">
+        {/* Top Row: Lane Info */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="text-slate-400">FEED</span>
+            <span className="font-semibold tracking-wide text-white">{cameraLabel}</span>
+            <span className={`rounded border px-2 py-0.5 text-[10px] font-semibold ${signalBadgeClass(focusRoad.signal)}`}>
+              {focusRoad.signal.toUpperCase()}
+            </span>
+            {ambulanceDetected && (
+              <span className="px-2 py-0.5 rounded border border-red-500/60 bg-red-500/20 text-red-300 text-[10px] font-semibold">🚑 AMBULANCE</span>
+            )}
+          </div>
+          <div className="flex items-center gap-3 text-slate-300">
+            <span>Vehicles {focusRoad.detectionCount}</span>
+            <span
+              className={
+                focusRoad.signal === "red"
+                  ? "text-red-300"
+                  : focusRoad.signal === "green"
+                    ? "text-green-300"
+                    : "text-amber-300"
+              }
+            >
+              {focusRoad.signal === "red"
+                ? `To Green ${focusRoad.signalTimeLeft.toFixed(1)}s`
+                : `To Red ${focusRoad.signalTimeLeft.toFixed(1)}s`}
+            </span>
+          </div>
         </div>
-        <div className="flex items-center gap-3 text-slate-300">
-          <span>Vehicle Count {focusRoad.detectionCount}</span>
-          <span
-            className={
-              focusRoad.signal === "red"
-                ? "text-red-300"
-                : focusRoad.signal === "green"
-                  ? "text-green-300"
-                  : "text-amber-300"
-            }
-          >
-            {focusRoad.signal === "red"
-              ? `To Green ${focusRoad.signalTimeLeft.toFixed(1)}s`
-              : `To Red ${focusRoad.signalTimeLeft.toFixed(1)}s`}
-          </span>
+
+        {/* Bottom Row: Algorithm Data */}
+        <div className="flex items-center justify-between text-[10px] border-t border-cyan-300/15 pt-1.5">
+          <div className="flex items-center gap-3">
+            {/* Priority Calculation */}
+            <div className="flex items-center gap-1.5">
+              <span className="text-cyan-400/80">PRIORITY:</span>
+              <span className="text-cyan-300 font-bold">{(() => {
+                const W1 = algorithmConfig?.w1 ?? 1.0;
+                const W2 = algorithmConfig?.w2 ?? 1.0;
+                const WAIT_SCALE = algorithmConfig?.waitScale ?? 0.1;
+                const MAX_WAIT = algorithmConfig?.maxWait ?? 300;
+                const scaledWait = Math.min(focusRoad.waitingTime, MAX_WAIT) * WAIT_SCALE;
+                const priority = focusRoad.detectionCount * W1 + scaledWait * W2;
+                return priority.toFixed(2);
+              })()}</span>
+            </div>
+
+            {/* Waiting Time */}
+            <div className="flex items-center gap-1.5">
+              <span className="text-slate-400">WAIT:</span>
+              <span className={
+                focusRoad.waitingTime > 180
+                  ? "text-red-400 font-bold animate-pulse"
+                  : focusRoad.waitingTime > 60
+                    ? "text-amber-400 font-bold"
+                    : "text-slate-300 font-bold"
+              }>{focusRoad.waitingTime.toFixed(1)}s</span>
+            </div>
+
+            {/* Green Time Calculation */}
+            <div className="flex items-center gap-1.5">
+              <span className="text-emerald-400/80">GREEN:</span>
+              <span className="text-emerald-300 font-bold">{(() => {
+                const baseTime = algorithmConfig?.baseTime ?? 10;
+                const factor = algorithmConfig?.factor ?? 2.0;
+                const minGreen = algorithmConfig?.minGreen ?? 10;
+                const maxGreen = algorithmConfig?.maxGreen ?? 60;
+                let greenTime = baseTime + (focusRoad.detectionCount * factor);
+                greenTime = Math.max(minGreen, Math.min(maxGreen, greenTime));
+                return greenTime.toFixed(1);
+              })()}s</span>
+            </div>
+          </div>
+
+          {/* Algorithm Config Display */}
+          <div className="flex items-center gap-2 px-2 py-1 rounded bg-slate-800/50 border border-cyan-300/10">
+            <div className="flex items-center gap-1">
+              <span className="text-slate-500 text-[9px]">F:</span>
+              <span className="text-cyan-400 font-mono text-[9px]">{algorithmConfig?.factor?.toFixed(1) ?? "2.0"}</span>
+            </div>
+            <span className="text-slate-600">|</span>
+            <div className="flex items-center gap-1">
+              <span className="text-slate-500 text-[9px]">W₁:</span>
+              <span className="text-orange-400 font-mono text-[9px]">{algorithmConfig?.w1?.toFixed(1) ?? "1.0"}</span>
+            </div>
+            <span className="text-slate-600">|</span>
+            <div className="flex items-center gap-1">
+              <span className="text-slate-500 text-[9px]">W₂:</span>
+              <span className="text-purple-400 font-mono text-[9px]">{algorithmConfig?.w2?.toFixed(1) ?? "1.0"}</span>
+            </div>
+            <span className="text-slate-600">|</span>
+            <div className="flex items-center gap-1">
+              <span className="text-slate-500 text-[9px]">BT:</span>
+              <span className="text-green-400 font-mono text-[9px]">{algorithmConfig?.baseTime?.toFixed(0) ?? "10"}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Algorithm Formula Explanation */}
+        <div className="text-[8px] text-slate-500 border-t border-cyan-300/10 pt-1 mt-1">
+          <div className="flex justify-between">
+            <div>
+              <span className="text-orange-300">P</span> = ({focusRoad.detectionCount} × <span className="text-orange-400">{algorithmConfig?.w1?.toFixed(1) ?? "1.0"}</span>) + ({(Math.min(focusRoad.waitingTime, algorithmConfig?.maxWait ?? 300) * (algorithmConfig?.waitScale ?? 0.1)).toFixed(1)} × <span className="text-purple-400">{algorithmConfig?.w2?.toFixed(1) ?? "1.0"}</span>)
+            </div>
+            <div>
+              <span className="text-emerald-300">G</span> = {algorithmConfig?.baseTime ?? "10"} + ({focusRoad.detectionCount} × <span className="text-cyan-400">{algorithmConfig?.factor?.toFixed(1) ?? "2.0"}</span>)
+            </div>
+          </div>
         </div>
       </div>
 

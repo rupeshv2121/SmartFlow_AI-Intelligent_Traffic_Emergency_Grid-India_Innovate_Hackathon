@@ -6,13 +6,81 @@ import {
   resetSettings,
   updateSystemSettings,
   type SettingsUpdateRequest,
-  type SystemSettings
+  type SystemSettings,
 } from "@/lib/settings-api";
 import { cn } from "@/lib/utils";
 import { AlertTriangle, Bell, Check, Cpu, Eye, RotateCcw, Save, Shield } from "lucide-react";
 import { useEffect, useState } from "react";
 
-type ActiveSection = 'ai' | 'alerts' | 'traffic' | 'display';
+type ActiveSection = "ai" | "alerts" | "traffic" | "display";
+type EditableSettingsSection = keyof SettingsUpdateRequest;
+
+interface PullSliderProps {
+  label: string;
+  value: number;
+  min: number;
+  max: number;
+  step?: number;
+  description?: string;
+  fillClassName: string;
+  thumbClassName: string;
+  valueClassName: string;
+  formatValue: (value: number) => string;
+  onChange: (value: number) => void;
+}
+
+function PullSlider({
+  label,
+  value,
+  min,
+  max,
+  step = 1,
+  description,
+  fillClassName,
+  thumbClassName,
+  valueClassName,
+  formatValue,
+  onChange,
+}: PullSliderProps) {
+  const ratio = (value - min) / (max - min);
+  const clampedRatio = Math.max(0, Math.min(1, Number.isFinite(ratio) ? ratio : 0));
+  const fillPercent = clampedRatio * 100;
+
+  return (
+    <div>
+      <label className="block text-sm font-medium text-white/80 mb-2">{label}</label>
+      <div className="flex items-center gap-4">
+        <div className="relative flex-1 h-5">
+          <div className="absolute left-0 right-0 top-1/2 h-2 -translate-y-1/2 rounded-full border border-white/15 bg-white/10" />
+          <div
+            className={cn("absolute left-0 top-1/2 h-2 -translate-y-1/2 rounded-full", fillClassName)}
+            style={{ width: `${fillPercent}%` }}
+          />
+          <input
+            type="range"
+            min={min}
+            max={max}
+            step={step}
+            value={value}
+            onChange={(e) => onChange(parseFloat(e.target.value))}
+            className={cn(
+              "absolute inset-0 h-5 w-full cursor-pointer appearance-none bg-transparent",
+              "[&::-webkit-slider-runnable-track]:h-2 [&::-webkit-slider-runnable-track]:bg-transparent",
+              "[&::-moz-range-track]:h-2 [&::-moz-range-track]:bg-transparent [&::-moz-range-track]:border-0",
+              "[&::-webkit-slider-thumb]:mt-[-6px] [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-white/40 [&::-webkit-slider-thumb]:shadow-[0_0_0_4px_rgba(15,23,42,0.4)]",
+              "[&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-white/40 [&::-moz-range-thumb]:shadow-[0_0_0_4px_rgba(15,23,42,0.4)]",
+              thumbClassName,
+            )}
+          />
+        </div>
+        <span className={cn("font-mono px-2 py-1 rounded text-sm min-w-16 text-center", valueClassName)}>
+          {formatValue(value)}
+        </span>
+      </div>
+      {description && <p className="text-xs text-muted-foreground mt-2">{description}</p>}
+    </div>
+  );
+}
 
 export default function Settings() {
   const { toast } = useToast();
@@ -138,15 +206,37 @@ export default function Settings() {
     }
   };
 
-  const updateFormData = (section: keyof SystemSettings, field: string, value: any) => {
+  const updateFormData = <S extends EditableSettingsSection, F extends keyof SystemSettings[S]>(
+    section: S,
+    field: F,
+    value: SystemSettings[S][F],
+  ) => {
     if (!formData) return;
 
     const newFormData = {
       ...formData,
       [section]: {
         ...formData[section],
-        [field]: value
+        [field]: value,
       }
+    };
+
+    setFormData(newFormData);
+    setHasChanges(JSON.stringify(newFormData) !== JSON.stringify(settings));
+  };
+
+  const updateTrafficAlgorithm = (field: keyof SystemSettings['trafficControl']['algorithm'], value: number) => {
+    if (!formData) return;
+
+    const newFormData = {
+      ...formData,
+      trafficControl: {
+        ...formData.trafficControl,
+        algorithm: {
+          ...formData.trafficControl.algorithm,
+          [field]: value,
+        },
+      },
     };
 
     setFormData(newFormData);
@@ -232,16 +322,32 @@ export default function Settings() {
                 AI VEHICLE DETECTION
               </h2>
 
-              <div className="space-y-4 text-sm text-muted-foreground leading-relaxed">
-                <p>
+              <div className="space-y-6">
+                {/* <div>
+                  <label className="block text-sm font-medium text-white/80 mb-2">Model Architecture</label>
+                  <select
+                    value={formData.aiModel.architecture}
+                    onChange={(e) => updateFormData('aiModel', 'architecture', e.target.value as SystemSettings['aiModel']['architecture'])}
+                    className="w-full bg-black/40 border border-white/10 rounded-md p-3 text-sm text-white focus:outline-none focus:border-primary/50 transition-colors"
+                  >
+                    <option value="yolov8">YOLOv8 - Real-time Optimized (Recommended)</option>
+                    <option value="yolov5">YOLOv5 - Stable Performance</option>
+                    <option value="efficientdet">EfficientDet - Balanced Accuracy</option>
+                  </select>
+                  <p className="text-xs text-muted-foreground mt-2">
+                    YOLOv8 provides the best real-time performance for your 4-camera system.
+                  </p>
+                </div> */}
+
+                <p className="text-sm text-muted-foreground leading-relaxed">
                   Our SmartFlow YOLO-based model, trained on a custom dataset of 300 images, delivers real-time vehicle detection using an optimized asynchronous inference pipeline with fixed frame skipping, ensuring continuous and efficient processing.
                 </p>
 
-                <p>
+                <p className="text-sm text-muted-foreground leading-relaxed">
                   It achieves sub-50 ms latency, processes multiple camera streams in parallel using 4 workers, and detects an average of 4–10 vehicles per frame depending on traffic density.
                 </p>
 
-                <p>
+                <p className="text-sm text-muted-foreground leading-relaxed">
                   The model classifies vehicles into two categories: normal vehicles (marked in green) and emergency vehicles (marked in red), enabling intelligent traffic prioritization and responsive urban traffic management.
                 </p>
               </div>
@@ -257,63 +363,48 @@ export default function Settings() {
 
               <div className="space-y-6">
                 <div>
-                  <label className="block text-sm font-medium text-white/80 mb-2">Congestion Alert Threshold</label>
-                  <div className="flex items-center gap-4">
-                    <input
-                      type="range"
-                      min="30"
-                      max="100"
-                      value={formData.alerts.congestionThreshold}
-                      onChange={(e) => updateFormData('alerts', 'congestionThreshold', parseInt(e.target.value))}
-                      className="flex-1 accent-destructive"
-                    />
-                    <span className="font-mono text-destructive bg-destructive/10 px-2 py-1 rounded text-sm min-w-12">
-                      {formData.alerts.congestionThreshold}%
-                    </span>
-                  </div>
-                  <p className="text-xs text-muted-foreground mt-2">
-                    Trigger critical alerts when lane congestion exceeds this percentage
-                  </p>
+                  <PullSlider
+                    label="Congestion Alert Threshold"
+                    value={formData.alerts.congestionThreshold}
+                    min={30}
+                    max={100}
+                    fillClassName="bg-linear-to-r from-rose-500 to-pink-500"
+                    thumbClassName="[&::-webkit-slider-thumb]:bg-rose-400 [&::-moz-range-thumb]:bg-rose-400"
+                    valueClassName="text-rose-300 bg-rose-500/12 border border-rose-400/20"
+                    formatValue={(v) => `${Math.round(v)}%`}
+                    description="Trigger critical alerts when lane congestion exceeds this percentage"
+                    onChange={(v) => updateFormData('alerts', 'congestionThreshold', Math.round(v))}
+                  />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-white/80 mb-2">Low Speed Alert Threshold</label>
-                  <div className="flex items-center gap-4">
-                    <input
-                      type="range"
-                      min="5"
-                      max="50"
-                      value={formData.alerts.lowSpeedThreshold}
-                      onChange={(e) => updateFormData('alerts', 'lowSpeedThreshold', parseInt(e.target.value))}
-                      className="flex-1 accent-warning"
-                    />
-                    <span className="font-mono text-warning bg-warning/10 px-2 py-1 rounded text-sm min-w-16">
-                      {formData.alerts.lowSpeedThreshold} km/h
-                    </span>
-                  </div>
-                  <p className="text-xs text-muted-foreground mt-2">
-                    Alert when average speed drops below this threshold
-                  </p>
+                  <PullSlider
+                    label="Low Speed Alert Threshold"
+                    value={formData.alerts.lowSpeedThreshold}
+                    min={5}
+                    max={50}
+                    fillClassName="bg-linear-to-r from-amber-400 to-yellow-300"
+                    thumbClassName="[&::-webkit-slider-thumb]:bg-amber-300 [&::-moz-range-thumb]:bg-amber-300"
+                    valueClassName="text-amber-200 bg-amber-400/12 border border-amber-300/20"
+                    formatValue={(v) => `${Math.round(v)} km/h`}
+                    description="Alert when average speed drops below this threshold"
+                    onChange={(v) => updateFormData('alerts', 'lowSpeedThreshold', Math.round(v))}
+                  />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-white/80 mb-2">Emergency Vehicle Sensitivity</label>
-                  <div className="flex items-center gap-4">
-                    <input
-                      type="range"
-                      min="50"
-                      max="100"
-                      value={Math.round(formData.alerts.emergencyVehicleSensitivity * 100)}
-                      onChange={(e) => updateFormData('alerts', 'emergencyVehicleSensitivity', parseInt(e.target.value) / 100)}
-                      className="flex-1 accent-purple-400"
-                    />
-                    <span className="font-mono text-purple-400 bg-purple-400/10 px-2 py-1 rounded text-sm min-w-12">
-                      {Math.round(formData.alerts.emergencyVehicleSensitivity * 100)}%
-                    </span>
-                  </div>
-                  <p className="text-xs text-muted-foreground mt-2">
-                    Detection sensitivity for emergency vehicles (ambulance, fire truck, police)
-                  </p>
+                  <PullSlider
+                    label="Emergency Vehicle Sensitivity"
+                    value={Math.round(formData.alerts.emergencyVehicleSensitivity * 100)}
+                    min={50}
+                    max={100}
+                    fillClassName="bg-linear-to-r from-violet-400 to-fuchsia-400"
+                    thumbClassName="[&::-webkit-slider-thumb]:bg-violet-300 [&::-moz-range-thumb]:bg-violet-300"
+                    valueClassName="text-violet-300 bg-violet-500/12 border border-violet-400/20"
+                    formatValue={(v) => `${Math.round(v)}%`}
+                    description="Detection sensitivity for emergency vehicles (ambulance, fire truck, police)"
+                    onChange={(v) => updateFormData('alerts', 'emergencyVehicleSensitivity', Math.round(v) / 100)}
+                  />
                 </div>
 
                 <div className="flex items-center justify-between pt-4 border-t border-border">
@@ -360,38 +451,143 @@ export default function Settings() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-white/80 mb-2">Maximum Green Light Duration</label>
-                  <div className="flex items-center gap-4">
-                    <input
-                      type="range"
-                      min="30"
-                      max="180"
-                      step="10"
-                      value={formData.trafficControl.maxGreenTime}
-                      onChange={(e) => updateFormData('trafficControl', 'maxGreenTime', parseInt(e.target.value))}
-                      className="flex-1 accent-success"
-                    />
-                    <span className="font-mono text-success bg-success/10 px-2 py-1 rounded text-sm min-w-12">
-                      {formData.trafficControl.maxGreenTime}s
-                    </span>
-                  </div>
+                  <PullSlider
+                    label="Maximum Green Light Duration"
+                    value={formData.trafficControl.maxGreenTime}
+                    min={30}
+                    max={180}
+                    step={10}
+                    fillClassName="bg-linear-to-r from-emerald-500 to-green-400"
+                    thumbClassName="[&::-webkit-slider-thumb]:bg-emerald-300 [&::-moz-range-thumb]:bg-emerald-300"
+                    valueClassName="text-emerald-200 bg-emerald-500/12 border border-emerald-400/20"
+                    formatValue={(v) => `${Math.round(v)}s`}
+                    onChange={(v) => updateFormData('trafficControl', 'maxGreenTime', Math.round(v))}
+                  />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-white/80 mb-2">Minimum Green Light Duration</label>
-                  <div className="flex items-center gap-4">
-                    <input
-                      type="range"
-                      min="5"
-                      max="30"
-                      step="5"
-                      value={formData.trafficControl.minGreenTime}
-                      onChange={(e) => updateFormData('trafficControl', 'minGreenTime', parseInt(e.target.value))}
-                      className="flex-1 accent-success"
-                    />
-                    <span className="font-mono text-success bg-success/10 px-2 py-1 rounded text-sm min-w-12">
-                      {formData.trafficControl.minGreenTime}s
-                    </span>
+                  <PullSlider
+                    label="Minimum Green Light Duration"
+                    value={formData.trafficControl.minGreenTime}
+                    min={5}
+                    max={30}
+                    step={5}
+                    fillClassName="bg-linear-to-r from-teal-500 to-emerald-400"
+                    thumbClassName="[&::-webkit-slider-thumb]:bg-teal-300 [&::-moz-range-thumb]:bg-teal-300"
+                    valueClassName="text-teal-200 bg-teal-500/12 border border-teal-400/20"
+                    formatValue={(v) => `${Math.round(v)}s`}
+                    onChange={(v) => updateFormData('trafficControl', 'minGreenTime', Math.round(v))}
+                  />
+                </div>
+
+                <div className="pt-4 border-t border-border">
+                  <h3 className="text-sm font-semibold text-white/90 mb-4">Adaptive Algorithm Parameters</h3>
+
+                  <div className="space-y-5">
+                    <div>
+                      <PullSlider
+                        label="Base Time (baseTime)"
+                        value={formData.trafficControl.algorithm.baseTime}
+                        min={5}
+                        max={30}
+                        step={1}
+                        fillClassName="bg-linear-to-r from-cyan-500 to-blue-500"
+                        thumbClassName="[&::-webkit-slider-thumb]:bg-cyan-300 [&::-moz-range-thumb]:bg-cyan-300"
+                        valueClassName="text-cyan-200 bg-cyan-500/12 border border-cyan-400/20"
+                        formatValue={(v) => `${Math.round(v)}s`}
+                        onChange={(v) => updateTrafficAlgorithm('baseTime', Math.round(v))}
+                      />
+                    </div>
+
+                    <div>
+                      <PullSlider
+                        label="Vehicle Factor (factor)"
+                        value={formData.trafficControl.algorithm.factor}
+                        min={0.5}
+                        max={10}
+                        step={0.1}
+                        fillClassName="bg-linear-to-r from-sky-500 to-cyan-400"
+                        thumbClassName="[&::-webkit-slider-thumb]:bg-sky-300 [&::-moz-range-thumb]:bg-sky-300"
+                        valueClassName="text-sky-200 bg-sky-500/12 border border-sky-400/20"
+                        formatValue={(v) => v.toFixed(1)}
+                        onChange={(v) => updateTrafficAlgorithm('factor', v)}
+                      />
+                    </div>
+
+                    <div>
+                      <PullSlider
+                        label="Weight W1 (vehicle count)"
+                        value={formData.trafficControl.algorithm.w1}
+                        min={0}
+                        max={5}
+                        step={0.1}
+                        fillClassName="bg-linear-to-r from-amber-500 to-orange-400"
+                        thumbClassName="[&::-webkit-slider-thumb]:bg-amber-300 [&::-moz-range-thumb]:bg-amber-300"
+                        valueClassName="text-amber-200 bg-amber-500/12 border border-amber-400/20"
+                        formatValue={(v) => v.toFixed(1)}
+                        onChange={(v) => updateTrafficAlgorithm('w1', v)}
+                      />
+                    </div>
+
+                    <div>
+                      <PullSlider
+                        label="Weight W2 (waiting time)"
+                        value={formData.trafficControl.algorithm.w2}
+                        min={0}
+                        max={5}
+                        step={0.1}
+                        fillClassName="bg-linear-to-r from-violet-500 to-purple-400"
+                        thumbClassName="[&::-webkit-slider-thumb]:bg-violet-300 [&::-moz-range-thumb]:bg-violet-300"
+                        valueClassName="text-violet-200 bg-violet-500/12 border border-violet-400/20"
+                        formatValue={(v) => v.toFixed(1)}
+                        onChange={(v) => updateTrafficAlgorithm('w2', v)}
+                      />
+                    </div>
+
+                    <div>
+                      <PullSlider
+                        label="Wait Scale"
+                        value={formData.trafficControl.algorithm.waitScale}
+                        min={0.01}
+                        max={1}
+                        step={0.01}
+                        fillClassName="bg-linear-to-r from-emerald-500 to-teal-400"
+                        thumbClassName="[&::-webkit-slider-thumb]:bg-emerald-300 [&::-moz-range-thumb]:bg-emerald-300"
+                        valueClassName="text-emerald-200 bg-emerald-500/12 border border-emerald-400/20"
+                        formatValue={(v) => v.toFixed(2)}
+                        onChange={(v) => updateTrafficAlgorithm('waitScale', v)}
+                      />
+                    </div>
+
+                    <div>
+                      <PullSlider
+                        label="Starvation Threshold"
+                        value={formData.trafficControl.algorithm.starvationThreshold}
+                        min={30}
+                        max={600}
+                        step={10}
+                        fillClassName="bg-linear-to-r from-rose-500 to-red-400"
+                        thumbClassName="[&::-webkit-slider-thumb]:bg-rose-300 [&::-moz-range-thumb]:bg-rose-300"
+                        valueClassName="text-rose-200 bg-rose-500/12 border border-rose-400/20"
+                        formatValue={(v) => `${Math.round(v)}s`}
+                        onChange={(v) => updateTrafficAlgorithm('starvationThreshold', Math.round(v))}
+                      />
+                    </div>
+
+                    <div>
+                      <PullSlider
+                        label="Max Wait Clamp"
+                        value={formData.trafficControl.algorithm.maxWait}
+                        min={60}
+                        max={900}
+                        step={10}
+                        fillClassName="bg-linear-to-r from-yellow-500 to-amber-400"
+                        thumbClassName="[&::-webkit-slider-thumb]:bg-yellow-300 [&::-moz-range-thumb]:bg-yellow-300"
+                        valueClassName="text-yellow-200 bg-yellow-500/12 border border-yellow-400/20"
+                        formatValue={(v) => `${Math.round(v)}s`}
+                        onChange={(v) => updateTrafficAlgorithm('maxWait', Math.round(v))}
+                      />
+                    </div>
                   </div>
                 </div>
 
@@ -423,24 +619,19 @@ export default function Settings() {
 
               <div className="space-y-6">
                 <div>
-                  <label className="block text-sm font-medium text-white/80 mb-2">Data Refresh Interval</label>
-                  <div className="flex items-center gap-4">
-                    <input
-                      type="range"
-                      min="1000"
-                      max="30000"
-                      step="1000"
-                      value={formData.display.refreshInterval}
-                      onChange={(e) => updateFormData('display', 'refreshInterval', parseInt(e.target.value))}
-                      className="flex-1 accent-primary"
-                    />
-                    <span className="font-mono text-primary bg-primary/10 px-2 py-1 rounded text-sm min-w-12">
-                      {Math.round(formData.display.refreshInterval / 1000)}s
-                    </span>
-                  </div>
-                  <p className="text-xs text-muted-foreground mt-2">
-                    How often the dashboard updates with new data from cameras
-                  </p>
+                  <PullSlider
+                    label="Data Refresh Interval"
+                    value={formData.display.refreshInterval}
+                    min={1000}
+                    max={30000}
+                    step={1000}
+                    fillClassName="bg-linear-to-r from-cyan-500 to-teal-400"
+                    thumbClassName="[&::-webkit-slider-thumb]:bg-cyan-300 [&::-moz-range-thumb]:bg-cyan-300"
+                    valueClassName="text-cyan-200 bg-cyan-500/12 border border-cyan-400/20"
+                    formatValue={(v) => `${Math.round(v / 1000)}s`}
+                    description="How often the dashboard updates with new data from cameras"
+                    onChange={(v) => updateFormData('display', 'refreshInterval', Math.round(v))}
+                  />
                 </div>
 
                 <div className="flex items-center justify-between pt-4 border-t border-border">
