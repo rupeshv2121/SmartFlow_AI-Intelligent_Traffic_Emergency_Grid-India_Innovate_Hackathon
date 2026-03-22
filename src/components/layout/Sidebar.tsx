@@ -62,7 +62,8 @@ export function Sidebar({ onExpandedChange, isExpanded = true }: SidebarProps) {
             <Link key={item.href} href={item.href} className="block">
               <div
                 className={cn(
-                  "flex items-center justify-center lg:justify-start gap-3 px-3 py-3 rounded-lg transition-all duration-200 relative overflow-hidden cursor-pointer",
+                  "flex items-center justify-start gap-3 px-3 py-3 rounded-lg transition-all duration-200 relative overflow-hidden cursor-pointer",
+                  isExpanded ? "" : "justify-center",
                   isActive
                     ? "bg-primary/10 text-primary border border-primary/20"
                     : "text-muted-foreground hover:bg-white/5 hover:text-foreground border border-transparent"
