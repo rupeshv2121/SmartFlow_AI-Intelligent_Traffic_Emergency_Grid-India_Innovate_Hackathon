@@ -107,11 +107,22 @@ export default function Dataset() {
     <AppLayout>
       <div className="mb-8">
         <div>
-          <h1 className="text-3xl font-display font-bold text-foreground mb-2">Vehicle Details</h1>
-          <p className="text-muted-foreground font-mono text-sm">We are using different vehicles and classifying them as normal vehicles and emergency vehicles, some of them are:</p>
+          <h1 className="text-3xl font-display font-bold text-foreground mb-2">AI Model Details</h1>
+          <div className="space-y-3 text-sm text-muted-foreground max-w-4xl">
+            <p>
+              Our SmartFlow YOLO-based model, trained on a custom dataset of 300 images, delivers real-time vehicle detection using an optimized asynchronous inference pipeline with fixed frame skipping, ensuring continuous and efficient processing.
+            </p>
+            <p>
+              It achieves sub-50 ms latency, processes multiple camera streams in parallel using 4 workers, and detects an average of 4–10 vehicles per frame depending on traffic density.
+            </p>
+            <p>
+              The model classifies vehicles into two categories: normal vehicles (marked in green) and emergency vehicles (marked in red), enabling intelligent traffic prioritization and responsive urban traffic management.
+            </p>
+          </div>
         </div>
       </div>
 
+      <h1 className="text-2xl font-display font-bold text-foreground mb-2">Vehicle Details</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
         {classStats.map((cls) => {
           const Icon = cls.icon;
