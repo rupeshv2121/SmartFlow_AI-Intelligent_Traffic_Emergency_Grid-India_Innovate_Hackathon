@@ -9,10 +9,10 @@ import {
   type SystemSettings,
 } from "@/lib/settings-api";
 import { cn } from "@/lib/utils";
-import { AlertTriangle, Bell, Check, Cpu, Eye, RotateCcw, Save, Shield } from "lucide-react";
+import { AlertTriangle, Bell, Check, Eye, RotateCcw, Save, Shield } from "lucide-react";
 import { useEffect, useState } from "react";
 
-type ActiveSection = "ai" | "alerts" | "traffic" | "display";
+type ActiveSection = "alerts" | "traffic" | "display";
 type EditableSettingsSection = keyof SettingsUpdateRequest;
 
 interface PullSliderProps {
@@ -84,7 +84,7 @@ function PullSlider({
 
 export default function Settings() {
   const { toast } = useToast();
-  const [activeSection, setActiveSection] = useState<ActiveSection>('ai');
+  const [activeSection, setActiveSection] = useState<ActiveSection>('alerts');
   const [settings, setSettings] = useState<SystemSettings | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -290,7 +290,6 @@ export default function Settings() {
         {/* Settings Navigation */}
         <div className="space-y-2 col-span-1">
           {[
-            { key: 'ai' as ActiveSection, icon: Cpu, label: "AI Detection", desc: "YOLO Models & Confidence" },
             { key: 'alerts' as ActiveSection, icon: Bell, label: "Alert Thresholds", desc: "Congestion & Speed Limits" },
             { key: 'traffic' as ActiveSection, icon: Shield, label: "Traffic Control", desc: "Signal Timing & Emergency" },
             { key: 'display' as ActiveSection, icon: Eye, label: "Dashboard", desc: "Refresh & Visualization" },
@@ -314,45 +313,6 @@ export default function Settings() {
 
         {/* Settings Content */}
         <div className="col-span-1 md:col-span-3 space-y-6">
-
-          {/* AI Detection Settings */}
-          {activeSection === 'ai' && (
-            <GlassPanel className="p-6">
-              <h2 className="text-lg font-display font-semibold mb-6 border-b border-border pb-4">
-                AI VEHICLE DETECTION
-              </h2>
-
-              <div className="space-y-6">
-                {/* <div>
-                  <label className="block text-sm font-medium text-white/80 mb-2">Model Architecture</label>
-                  <select
-                    value={formData.aiModel.architecture}
-                    onChange={(e) => updateFormData('aiModel', 'architecture', e.target.value as SystemSettings['aiModel']['architecture'])}
-                    className="w-full bg-black/40 border border-white/10 rounded-md p-3 text-sm text-white focus:outline-none focus:border-primary/50 transition-colors"
-                  >
-                    <option value="yolov8">YOLOv8 - Real-time Optimized (Recommended)</option>
-                    <option value="yolov5">YOLOv5 - Stable Performance</option>
-                    <option value="efficientdet">EfficientDet - Balanced Accuracy</option>
-                  </select>
-                  <p className="text-xs text-muted-foreground mt-2">
-                    YOLOv8 provides the best real-time performance for your 4-camera system.
-                  </p>
-                </div> */}
-
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                  Our SmartFlow YOLO-based model, trained on a custom dataset of 300 images, delivers real-time vehicle detection using an optimized asynchronous inference pipeline with fixed frame skipping, ensuring continuous and efficient processing.
-                </p>
-
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                  It achieves sub-50 ms latency, processes multiple camera streams in parallel using 4 workers, and detects an average of 4–10 vehicles per frame depending on traffic density.
-                </p>
-
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                  The model classifies vehicles into two categories: normal vehicles (marked in green) and emergency vehicles (marked in red), enabling intelligent traffic prioritization and responsive urban traffic management.
-                </p>
-              </div>
-            </GlassPanel>
-          )}
 
           {/* Alert Settings */}
           {activeSection === 'alerts' && (

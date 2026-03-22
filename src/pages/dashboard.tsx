@@ -24,6 +24,35 @@ import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YA
 const CHART_STORAGE_KEY = 'traffic-density-history';
 const AMBULANCE_TRACKING_KEY = 'ambulance-tracking-history';
 
+// Helper to turn internal vehicle IDs into pseudo real-world number plates
+function formatVehicleNumber(id: string): string {
+  // Example format: MH 12 AB 1234
+  const clean = id.replace(/[^a-zA-Z0-9]/g, "");
+  if (!clean) return "MH 00 AA 0000";
+
+  const letters = clean.replace(/[^a-zA-Z]/g, "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+  const digits = clean.replace(/[^0-9]/g, "0123456789");
+
+  const pickChar = (source: string, index: number, fallback: string) =>
+    source.length ? source[index % source.length].toUpperCase() : fallback;
+
+  const pickDigit = (source: string, index: number, fallback: string) =>
+    source.length ? source.charAt(index % source.length) : fallback;
+
+  const s1 = pickChar(letters, 0, "M");
+  const s2 = pickChar(letters, 3, "H");
+  const d1 = pickDigit(digits, 1, "0");
+  const d2 = pickDigit(digits, 2, "1");
+  const a1 = pickChar(letters, 5, "A");
+  const a2 = pickChar(letters, 7, "B");
+  const n1 = pickDigit(digits, 4, "0");
+  const n2 = pickDigit(digits, 6, "0");
+  const n3 = pickDigit(digits, 8, "0");
+  const n4 = pickDigit(digits, 10, "0");
+
+  return `${s1}${s2} ${d1}${d2} ${a1}${a2} ${n1}${n2}${n3}${n4}`;
+}
+
 export default function Dashboard() {
   const { data: stats } = useLiveDashboardStats();
   const { data: history } = useLiveTrafficHistory();
@@ -180,9 +209,9 @@ export default function Dashboard() {
   const ambulanceEvents = Array.from(ambulanceHistory.entries())
     .map(([vehicleId, data]) => ({
       id: vehicleId,
-      vehicleId: vehicleId.substring(10), // Show shortened ID
+      vehicleId: formatVehicleNumber(vehicleId),
       timestamp: new Date(data.firstSeen).toISOString(),
-      route: data.completed ? 'Cleared intersection' : `🚨 Active in ${data.lane}`,
+      route: data.completed ? 'Cleared intersection' : `Active in ${data.lane}`,
       status: data.completed ? 'completed' : 'pending',
       duration: Math.round((data.lastSeen - data.firstSeen) / 1000),
     }))
@@ -422,7 +451,7 @@ export default function Dashboard() {
             <thead className="text-xs font-mono text-muted-foreground border-b border-border">
               <tr>
                 <th className="pb-3 font-medium">TIMESTAMP</th>
-                <th className="pb-3 font-medium">VEHICLE ID</th>
+                <th className="pb-3 font-medium">VEHICLE NO.</th>
                 <th className="pb-3 font-medium">LANE MOVEMENT</th>
                 <th className="pb-3 font-medium">STATUS</th>
                 <th className="pb-3 font-medium">DURATION</th>
@@ -433,11 +462,8 @@ export default function Dashboard() {
                 ambulanceEvents.slice(0, 5).map((ev) => (
                   <tr key={ev.id} className="border-b border-border/50 hover:bg-white/5 transition-colors">
                     <td className="py-3 font-mono text-muted-foreground">{format(new Date(ev.timestamp), "HH:mm:ss")}</td>
-                    <td className="py-3 font-medium text-destructive">
-                      <div className="flex items-center gap-2">
-                        <AlertTriangle className="w-3 h-3" />
-                        {ev.vehicleId}
-                      </div>
+                    <td className="py-3 font-medium text-destructive font-mono">
+                      {ev.vehicleId}
                     </td>
                     <td className="py-3 text-white font-mono">{ev.route}</td>
                     <td className="py-3">

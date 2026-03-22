@@ -3,24 +3,41 @@ import { AppLayout } from "@/components/layout/AppLayout";
 import { useLiveCongestionAnalytics, useLiveDashboardStats, useLiveTrafficHistory } from "@/hooks/use-smartflow";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
-import { Activity, AlertTriangle, Bell, Brain, Clock, Database, Download, MapPin, RefreshCw, Target, TrendingUp, Zap } from "lucide-react";
+import { Activity, AlertTriangle, Bell, Brain, Clock, Database, MapPin, RefreshCw, Target, TrendingUp, Zap } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Area, AreaChart, Bar, BarChart, CartesianGrid, Cell, Legend, Line, LineChart, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { getSystemSettings, type SystemSettings } from "@/lib/settings-api";
 
 // Enhanced analytics with ML predictions and real-time insights
+
+function renderPieLabel(props: any) {
+  const { x, y, textAnchor, intersection, percent } = props;
+
+  return (
+    <text
+      x={x}
+      y={y}
+      fill="#ffffff"
+      textAnchor={textAnchor}
+      dominantBaseline="central"
+      fontSize={10}
+    >
+      <tspan x={x}>{intersection}</tspan>
+      <tspan x={x} dy={12}>{`${(percent * 100).toFixed(0)}%`}</tspan>
+    </text>
+  );
+}
+
 export default function Analytics() {
   const { data: congestionData } = useLiveCongestionAnalytics();
   const { data: dashboardStats } = useLiveDashboardStats();
   const { data: trafficHistory } = useLiveTrafficHistory();
 
   // Filter states
-  const [dateRange, setDateRange] = useState("today");
   const [selectedIntersection, setSelectedIntersection] = useState("all");
   const [showPredictions, setShowPredictions] = useState(true);
   const [autoRefresh, setAutoRefresh] = useState(true);
   const [alerts, setAlerts] = useState<Array<{id: string, type: 'critical' | 'warning' | 'info', message: string, timestamp: Date}>>([]);
-  const [isLoading, setIsLoading] = useState(false);
   const [lastUpdate, setLastUpdate] = useState(new Date());
   const [systemSettings, setSystemSettings] = useState<SystemSettings | null>(null);
 
@@ -78,6 +95,22 @@ export default function Analytics() {
     const historical = trafficHistory?.data?.slice(-30) || [];
     return [...historical.map(d => ({ ...d, isPrediction: false })), ...predictions];
   }, [trafficHistory, predictions]);
+
+  // Keep x-axis uniformly spaced in 10-minute buckets while preserving mock values.
+  const chartDataWithUniformTime = useMemo(() => {
+    const now = new Date();
+    const totalPoints = enhancedHistoricalData.length;
+
+    return enhancedHistoricalData.map((point, index) => {
+      const minutesFromNow = (totalPoints - 1 - index) * 10;
+      const timestamp = new Date(now.getTime() - minutesFromNow * 60 * 1000);
+
+      return {
+        ...point,
+        chartTime: format(timestamp, 'HH:mm')
+      };
+    });
+  }, [enhancedHistoricalData]);
 
   // Real-time alerting system with dynamic thresholds from settings
   useEffect(() => {
@@ -167,58 +200,6 @@ export default function Analytics() {
   // Chart colors
   const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4'];
 
-  // Export functionality
-  const exportAnalyticsData = async () => {
-    setIsLoading(true);
-    try {
-      const exportData = {
-        timestamp: new Date().toISOString(),
-        performanceMetrics,
-        alerts: alerts.slice(0, 10),
-        intersectionData: filteredData.map(node => ({
-          intersection: node.intersection,
-          congestion: node.congestion,
-          vehicles: node.vehicles,
-          avgSpeed: node.avgSpeed,
-          efficiency: Math.max(0, 100 - node.congestion + (node.avgSpeed - 20)),
-          status: node.congestion > 80 ? 'CRITICAL' : node.congestion > 50 ? 'ELEVATED' : 'OPTIMAL'
-        })),
-        predictions: predictions,
-        trafficHistory: trafficHistory?.data || []
-      };
-
-      // Create CSV format
-      const csvContent = [
-        // Header
-        ['Intersection', 'Congestion %', 'Vehicles', 'Speed km/h', 'Efficiency %', 'Status'],
-        // Data rows
-        ...filteredData.map(node => [
-          node.intersection,
-          node.congestion,
-          node.vehicles,
-          node.avgSpeed,
-          Math.max(0, 100 - node.congestion + (node.avgSpeed - 20)),
-          node.congestion > 80 ? 'CRITICAL' : node.congestion > 50 ? 'ELEVATED' : 'OPTIMAL'
-        ])
-      ].map(row => row.join(',')).join('\n');
-
-      // Download file
-      const blob = new Blob([csvContent], { type: 'text/csv' });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `smartflow-analytics-${format(new Date(), 'yyyy-MM-dd-HHmm')}.csv`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
-    } catch (error) {
-      console.error('Export failed:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   return (
     <AppLayout>
       <div className="mb-8">
@@ -251,7 +232,7 @@ export default function Analytics() {
             <select
               value={selectedIntersection}
               onChange={(e) => setSelectedIntersection(e.target.value)}
-              className="px-3 py-2 bg-white/5 border border-white/10 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+              className="analytics-intersection-select px-3 py-2 bg-white/5 border border-white/10 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
             >
               <option value="all">All Intersections</option>
               {congestionData?.data?.map(node => (
@@ -259,24 +240,7 @@ export default function Analytics() {
               ))}
             </select>
 
-            <select
-              value={dateRange}
-              onChange={(e) => setDateRange(e.target.value)}
-              className="px-3 py-2 bg-white/5 border border-white/10 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
-            >
-              <option value="today">Today</option>
-              <option value="week">This Week</option>
-              <option value="month">This Month</option>
-            </select>
-
-            <button
-              onClick={exportAnalyticsData}
-              disabled={isLoading}
-              className="flex items-center gap-2 px-4 py-2 bg-primary/20 border border-primary/30 rounded-md text-sm font-medium hover:bg-primary/30 transition-colors cursor-pointer text-primary disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <Download className={cn("w-4 h-4", isLoading && "animate-spin")} />
-              {isLoading ? 'Exporting...' : 'Export CSV'}
-            </button>
+            {/* Date range and export controls removed per UI simplification */}
           </div>
         </div>
 
@@ -365,7 +329,7 @@ export default function Analytics() {
       {/* Enhanced Charts Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         {/* Real-Time Traffic Trend with ML Predictions */}
-        <GlassPanel className="p-6">
+        <GlassPanel className="p-4">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-lg font-display font-semibold text-white/90 flex items-center gap-2">
               <TrendingUp className="w-5 h-5 text-primary" />
@@ -384,21 +348,28 @@ export default function Analytics() {
               </button>
             </div>
           </div>
-          <div className="h-[320px]">
-            {enhancedHistoricalData.length > 0 ? (
+          <div className="h-[300px]">
+            {chartDataWithUniformTime.length > 0 ? (
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={enhancedHistoricalData} margin={{ top: 10, right: 30, left: -20, bottom: 30 }}>
+                <LineChart data={chartDataWithUniformTime} margin={{ top: 10, right: 30, left: 5, bottom: 40 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} />
                   <XAxis
-                    dataKey="time"
+                    dataKey="chartTime"
                     stroke="hsl(var(--muted-foreground))"
                     fontSize={10}
                     tickLine={false}
-                    interval={Math.max(0, Math.floor(enhancedHistoricalData.length / 6) - 1)}
+                    interval={Math.max(0, Math.floor(chartDataWithUniformTime.length / 6) - 1)}
                     angle={0}
                     textAnchor="middle"
+                    label={{ value: 'Time (10-min intervals)', position: 'insideBottom', offset: -8, fill: 'hsl(var(--muted-foreground))', fontSize: 11 }}
                   />
-                  <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} />
+                  <YAxis
+                    stroke="hsl(var(--muted-foreground))"
+                    fontSize={12}
+                    tickLine={false}
+                    axisLine={false}
+                    label={{ value: 'Vehicle Count', angle: -90, position: 'insideLeft', fill: 'hsl(var(--muted-foreground))', fontSize: 11 }}
+                  />
                   <Tooltip
                     contentStyle={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))', borderRadius: '8px' }}
                     labelStyle={{ color: 'hsl(var(--muted-foreground))' }}
@@ -441,7 +412,7 @@ export default function Analytics() {
         </GlassPanel>
 
         {/* Enhanced Node Comparison with Status */}
-        <GlassPanel className="p-6">
+        <GlassPanel className="p-4">
           <h2 className="text-lg font-display font-semibold mb-6 text-white/90 flex items-center gap-2">
             <MapPin className="w-5 h-5 text-warning" />
             INTERSECTION PERFORMANCE
@@ -449,18 +420,52 @@ export default function Analytics() {
           <div className="h-[320px]">
             {filteredData.length > 0 ? (
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={filteredData}>
+                <BarChart
+                  data={filteredData}
+                  margin={{ top: 10, right: 16, left: 8, bottom: 56 }}
+                >
                   <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} />
-                  <XAxis dataKey="intersection" stroke="hsl(var(--muted-foreground))" fontSize={10} tickLine={false} angle={-20} textAnchor="end" height={60} />
-                  <YAxis yAxisId="left" stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} />
-                  <YAxis yAxisId="right" orientation="right" stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} />
+                  <XAxis
+                    dataKey="intersection"
+                    stroke="hsl(var(--muted-foreground))"
+                    fontSize={10}
+                    tickLine={false}
+                    angle={-20}
+                    textAnchor="end"
+                    height={70}
+                    interval={0}
+                    label={{
+                      value: 'Intersections',
+                      position: 'insideBottom',
+                      offset: -2,
+                      fill: 'hsl(var(--muted-foreground))',
+                      fontSize: 11,
+                    }}
+                  />
+                  <YAxis
+                    yAxisId="left"
+                    stroke="hsl(var(--muted-foreground))"
+                    fontSize={12}
+                    tickLine={false}
+                    axisLine={false}
+                    label={{ value: 'Vehicles', angle: -90, position: 'insideLeft', fill: 'hsl(var(--muted-foreground))', fontSize: 11 }}
+                  />
+                  <YAxis
+                    yAxisId="right"
+                    orientation="right"
+                    stroke="hsl(var(--muted-foreground))"
+                    fontSize={12}
+                    tickLine={false}
+                    axisLine={false}
+                    label={{ value: 'Speed (km/h)', angle: 90, position: 'insideRight', fill: 'hsl(var(--muted-foreground))', fontSize: 11 }}
+                  />
                   <Tooltip
                     contentStyle={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))' }}
                     cursor={{ fill: 'hsl(var(--white)/0.05)' }}
                   />
                   <Bar yAxisId="left" dataKey="vehicles" fill="hsl(var(--primary))" radius={[2, 2, 0, 0]} name="Vehicles" />
                   <Bar yAxisId="right" dataKey="avgSpeed" fill="hsl(var(--success))" radius={[2, 2, 0, 0]} name="Speed (km/h)" />
-                  <Legend />
+                  <Legend verticalAlign="top" align="center" wrapperStyle={{ paddingBottom: '8px' }} />
                 </BarChart>
               </ResponsiveContainer>
             ) : (
@@ -475,21 +480,21 @@ export default function Analytics() {
         </GlassPanel>
 
         {/* Congestion Distribution Pie Chart */}
-        <GlassPanel className="p-6">
+        <GlassPanel className="p-4">
           <h2 className="text-lg font-display font-semibold mb-6 text-white/90 flex items-center gap-2">
             <Activity className="w-5 h-5 text-success" />
             CONGESTION DISTRIBUTION
           </h2>
-          <div className="h-[320px]">
+          <div className="h-[300px]">
             <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
+              <PieChart margin={{ top: 16, right: 72, bottom: 16, left: 72 }}>
                 <Pie
                   data={filteredData}
                   cx="50%"
                   cy="50%"
-                  labelLine={false}
-                  label={({ intersection, percent }) => `${intersection} ${(percent * 100).toFixed(0)}%`}
-                  outerRadius={80}
+                  labelLine
+                  label={renderPieLabel}
+                  outerRadius={70}
                   fill="#8884d8"
                   dataKey="vehicles"
                 >
@@ -497,6 +502,10 @@ export default function Analytics() {
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>
+                <Legend
+                  verticalAlign="bottom"
+                  formatter={(value) => `${value} (Vehicle Share)`}
+                />
                 <Tooltip />
               </PieChart>
             </ResponsiveContainer>
@@ -504,20 +513,40 @@ export default function Analytics() {
         </GlassPanel>
 
         {/* Speed vs Congestion Correlation */}
-        <GlassPanel className="p-6">
+        <GlassPanel className="p-4">
           <h2 className="text-lg font-display font-semibold mb-6 text-white/90 flex items-center gap-2">
             <Brain className="w-5 h-5 text-purple-400" />
             SPEED-CONGESTION ANALYSIS
           </h2>
-          <div className="h-[320px]">
+          <div className="h-[300px]">
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={filteredData}>
+              <AreaChart
+                data={filteredData}
+                margin={{ top: 10, right: 16, left: 8, bottom: 44 }}
+              >
                 <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                <XAxis dataKey="intersection" stroke="hsl(var(--muted-foreground))" fontSize={10} />
-                <YAxis stroke="hsl(var(--muted-foreground))" fontSize={11} />
+                <XAxis
+                  dataKey="intersection"
+                  stroke="hsl(var(--muted-foreground))"
+                  fontSize={10}
+                  padding={{ left: 8, right: 8 }}
+                  label={{
+                    value: 'Intersections',
+                    position: 'insideBottom',
+                    offset: -2,
+                    fill: 'hsl(var(--muted-foreground))',
+                    fontSize: 11,
+                  }}
+                />
+                <YAxis
+                  stroke="hsl(var(--muted-foreground))"
+                  fontSize={11}
+                  label={{ value: 'Value', angle: -90, position: 'insideLeft', fill: 'hsl(var(--muted-foreground))', fontSize: 11 }}
+                />
                 <Tooltip contentStyle={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))' }} />
                 <Area type="monotone" dataKey="congestion" stackId="1" stroke="hsl(var(--destructive))" fill="hsl(var(--destructive))" fillOpacity={0.6} name="Congestion %" />
                 <Area type="monotone" dataKey="avgSpeed" stackId="2" stroke="hsl(var(--success))" fill="hsl(var(--success))" fillOpacity={0.6} name="Speed km/h" />
+                <Legend verticalAlign="top" />
               </AreaChart>
             </ResponsiveContainer>
           </div>

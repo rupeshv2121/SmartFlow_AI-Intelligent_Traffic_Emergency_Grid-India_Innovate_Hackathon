@@ -174,3 +174,10 @@
 .animate-scanline {
   animation: scanline 4s linear infinite;
 }
+
+/* Dark background for Analytics intersection dropdown (including its options) */
+.analytics-intersection-select,
+.analytics-intersection-select option {
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+}
