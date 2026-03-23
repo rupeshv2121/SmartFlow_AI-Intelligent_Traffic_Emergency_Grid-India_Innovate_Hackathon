@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Github, Linkedin, Mail, ExternalLink } from 'lucide-react';
+import { ExternalLink, Github, Linkedin, Mail } from 'lucide-react';
 
 export function Footer() {
   return (
@@ -103,8 +103,8 @@ export function Footer() {
             className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-slate-400"
           >
             <p>
-              © 2025 Smart Traffic. Built with{' '}
-              <span className="text-sky-400">AI & Innovation</span>.
+              © 2025 Smart Traffic. Built by{' '}
+              <span className="text-sky-400">Commit & Conquer Team</span>.
             </p>
             <div className="flex gap-6">
               <a href="#" className="hover:text-sky-400 transition-colors">

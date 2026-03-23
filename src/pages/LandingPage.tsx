@@ -8,6 +8,7 @@ import { Innovation } from '../components/landing/sections/Innovation';
 import { Metrics } from '../components/landing/sections/Metrics';
 import { Problem } from '../components/landing/sections/Problem';
 import { Solution } from '../components/landing/sections/Solution';
+import { Team } from '../components/landing/sections/Team';
 import { UseCases } from '../components/landing/sections/UseCases';
 
 export const metadata = {
@@ -35,6 +36,7 @@ export default function Home() {
       <Comparison />
       <UseCases />
       <Innovation />
+      <Team />
       <CTA />
       <Footer />
     </main>
