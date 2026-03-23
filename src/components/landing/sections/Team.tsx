@@ -1,8 +1,8 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { ScrollReveal } from '../ScrollReveal';
 import bhomikVarshneyImage from '../../../assets/bhomik-varshney.jpg';
+import { ScrollReveal } from '../ScrollReveal';
 
 const teamMembers = [
   {
@@ -67,7 +67,7 @@ export function Team() {
                 <img
                   src={member.avatar}
                   alt={`Avatar of ${member.name}`}
-                  className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-300"
+                  className="w-full h-full object-cover group-hover:grayscale-0 transition-all duration-300"
                 />
               </div>
               <h3 className="mt-4 text-xl font-bold text-foreground">{member.name}</h3>
