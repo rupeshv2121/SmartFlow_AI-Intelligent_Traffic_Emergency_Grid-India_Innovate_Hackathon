@@ -91,7 +91,7 @@ const OUTGOING_LANES = [-3, -1];
 
 const VEHICLE_CONFIG: Record<VehicleType, { speed: number; length: number; width: number }> = {
   car: { speed: 0.082, length: 1.9, width: 1 },
-  bus: { speed: 0.062, length: 2.8, width: 1.2 },
+  auto: { speed: 0.062, length: 2.8, width: 1.2 },
   bike: { speed: 0.102, length: 1.2, width: 0.6 },
   ambulance: { speed: 0.124, length: 2, width: 1 },
 };
@@ -168,7 +168,7 @@ const TrafficSimContext = createContext<TrafficSimContextValue | null>(null);
 function randomVehicleType(): VehicleType {
   const n = Math.random();
   if (n < 0.01) return "ambulance";
-  if (n < 0.80) return "bus";
+  if (n < 0.80) return "auto";
   if (n < 0.10) return "bike";
   return "car";
 }

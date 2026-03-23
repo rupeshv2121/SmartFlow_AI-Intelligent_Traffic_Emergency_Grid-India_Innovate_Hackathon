@@ -17,12 +17,15 @@ const VEHICLE_CLASSES: Array<{
   color: string;
   sizeHint: string;
   detectorClassId: number;
+  // High-level vehicle category used for AI model description (NORMAL / EMERGENCY)
+  vehicleType: "NORMAL" | "EMERGENCY";
   icon: typeof CarFront;
 }> = [
-  { type: "car", label: "Car", color: "#4b5563", sizeHint: "medium", detectorClassId: 0, icon: CarFront },
-  { type: "bus", label: "Bus", color: "#d97706", sizeHint: "large", detectorClassId: 1, icon: Bus },
-  { type: "bike", label: "Bike", color: "#374151", sizeHint: "small", detectorClassId: 2, icon: Bike },
-  { type: "ambulance", label: "Ambulance", color: "#f3f4f6", sizeHint: "medium", detectorClassId: 3, icon: Ambulance },
+  { type: "car", label: "Car", color: "#4b5563", sizeHint: "medium", detectorClassId: 0, vehicleType: "NORMAL", icon: CarFront },
+  // Auto-rickshaw vehicle type
+  { type: "auto", label: "Auto", color: "#d97706", sizeHint: "medium", detectorClassId: 1, vehicleType: "NORMAL", icon: Bus },
+  { type: "bike", label: "Bike", color: "#374151", sizeHint: "small", detectorClassId: 2, vehicleType: "NORMAL", icon: Bike },
+  { type: "ambulance", label: "Ambulance", color: "#f3f4f6", sizeHint: "medium", detectorClassId: 3, vehicleType: "EMERGENCY", icon: Ambulance },
 ];
 
 function VehiclePreviewMesh({ type }: { type: VehicleType }) {
@@ -37,8 +40,8 @@ function VehiclePreviewMesh({ type }: { type: VehicleType }) {
       return <RealisticBike position={[0, -0.13, 0]} color={0x374151} scale={0.75} animated />;
     case "ambulance":
       return <RealisticAmbulance position={[0, -0.21, 0]} scale={0.45} animated />;
-    case "bus":
-      // Bus class uses the updated 3D auto-rickshaw model used in simulation scenes.
+    case "auto":
+      // Auto class uses the updated 3D auto-rickshaw model used in simulation scenes.
       return <RealisticAuto position={[0, -0.17, 0]} color={0xd97706} scale={0.65} animated />;
     default:
       return <RealisticCar position={[0, -0.2, 0]} color={0x4b5563} scale={0.5} animated />;
@@ -95,6 +98,7 @@ export default function Dataset() {
       classes: VEHICLE_CLASSES.map((cls) => ({
         classId: cls.detectorClassId,
         type: cls.type,
+        vehicleType: cls.vehicleType,
         label: cls.label,
         displayColor: cls.color,
         sizeHint: cls.sizeHint,
@@ -142,7 +146,7 @@ export default function Dataset() {
                 </span>
               </div>
               <div className="space-y-1.5 text-sm font-mono text-muted-foreground">
-                <div>Type: {cls.type}</div>
+                <div>Type: {cls.vehicleType}</div>
                 <div>Size: {cls.sizeHint}</div>
                 <div className="text-foreground">Live Samples: {cls.count}</div>
               </div>

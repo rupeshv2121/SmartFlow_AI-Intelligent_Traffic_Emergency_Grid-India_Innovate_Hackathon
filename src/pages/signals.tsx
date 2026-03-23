@@ -115,7 +115,6 @@ export default function Signals() {
                   <th className="pb-4 font-medium pl-2">LANE</th>
                   <th className="pb-4 font-medium">LIGHT</th>
                   <th className="pb-4 font-medium">VEHICLES</th>
-                  <th className="pb-4 font-medium">QUEUE</th>
                   <th className="pb-4 font-medium">SIGNAL TIME</th>
                   <th className="pb-4 font-medium">WAIT TIME</th>
                   <th className="pb-4 font-medium">STATUS</th>
@@ -127,7 +126,7 @@ export default function Signals() {
                     "border-b border-border/30 hover:bg-white/5 transition-colors",
                     sig.signal === 'green' && "bg-success/5"
                   )}>
-                    <td className="py-4 pl-2">
+                    <td className="py-5 pl-2">
                       <div className="font-medium text-white flex items-center gap-2">
                         {sig.lane}
                         {sig.signal === 'green' && (
@@ -138,11 +137,17 @@ export default function Signals() {
                         Throughput: {sig.throughput}v
                       </div>
                     </td>
-                    <td className="py-4">
-                      <TrafficLight phase={sig.signal} size="sm" horizontal />
+                    <td className="py-5 pr-4">
+                      <TrafficLight
+                        phase={sig.signal}
+                        size="xs"
+                        horizontal
+                        className="rounded-lg mr-2"
+                      />
                     </td>
-                    <td className="py-4">
+                    <td className="py-5">
                       <div className="flex items-center gap-2">
+                        <span className="text-xs text-white font-mono font-bold">{sig.vehicles}</span>
                         <span className={cn(
                           "px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase",
                           sig.density === 'high' ? "bg-destructive/20 text-destructive border border-destructive/30" :
@@ -151,25 +156,9 @@ export default function Signals() {
                         )}>
                           {sig.density}
                         </span>
-                        <span className="text-xs text-white font-mono font-bold">{sig.vehicles}v</span>
                       </div>
                     </td>
-                    <td className="py-4">
-                      <div className="flex items-center gap-1">
-                        <div className="w-16 bg-black/50 rounded-full h-1.5 overflow-hidden border border-white/5">
-                          <div
-                            className={cn(
-                              "h-full transition-all",
-                              sig.queueLength >= 8 ? "bg-destructive" :
-                              sig.queueLength >= 4 ? "bg-warning" : "bg-success"
-                            )}
-                            style={{ width: `${Math.min(100, (sig.queueLength / 10) * 100)}%` }}
-                          />
-                        </div>
-                        <span className="text-xs text-muted-foreground font-mono">{sig.queueLength}</span>
-                      </div>
-                    </td>
-                    <td className="py-4">
+                    <td className="py-5">
                       <div className="space-y-1">
                         <div className={cn(
                           "text-xs font-mono font-bold",
@@ -189,7 +178,7 @@ export default function Signals() {
                         )}
                       </div>
                     </td>
-                    <td className="py-4">
+                    <td className="py-5">
                       <div className={cn(
                         "text-xs font-mono font-bold",
                         sig.waitingTime > 120 ? "text-destructive" :
@@ -198,7 +187,7 @@ export default function Signals() {
                         {sig.waitingTime}s
                       </div>
                     </td>
-                    <td className="py-4">
+                    <td className="py-5">
                       {sig.ambulanceDetected && (
                         <div className="px-2 py-0.5 rounded border border-destructive/50 bg-destructive/20 text-destructive text-[10px] font-mono font-bold flex items-center gap-1 w-[80%]">
                           <AlertTriangle className="w-3 h-3" />
@@ -247,21 +236,47 @@ export default function Signals() {
                   congestion: Math.round((sig.vehicles / 20) * 100),
                 }))}
                 layout="vertical"
-                margin={{ top: 0, right: 0, left: 0, bottom: 0 }}
+                // Pull chart content closer to the left edge (reduce padding)
+                margin={{ top: 0, right: 0, left: -35, bottom: 0 }}
               >
                 <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" horizontal={false} />
-                <XAxis type="number" hide />
+                <XAxis
+                  type="number"
+                  domain={[0, 100]}
+                  tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 10 }}
+                  label={{
+                    value: "Congestion Index (%)",
+                    position: "insideBottomRight",
+                    offset: -10,
+                    fill: "hsl(var(--muted-foreground))",
+                    fontSize: 11,
+                  }}
+                />
                 <YAxis
                   dataKey="lane"
                   type="category"
                   axisLine={false}
                   tickLine={false}
                   tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 11 }}
+                  label={{
+                    value: "Lane",
+                    angle: -90,
+                    position: "insideLeft",
+                    offset: -40,
+                    fill: "hsl(var(--muted-foreground))",
+                    fontSize: 11,
+                  }}
                   width={80}
                 />
                 <RechartsTooltip
                   cursor={{ fill: 'hsl(var(--white)/0.05)' }}
-                  contentStyle={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))' }}
+                  contentStyle={{
+                    backgroundColor: 'rgba(15,23,42,0.95)',
+                    borderColor: 'hsl(var(--border))',
+                    color: 'hsl(var(--foreground))',
+                  }}
+                  labelStyle={{ color: 'hsl(var(--muted-foreground))', fontSize: 11 }}
+                  itemStyle={{ color: 'hsl(var(--foreground))', fontSize: 11 }}
                 />
                 <Bar dataKey="congestion" radius={[0, 4, 4, 0]} animationDuration={500}>
                   {liveSignals.map((sig, index) => {

@@ -76,7 +76,7 @@ const VEHICLE_STYLE: Record<
     wheelFrontZ: 0.43,
     wheelRearZ: -0.38,
   },
-  bus: {
+  auto: {
     bodyColor: "#d97706",
     roofColor: "#92400e",
     accentColor: "#111827",
@@ -350,8 +350,8 @@ function VehicleMesh({ vehicle, simplified = false }: { vehicle: SimVehicle; sim
         />
       );
 
-    case "bus":
-      // Map bus type to auto-rickshaw
+    case "auto":
+      // Map auto type to auto-rickshaw
       return (
         <RealisticAuto
           position={[0, -0.38, 0]}

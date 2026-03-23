@@ -23,7 +23,7 @@ function getVehicleIcon(type: string) {
       return <Bike className="w-3 h-3" />;
     case "ambulance":
       return <Ambulance className="w-3 h-3" />;
-    case "bus":
+    case "auto":
       return <Bus className="w-3 h-3" />;
     default:
       return <Car className="w-3 h-3" />;

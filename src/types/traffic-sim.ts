@@ -1,4 +1,4 @@
-export type VehicleType = "car" | "bus" | "bike" | "ambulance";
+export type VehicleType = "car" | "auto" | "bike" | "ambulance";
 
 export type SignalState = "red" | "yellow" | "green";
 export type SignalControllerPhase = "green" | "yellow";
