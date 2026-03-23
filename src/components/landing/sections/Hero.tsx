@@ -8,7 +8,7 @@ import { GlowButton } from '../GlowButton';
 
 export function Hero() {
   return (
-    <section className="relative min-h-screen flex items-center justify-center pt-20 pb-20 px-4 overflow-hidden">
+    <section className="relative min-h-screen flex items-center justify-center pt-12 pb-20 px-4 overflow-hidden">
       <FloatingParticles />
       
       {/* Gradient orbs background */}

@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { ArrowRight, Github } from 'lucide-react';
+import { Link } from 'wouter';
 import { GlowButton } from '../GlowButton';
 import { ScrollReveal } from '../ScrollReveal';
 
@@ -21,10 +22,10 @@ export function CTA() {
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.7 }}
-            className="text-5xl md:text-6xl font-bold text-white leading-tight"
+            className="text-5xl md:text-6xl font-bold text-foreground leading-tight"
           >
             Transform Traffic Chaos into
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 via-cyan-400 to-purple-400">
+            <span className="text-primary">
               {' '}
               Intelligent Flow
             </span>
@@ -35,7 +36,7 @@ export function CTA() {
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.7, delay: 0.1 }}
-            className="text-xl text-slate-300 max-w-2xl mx-auto leading-relaxed"
+            className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed"
           >
             Join the future of urban traffic management. Deploy AI-powered traffic
             optimization in your city and see the impact immediately.
@@ -49,14 +50,19 @@ export function CTA() {
             transition={{ duration: 0.7, delay: 0.2 }}
             className="flex flex-col sm:flex-row justify-center gap-4 pt-8"
           >
+            <Link to='/dashboard'>
             <GlowButton variant="primary" className="text-lg px-8 py-4">
-              Schedule Demo
+              Get Started
               <ArrowRight className="w-5 h-5 ml-2 inline" />
             </GlowButton>
+            </Link>
+
+            <a href='https://github.com/AustinVarshney/SmartFlow_AI-Intelligent_Traffic_Emergency_Grid-India_Innovate_Hackathon' target="_blank" rel="noopener noreferrer">
             <GlowButton variant="secondary" className="text-lg px-8 py-4">
               Explore GitHub
               <Github className="w-5 h-5 ml-2 inline" />
             </GlowButton>
+            </a>
           </motion.div>
 
           {/* Trust statement */}
@@ -65,7 +71,7 @@ export function CTA() {
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.7, delay: 0.3 }}
-            className="text-slate-400 text-sm pt-8"
+            className="text-muted-foreground text-sm pt-8"
           >
             Trusted by leading municipalities and smart city initiatives worldwide.
           </motion.p>
