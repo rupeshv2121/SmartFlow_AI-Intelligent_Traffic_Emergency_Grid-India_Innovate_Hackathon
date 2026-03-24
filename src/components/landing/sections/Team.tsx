@@ -12,7 +12,7 @@ const teamMembers = [
   },
   {
     name: 'Austin Varshney',
-    role: 'FUll Stack Developer',
+    role: 'Full Stack Developer',
     avatar: '/placeholder-user.jpg',
   },
   {
@@ -37,10 +37,10 @@ export function Team() {
     <section className="relative py-20 px-4">
       <div className="relative z-10 max-w-6xl mx-auto">
         <ScrollReveal className="text-center space-y-4">
-          <h2 className="text-4xl md:text-5xl font-bold text-foreground">
+          <h2 className="text-4xl md:text-5xl font-bold text-slate-200">
             Meet the Innovators
           </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-lg text-slate-400 max-w-2xl mx-auto">
             A passionate team of developers and thinkers dedicated to solving
             real-world traffic challenges with cutting-edge technology.
           </p>
@@ -51,7 +51,7 @@ export function Team() {
           whileInView="visible"
           viewport={{ once: true, amount: 0.2 }}
           transition={{ staggerChildren: 0.1 }}
-          className="flex flex-wrap justify-center gap-20 pt-16"
+          className="flex flex-wrap justify-center gap-18 pt-16"
         >
           {teamMembers.map((member, i) => (
             <motion.div
@@ -63,15 +63,15 @@ export function Team() {
               transition={{ duration: 0.5 }}
               className="group text-center"
             >
-              <div className="relative w-40 h-40 mx-auto rounded-full overflow-hidden border-4 border-transparent group-hover:border-primary transition-all duration-300 transform group-hover:scale-105">
+              <div className="relative w-40 h-40 mx-auto rounded-full overflow-hidden border-4 border-white/10 group-hover:border-cyan-400/50 transition-all duration-300 transform group-hover:scale-105 shadow-[0_12px_26px_rgba(2,6,23,0.45)] ">
                 <img
                   src={member.avatar}
                   alt={`Avatar of ${member.name}`}
                   className="w-full h-full object-cover group-hover:grayscale-0 transition-all duration-300"
                 />
               </div>
-              <h3 className="mt-4 text-xl font-bold text-foreground">{member.name}</h3>
-              <p className="text-primary">{member.role}</p>
+              <h3 className="mt-4 text-xl font-bold text-slate-200">{member.name}</h3>
+              <p className="text-cyan-300">{member.role}</p>
             </motion.div>
           ))}
         </motion.div>

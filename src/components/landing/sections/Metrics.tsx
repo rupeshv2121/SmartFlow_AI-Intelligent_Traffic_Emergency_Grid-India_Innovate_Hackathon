@@ -38,11 +38,11 @@ const metrics = [
 
 export function Metrics() {
   return (
-    <section className="relative py-20 px-4 bg-gradient-to-b from-slate-900 to-slate-950">
+    <section className="relative py-20 px-4">
       <div className="max-w-7xl mx-auto">
         {/* Section header */}
         <ScrollReveal className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
+          <h2 className="text-4xl md:text-5xl font-bold text-slate-200 mb-6">
             Impact & Metrics
           </h2>
           <p className="text-xl text-slate-400 max-w-2xl mx-auto">
@@ -61,23 +61,23 @@ export function Metrics() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: '-50px' }}
                 transition={{ duration: 0.6, delay: i * 0.1 }}
-                className="group glass-effect rounded-xl p-8 border-sky-500/30 hover:border-sky-400/50 transition-all duration-300 hover:shadow-lg hover:shadow-sky-500/20"
+                className="group glass-effect rounded-xl p-8 transition-all duration-300 hover:shadow-[0_16px_30px_rgba(2,6,23,0.5)] hover:border-cyan-400/35"
               >
                 <div className="space-y-4">
-                  <div className="p-3 rounded-lg bg-sky-500/20 text-sky-400 w-fit group-hover:bg-sky-500/30 transition-all">
+                  <div className="p-3 rounded-lg bg-slate-800/80 border border-cyan-400/25 text-cyan-300 w-fit group-hover:bg-slate-800 transition-all">
                     <Icon className="w-6 h-6" />
                   </div>
 
                   {/* Animated number */}
                   <div className="space-y-1">
-                    <div className="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-cyan-400">
+                    <div className="text-5xl font-bold text-cyan-300">
                       <AnimatedCounter
                         end={metric.end}
                         duration={2.5}
                         suffix={metric.suffix}
                       />
                     </div>
-                    <div className="text-lg font-semibold text-white">
+                    <div className="text-lg font-semibold text-slate-200">
                       {metric.label}
                     </div>
                   </div>
@@ -97,12 +97,12 @@ export function Metrics() {
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.5 }}
-          className="mt-16 text-center p-8 rounded-xl glass-effect border-purple-500/30"
+          className="mt-16 text-center p-8 rounded-xl glass-effect border-white/10"
         >
-          <p className="text-2xl font-bold text-white mb-2">
+          <p className="text-2xl font-bold text-slate-200 mb-2">
             Smart Cities Deserve Smart Traffic
           </p>
-          <p className="text-slate-300 max-w-2xl mx-auto">
+          <p className="text-slate-400 max-w-2xl mx-auto">
             Our AI system turns every intersection into an intelligent decision point,
             creating safer, faster, and more efficient urban transportation.
           </p>

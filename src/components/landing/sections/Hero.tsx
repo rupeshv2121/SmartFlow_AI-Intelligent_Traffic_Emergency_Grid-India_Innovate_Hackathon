@@ -11,10 +11,10 @@ export function Hero() {
     <section className="relative min-h-screen flex items-center justify-center pt-12 pb-20 px-4 overflow-hidden">
       <FloatingParticles />
       
-      {/* Gradient orbs background */}
+      {/* Ambient glow background */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-sky-500/10 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-40 right-10 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute top-20 left-10 w-72 h-72 bg-cyan-400/8 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-40 right-10 w-96 h-96 bg-cyan-300/6 rounded-full blur-3xl animate-pulse" />
       </div>
 
       <div className="relative z-10 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
@@ -30,10 +30,10 @@ export function Hero() {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full glow-border-blue"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full glow-border bg-slate-900/60"
           >
-            <Activity className="w-4 h-4 text-sky-400" />
-            <span className="text-sm font-medium text-sky-400">Hackathon Innovation</span>
+            <Activity className="w-4 h-4 text-cyan-300" />
+            <span className="text-sm font-medium text-cyan-300">Hackathon Innovation</span>
           </motion.div>
 
           {/* Main headline */}
@@ -42,9 +42,9 @@ export function Hero() {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8, delay: 0.3 }}
           >
-            <h1 className="text-5xl md:text-7xl font-bold text-white leading-tight">
+            <h1 className="text-5xl md:text-7xl font-bold text-slate-200 leading-tight">
               Reinventing{' '}
-              <span className="text-transparent bg-clip-text bg-linear-to-r from-sky-400 to-cyan-400">
+              <span className="text-cyan-300">
                 Urban Traffic
               </span>{' '}
               with AI
@@ -56,7 +56,7 @@ export function Hero() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8, delay: 0.4 }}
-            className="text-xl text-slate-300 max-w-xl leading-relaxed"
+            className="text-xl text-slate-400 max-w-xl leading-relaxed"
           >
             Transform chaotic traffic flow into intelligent, adaptive systems using real-time AI analysis. Reduce congestion by 35%, accelerate emergency response, and enable smart city infrastructure.
           </motion.p>
@@ -84,18 +84,18 @@ export function Hero() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8, delay: 0.6 }}
-            className="grid grid-cols-3 gap-4 pt-8 border-t border-slate-700"
+            className="grid grid-cols-3 gap-4 pt-8 border-t border-white/10"
           >
             <div>
-              <div className="text-2xl font-bold text-sky-400">35%</div>
+              <div className="text-2xl font-bold text-cyan-300">35%</div>
               <div className="text-sm text-slate-400">Less Congestion</div>
             </div>
             <div>
-              <div className="text-2xl font-bold text-cyan-400">50%</div>
+              <div className="text-2xl font-bold text-slate-100">50%</div>
               <div className="text-sm text-slate-400">Faster Response</div>
             </div>
             <div>
-              <div className="text-2xl font-bold text-purple-400">24/7</div>
+              <div className="text-2xl font-bold text-cyan-200">24/7</div>
               <div className="text-sm text-slate-400">Real-Time</div>
             </div>
           </motion.div>
@@ -108,11 +108,11 @@ export function Hero() {
           transition={{ duration: 0.8, delay: 0.3 }}
           className="relative"
         >
-          <div className="glass-effect rounded-2xl p-8 space-y-6 border-cyan-500/30 glow-border-blue">
+          <div className="glass-effect rounded-2xl p-8 space-y-6 glow-border-blue">
             {/* Dashboard header */}
             <div className="flex items-center justify-between">
-              <h3 className="text-xl font-semibold text-white">Live Traffic Control</h3>
-              <div className="w-3 h-3 rounded-full bg-green-500 animate-pulse" />
+              <h3 className="text-xl font-semibold text-slate-100">Live Traffic Control</h3>
+              <div className="w-3 h-3 rounded-full bg-cyan-300 animate-pulse" />
             </div>
 
             {/* Lane Status */}
@@ -122,14 +122,14 @@ export function Hero() {
                 <div key={i} className="space-y-1">
                   <div className="flex justify-between text-sm">
                     <span className="text-slate-300">{lane}</span>
-                    <span className="text-sky-400">{70 - i * 20}%</span>
+                    <span className="text-cyan-300">{70 - i * 20}%</span>
                   </div>
-                  <div className="h-2 bg-slate-700 rounded-full overflow-hidden">
+                  <div className="h-2 bg-slate-700/70 rounded-full overflow-hidden">
                     <motion.div
                       initial={{ width: 0 }}
                       animate={{ width: `${70 - i * 20}%` }}
                       transition={{ duration: 1.5, delay: 0.5 + i * 0.2 }}
-                      className="h-full bg-linear-to-r from-sky-500 to-cyan-500"
+                      className="h-full bg-cyan-400"
                     />
                   </div>
                 </div>
@@ -137,17 +137,17 @@ export function Hero() {
             </div>
 
             {/* Signal Status */}
-            <div className="grid grid-cols-3 gap-4 pt-4 border-t border-slate-700">
+            <div className="grid grid-cols-3 gap-4 pt-4 border-t border-white/10">
               {['Signal 1', 'Signal 2', 'Signal 3'].map((signal, i) => (
                 <div
                   key={i}
-                  className="p-3 rounded-lg bg-slate-700/50 text-center"
+                  className="p-3 rounded-lg bg-slate-800/70 border border-white/8 text-center"
                 >
                   <div className="text-xs text-slate-400 mb-2">{signal}</div>
                   <div
                     className="text-lg font-bold"
                     style={{
-                      color: i === 0 ? '#22c55e' : i === 1 ? '#eab308' : '#ef4444',
+                      color: i === 0 ? '#22D3EE' : '#64748B',
                     }}
                   >
                     {i === 0 ? '●' : i === 1 ? '●' : '●'}
@@ -157,20 +157,19 @@ export function Hero() {
             </div>
 
             {/* Stats footer */}
-            <div className="grid grid-cols-2 gap-4 pt-4 border-t border-slate-700">
-              <div className="p-3 rounded-lg bg-sky-500/10 border border-sky-500/30">
-                <div className="text-2xl font-bold text-sky-400">247</div>
+            <div className="grid grid-cols-2 gap-4 pt-4 border-t border-white/10">
+              <div className="p-3 rounded-lg bg-slate-800/70 border border-white/10 shadow-[0_10px_24px_rgba(2,6,23,0.45)]">
+                <div className="text-2xl font-bold text-cyan-300">247</div>
                 <div className="text-xs text-slate-400">Vehicles Detected</div>
               </div>
-              <div className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/30">
-                <div className="text-2xl font-bold text-purple-400">12s</div>
+              <div className="p-3 rounded-lg bg-slate-800/70 border border-white/10 shadow-[0_10px_24px_rgba(2,6,23,0.45)]">
+                <div className="text-2xl font-bold text-slate-100">12s</div>
                 <div className="text-xs text-slate-400">Avg Wait Time</div>
               </div>
             </div>
           </div>
 
-          {/* Decorative glow */}
-          <div className="absolute -inset-4 bg-linear-to-r from-sky-500/20 to-purple-500/20 rounded-2xl blur-xl -z-10" />
+          <div className="absolute -inset-3 rounded-2xl border border-cyan-400/10 shadow-[0_0_40px_rgba(34,211,238,0.08)] -z-10" />
         </motion.div>
       </div>
     </section>

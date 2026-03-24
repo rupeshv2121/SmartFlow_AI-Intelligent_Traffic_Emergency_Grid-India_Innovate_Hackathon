@@ -22,7 +22,7 @@ export function GlassCard({
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.6, delay }}
-      whileHover={hover ? { y: -5, boxShadow: '0 0 30px rgba(14, 165, 233, 0.4)' } : {}}
+      whileHover={hover ? { y: -5, boxShadow: '0 14px 30px rgba(2, 6, 23, 0.5), 0 0 0 1px rgba(34, 211, 238, 0.25)' } : {}}
       className={`glass-effect group rounded-xl p-6 transition-all duration-300 ${className}`}
     >
       {children}

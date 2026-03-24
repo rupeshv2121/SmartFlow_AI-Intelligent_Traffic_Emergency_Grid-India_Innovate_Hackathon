@@ -8,11 +8,10 @@ import { ScrollReveal } from '../ScrollReveal';
 
 export function CTA() {
   return (
-    <section className="relative py-20 px-4 bg-gradient-to-b from-slate-950 to-slate-900 overflow-hidden">
-      {/* Background effects */}
+    <section className="relative py-20 px-4 overflow-hidden">
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-1/2 left-1/4 w-96 h-96 bg-sky-500/10 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute top-1/2 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute top-1/2 left-1/4 w-96 h-96 bg-cyan-400/8 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute top-1/2 right-1/4 w-96 h-96 bg-cyan-300/5 rounded-full blur-3xl animate-pulse" />
       </div>
 
       <div className="relative z-10 max-w-4xl mx-auto">
@@ -22,10 +21,10 @@ export function CTA() {
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.7 }}
-            className="text-5xl md:text-6xl font-bold text-foreground leading-tight"
+            className="text-5xl md:text-6xl font-bold text-slate-200 leading-tight"
           >
             Transform Traffic Chaos into
-            <span className="text-primary">
+            <span className="text-cyan-300">
               {' '}
               Intelligent Flow
             </span>
@@ -36,7 +35,7 @@ export function CTA() {
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.7, delay: 0.1 }}
-            className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed"
+            className="text-xl text-slate-400 max-w-2xl mx-auto leading-relaxed"
           >
             Join the future of urban traffic management. Deploy AI-powered traffic
             optimization in your city and see the impact immediately.
@@ -71,7 +70,7 @@ export function CTA() {
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.7, delay: 0.3 }}
-            className="text-muted-foreground text-sm pt-8"
+            className="text-slate-400 text-sm pt-8"
           >
             Trusted by leading municipalities and smart city initiatives worldwide.
           </motion.p>

@@ -52,10 +52,10 @@ const useCases = [
 
 export function UseCases() {
   return (
-    <section className="relative py-20 px-4 bg-gradient-to-b from-slate-950 to-slate-900">
+    <section className="relative py-20 px-4">
       <div className="max-w-7xl mx-auto">
         <ScrollReveal className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
+          <h2 className="text-4xl md:text-5xl font-bold text-slate-200 mb-6">
             Who Benefits
           </h2>
           <p className="text-xl text-slate-400 max-w-2xl mx-auto">
@@ -69,14 +69,14 @@ export function UseCases() {
             return (
               <GlassCard key={i} delay={i * 0.08}>
                 <div className="space-y-4">
-                  <div className="p-4 rounded-lg bg-gradient-to-br from-purple-500/20 to-pink-500/20 w-fit">
-                    <Icon className="w-6 h-6 text-purple-400" />
+                  <div className="p-4 rounded-lg bg-slate-800/80 border border-cyan-400/25 w-fit shadow-[0_0_18px_rgba(34,211,238,0.1)]">
+                    <Icon className="w-6 h-6 text-cyan-300" />
                   </div>
                   <div>
-                    <h3 className="text-lg font-semibold text-white mb-2">
+                    <h3 className="text-lg font-semibold text-slate-200 mb-2">
                       {useCase.title}
                     </h3>
-                    <p className="text-slate-300 text-sm leading-relaxed">
+                    <p className="text-slate-400 text-sm leading-relaxed">
                       {useCase.description}
                     </p>
                   </div>

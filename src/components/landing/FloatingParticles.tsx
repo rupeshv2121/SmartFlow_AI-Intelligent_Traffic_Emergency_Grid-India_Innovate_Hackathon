@@ -18,7 +18,7 @@ export function FloatingParticles() {
     delay: Math.random() * 5,
     size: 2 + Math.random() * 4,
     left: Math.random() * 100,
-    opacity: 0.1 + Math.random() * 0.3,
+    opacity: 0.04 + Math.random() * 0.16,
   }));
 
   if (!isClient) return null;
@@ -28,7 +28,7 @@ export function FloatingParticles() {
       {particles.map((particle) => (
         <motion.div
           key={particle.id}
-          className="absolute rounded-full bg-sky-400"
+          className="absolute rounded-full bg-cyan-300"
           style={{
             width: particle.size,
             height: particle.size,
