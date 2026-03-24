@@ -44,13 +44,13 @@ const problems = [
 
 export function Problem() {
   return (
-    <section className="relative py-20 px-4 bg-gradient-to-b from-slate-950 to-slate-900">
+    <section className="relative py-20 px-4">
       <div className="max-w-7xl mx-auto">
         {/* Section header */}
         <ScrollReveal className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
+          <h2 className="text-4xl md:text-5xl font-bold text-slate-200 mb-6">
             Why Current Systems
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-orange-400">
+            <span className="text-cyan-300">
               {' '}
               Fail
             </span>
@@ -68,14 +68,14 @@ export function Problem() {
             return (
               <GlassCard key={i} delay={i * 0.1}>
                 <div className="flex items-start gap-4">
-                  <div className="p-3 rounded-lg bg-red-500/20 text-red-400 flex-shrink-0">
+                  <div className="p-3 rounded-lg bg-slate-800/80 border border-cyan-400/25 text-cyan-300 flex-shrink-0 shadow-[0_0_18px_rgba(34,211,238,0.1)]">
                     <Icon className="w-6 h-6" />
                   </div>
                   <div>
-                    <h3 className="text-lg font-semibold text-white mb-2">
+                    <h3 className="text-lg font-semibold text-slate-200 mb-2">
                       {problem.title}
                     </h3>
-                    <p className="text-slate-300 text-sm leading-relaxed">
+                    <p className="text-slate-400 text-sm leading-relaxed">
                       {problem.description}
                     </p>
                   </div>

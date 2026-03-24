@@ -52,13 +52,13 @@ const features = [
 
 export function Solution() {
   return (
-    <section className="relative py-20 px-4 bg-gradient-to-b from-slate-900 to-slate-950">
+    <section className="relative py-20 px-4">
       <div className="max-w-7xl mx-auto">
         {/* Section header */}
         <ScrollReveal className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
+          <h2 className="text-4xl md:text-5xl font-bold text-slate-200 mb-6">
             The AI-Powered
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-cyan-400">
+            <span className="text-cyan-300">
               {' '}
               Answer
             </span>
@@ -77,17 +77,17 @@ export function Solution() {
               <GlassCard
                 key={i}
                 delay={i * 0.1}
-                className="group hover:glow-border-blue"
+                className="group hover:glow-border"
               >
                 <div className="space-y-4">
-                  <div className="p-3 rounded-lg bg-sky-500/20 text-sky-400 w-fit group-hover:bg-sky-500/30 group-hover:shadow-lg group-hover:shadow-sky-500/20 transition-all">
+                  <div className="p-3 rounded-lg bg-slate-800/80 border border-cyan-400/25 text-cyan-300 w-fit group-hover:bg-slate-800 group-hover:shadow-[0_0_18px_rgba(34,211,238,0.14)] transition-all">
                     <Icon className="w-6 h-6" />
                   </div>
                   <div>
-                    <h3 className="text-lg font-semibold text-white mb-2">
+                    <h3 className="text-lg font-semibold text-slate-200 mb-2">
                       {feature.title}
                     </h3>
-                    <p className="text-slate-300 text-sm leading-relaxed">
+                    <p className="text-slate-400 text-sm leading-relaxed">
                       {feature.description}
                     </p>
                   </div>

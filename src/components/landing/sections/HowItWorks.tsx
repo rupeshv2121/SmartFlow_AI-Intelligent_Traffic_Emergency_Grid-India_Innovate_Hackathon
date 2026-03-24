@@ -46,13 +46,13 @@ const steps = [
 
 export function HowItWorks() {
   return (
-    <section className="relative py-20 px-4 bg-gradient-to-b from-slate-950 to-slate-900">
+    <section className="relative py-20 px-4">
       <div className="max-w-7xl mx-auto">
         {/* Section header */}
         <ScrollReveal className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
+          <h2 className="text-4xl md:text-5xl font-bold text-slate-200 mb-6">
             The Intelligent
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">
+            <span className="text-cyan-300">
               {' '}
               Pipeline
             </span>
@@ -65,7 +65,7 @@ export function HowItWorks() {
         {/* Timeline */}
         <div className="relative">
           {/* Connecting line */}
-          <div className="hidden lg:block absolute top-24 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-sky-500/50 to-transparent" />
+          <div className="hidden lg:block absolute top-24 left-0 right-0 h-1 bg-linear-to-r from-transparent via-cyan-400/35 to-transparent" />
 
           {/* Steps grid */}
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -86,7 +86,7 @@ export function HowItWorks() {
                     whileInView={{ scale: 1 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.6, delay: i * 0.1 + 0.2 }}
-                    className="absolute -top-12 left-0 w-12 h-12 rounded-full bg-gradient-to-r from-sky-500 to-cyan-500 text-white font-bold text-lg flex items-center justify-center border-4 border-slate-950"
+                    className="absolute -top-12 left-0 w-12 h-12 rounded-full bg-slate-900 text-cyan-300 font-bold text-lg flex items-center justify-center border-4 border-slate-950 glow-border"
                   >
                     {i + 1}
                   </motion.div>
@@ -94,14 +94,14 @@ export function HowItWorks() {
                   {/* Card */}
                   <div className="glass-effect rounded-xl p-8 h-full pt-16">
                     <div className="flex items-start gap-4 mb-4">
-                      <div className="p-3 rounded-lg bg-purple-500/20 text-purple-400 flex-shrink-0">
+                      <div className="p-3 rounded-lg bg-slate-800/80 border border-cyan-400/25 text-cyan-300 flex-shrink-0">
                         <Icon className="w-6 h-6" />
                       </div>
                       <div>
-                        <h3 className="text-xl font-semibold text-white mb-2">
+                        <h3 className="text-xl font-semibold text-slate-200 mb-2">
                           {step.title}
                         </h3>
-                        <p className="text-slate-300 text-sm leading-relaxed">
+                        <p className="text-slate-400 text-sm leading-relaxed">
                           {step.description}
                         </p>
                       </div>
@@ -121,7 +121,7 @@ export function HowItWorks() {
           transition={{ duration: 0.6, delay: 0.6 }}
           className="flex justify-center mt-16"
         >
-          <div className="text-4xl text-sky-400 animate-bounce">↓</div>
+          <div className="text-4xl text-cyan-300 animate-bounce">↓</div>
         </motion.div>
 
         {/* Result statement */}
@@ -130,12 +130,12 @@ export function HowItWorks() {
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.7 }}
-          className="text-center mt-8 p-6 rounded-xl glass-effect border-cyan-500/30 glow-border"
+          className="text-center mt-8 p-6 rounded-xl glass-effect glow-border"
         >
-          <p className="text-xl font-semibold text-sky-400">
+          <p className="text-xl font-semibold text-cyan-300">
             Intelligent Traffic Flow Achieved
           </p>
-          <p className="text-slate-300 mt-2">
+          <p className="text-slate-400 mt-2">
             Optimized signal timing, reduced congestion, and faster emergency response.
           </p>
         </motion.div>

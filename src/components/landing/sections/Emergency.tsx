@@ -6,12 +6,12 @@ import { ScrollReveal } from '../ScrollReveal';
 
 export function Emergency() {
   return (
-    <section className="relative py-20 px-4 bg-gradient-to-b from-slate-950 to-slate-900">
+    <section className="relative py-20 px-4">
       <div className="max-w-7xl mx-auto">
         <ScrollReveal className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
+          <h2 className="text-4xl md:text-5xl font-bold text-slate-200 mb-6">
             Emergency Response,
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-orange-400">
+            <span className="text-cyan-300">
               {' '}
               Elevated
             </span>
@@ -29,14 +29,13 @@ export function Emergency() {
           transition={{ duration: 0.7 }}
           className="max-w-2xl mx-auto"
         >
-          <div className="glass-effect rounded-2xl p-12 border-red-500/30 relative overflow-hidden">
-            {/* Animated background glow */}
+          <div className="glass-effect rounded-2xl p-12 border-white/10 relative overflow-hidden">
             <motion.div
               animate={{
                 boxShadow: [
-                  '0 0 40px rgba(239, 68, 68, 0.2)',
-                  '0 0 60px rgba(239, 68, 68, 0.4)',
-                  '0 0 40px rgba(239, 68, 68, 0.2)',
+                  '0 0 24px rgba(34, 211, 238, 0.06)',
+                  '0 0 36px rgba(34, 211, 238, 0.14)',
+                  '0 0 24px rgba(34, 211, 238, 0.06)',
                 ],
               }}
               transition={{ duration: 2, repeat: Infinity }}
@@ -50,14 +49,14 @@ export function Emergency() {
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.1 }}
-                className="flex items-start gap-4 p-4 rounded-lg bg-red-500/10 border border-red-500/30"
+                className="flex items-start gap-4 p-4 rounded-lg bg-slate-800/75 border border-cyan-400/20"
               >
-                <Ambulance className="w-8 h-8 text-red-400 flex-shrink-0 mt-1" />
+                <Ambulance className="w-8 h-8 text-cyan-300 flex-shrink-0 mt-1" />
                 <div>
-                  <h3 className="text-xl font-bold text-red-400 mb-2">
+                  <h3 className="text-xl font-bold text-cyan-300 mb-2">
                     Emergency Vehicle Detected
                   </h3>
-                  <p className="text-slate-300">
+                  <p className="text-slate-400">
                     System identifies ambulance, fire truck, or police vehicle through GPS or CCTV
                     recognition.
                   </p>
@@ -68,7 +67,7 @@ export function Emergency() {
               <motion.div
                 animate={{ y: [0, 8, 0] }}
                 transition={{ duration: 1.5, repeat: Infinity }}
-                className="flex justify-center text-red-400 text-2xl"
+                className="flex justify-center text-cyan-300 text-2xl"
               >
                 ↓
               </motion.div>
@@ -79,14 +78,14 @@ export function Emergency() {
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.2 }}
-                className="flex items-start gap-4 p-4 rounded-lg bg-orange-500/10 border border-orange-500/30"
+                className="flex items-start gap-4 p-4 rounded-lg bg-slate-800/75 border border-cyan-400/20"
               >
-                <AlertTriangle className="w-8 h-8 text-orange-400 flex-shrink-0 mt-1" />
+                <AlertTriangle className="w-8 h-8 text-cyan-300 flex-shrink-0 mt-1" />
                 <div>
-                  <h3 className="text-xl font-bold text-orange-400 mb-2">
+                  <h3 className="text-xl font-bold text-cyan-300 mb-2">
                     Signal Override Activated
                   </h3>
-                  <p className="text-slate-300">
+                  <p className="text-slate-400">
                     AI immediately overrides current signal timing and initiates emergency
                     protocols.
                   </p>
@@ -97,7 +96,7 @@ export function Emergency() {
               <motion.div
                 animate={{ y: [0, 8, 0] }}
                 transition={{ duration: 1.5, repeat: Infinity, delay: 0.5 }}
-                className="flex justify-center text-orange-400 text-2xl"
+                className="flex justify-center text-cyan-300 text-2xl"
               >
                 ↓
               </motion.div>
@@ -108,14 +107,14 @@ export function Emergency() {
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.3 }}
-                className="flex items-start gap-4 p-4 rounded-lg bg-green-500/10 border border-green-500/30"
+                className="flex items-start gap-4 p-4 rounded-lg bg-slate-800/75 border border-cyan-400/20"
               >
-                <MapPin className="w-8 h-8 text-green-400 flex-shrink-0 mt-1" />
+                <MapPin className="w-8 h-8 text-cyan-300 flex-shrink-0 mt-1" />
                 <div>
-                  <h3 className="text-xl font-bold text-green-400 mb-2">
+                  <h3 className="text-xl font-bold text-cyan-300 mb-2">
                     Green Corridor Enabled
                   </h3>
-                  <p className="text-slate-300">
+                  <p className="text-slate-400">
                     Entire route turns green, allowing emergency vehicles to reach their destination
                     50% faster.
                   </p>
@@ -128,12 +127,12 @@ export function Emergency() {
                 whileInView={{ opacity: 1 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.5 }}
-                className="mt-8 p-6 rounded-lg bg-gradient-to-r from-green-500/20 to-sky-500/20 border border-green-500/50"
+                className="mt-8 p-6 rounded-lg bg-slate-800/75 border border-cyan-400/30 shadow-[0_0_24px_rgba(34,211,238,0.08)]"
               >
-                <p className="text-center text-lg font-bold text-white">
-                  Result: <span className="text-green-400">Lifesaving Response Time</span>
+                <p className="text-center text-lg font-bold text-slate-200">
+                  Result: <span className="text-cyan-300">Lifesaving Response Time</span>
                 </p>
-                <p className="text-center text-slate-300 mt-2">
+                <p className="text-center text-slate-400 mt-2">
                   Every second counts in emergencies. Our system ensures maximum efficiency when
                   it matters most.
                 </p>
