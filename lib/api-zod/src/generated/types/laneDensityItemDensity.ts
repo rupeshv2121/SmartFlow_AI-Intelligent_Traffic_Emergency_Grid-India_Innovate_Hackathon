@@ -6,10 +6,10 @@
  * OpenAPI spec version: 0.1.0
  */
 
-export type LaneDensityItemDensity =
-  (typeof LaneDensityItemDensity)[keyof typeof LaneDensityItemDensity];
+export type RoadDensityItemDensity =
+  (typeof RoadDensityItemDensity)[keyof typeof RoadDensityItemDensity];
 
-export const LaneDensityItemDensity = {
+export const RoadDensityItemDensity = {
   low: "low",
   medium: "medium",
   high: "high",

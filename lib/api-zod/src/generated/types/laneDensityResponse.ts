@@ -5,8 +5,8 @@
  * SmartFlow AI Traffic Management API
  * OpenAPI spec version: 0.1.0
  */
-import type { LaneDensityItem } from "./laneDensityItem";
+import type { RoadDensityItem } from "./roadDensityItem";
 
-export interface LaneDensityResponse {
-  lanes: LaneDensityItem[];
+export interface RoadDensityResponse {
+  roads: RoadDensityItem[];
 }

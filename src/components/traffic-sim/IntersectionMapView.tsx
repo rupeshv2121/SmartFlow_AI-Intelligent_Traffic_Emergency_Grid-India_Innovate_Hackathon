@@ -4,12 +4,12 @@ import type { ReactNode } from "react";
 
 interface IntersectionMapViewProps {
   roads: SimRoadState[];
-  onLaneClick?: (laneIndex: number) => void;
-  activeLane?: number;
+  onRoadClick?: (roadIndex: number) => void;
+  activeRoad?: number;
   cameraFeeds?: ReactNode[];
 }
 
-const LANE_LABELS = ["North", "East", "South", "West"];
+const ROAD_LABELS = ["North", "East", "South", "West"];
 
 function getSignalColor(signal: string) {
   if (signal === "green") return "bg-green-500 shadow-[0_0_15px_rgba(34,197,94,0.8)]";
@@ -30,10 +30,10 @@ function getVehicleIcon(type: string) {
   }
 }
 
-export function IntersectionMapView({ roads, onLaneClick }: IntersectionMapViewProps) {
-  const handleLaneClick = (index: number) => {
-    if (onLaneClick) {
-      onLaneClick(index);
+export function IntersectionMapView({ roads, onRoadClick }: IntersectionMapViewProps) {
+  const handleRoadClick = (index: number) => {
+    if (onRoadClick) {
+      onRoadClick(index);
     }
   };
 
@@ -42,7 +42,7 @@ export function IntersectionMapView({ roads, onLaneClick }: IntersectionMapViewP
       {/* Header */}
       <div className="absolute left-6 top-6 z-20 rounded-md border border-cyan-300/20 bg-slate-900/90 px-4 py-2 font-mono text-sm text-slate-200 backdrop-blur-sm">
         <div className="font-semibold text-cyan-300">INTERSECTION MAP VIEW</div>
-        <div className="mt-1 text-xs text-slate-400">Click on a lane to view details</div>
+        <div className="mt-1 text-xs text-slate-400">Click on a road to view details</div>
       </div>
 
       {/* Stats */}
@@ -62,11 +62,11 @@ export function IntersectionMapView({ roads, onLaneClick }: IntersectionMapViewP
             </div>
           </div>
 
-          {/* Roads and Lane Buttons */}
+          {/* Roads and Road Buttons */}
           {roads.map((road, index) => {
             const rotation = index * 90;
             const isNorthSouth = index % 2 === 0;
-            const direction = LANE_LABELS[index];
+            const direction = ROAD_LABELS[index];
 
             return (
               <div
@@ -86,7 +86,7 @@ export function IntersectionMapView({ roads, onLaneClick }: IntersectionMapViewP
                     marginLeft: isNorthSouth ? "-40px" : "-300px",
                   }}
                 >
-                  {/* Lane Divider */}
+                  {/* Road Divider */}
                   {isNorthSouth ? (
                     <div className="absolute left-1/2 top-0 bottom-0 w-0.5 bg-yellow-400/30" style={{ marginLeft: "-1px" }} />
                   ) : (
@@ -94,9 +94,9 @@ export function IntersectionMapView({ roads, onLaneClick }: IntersectionMapViewP
                   )}
                 </div>
 
-                {/* Lane Button */}
+                {/* Road Button */}
                 <button
-                  onClick={() => handleLaneClick(index)}
+                  onClick={() => handleRoadClick(index)}
                   className="absolute top-1/2 left-1/2 group cursor-pointer"
                   style={{
                     transform: `translate(-50%, -50%) rotate(-${rotation}deg)`,
@@ -105,7 +105,7 @@ export function IntersectionMapView({ roads, onLaneClick }: IntersectionMapViewP
                   }}
                 >
                   <div className="relative">
-                    {/* Lane Card */}
+                    {/* Road Card */}
                     <div className="bg-gradient-to-br from-slate-800/95 to-slate-900/95 border-2 border-cyan-400/40 rounded-lg px-6 py-4 min-w-[180px] transition-all duration-300 group-hover:border-cyan-300 group-hover:shadow-[0_0_25px_rgba(34,211,238,0.4)] group-hover:scale-105">
                       {/* Direction Arrow */}
                       <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-slate-700 border-2 border-cyan-400/60 flex items-center justify-center">
@@ -117,9 +117,9 @@ export function IntersectionMapView({ roads, onLaneClick }: IntersectionMapViewP
                         />
                       </div>
 
-                      {/* Lane Info */}
+                      {/* Road Info */}
                       <div className="text-center space-y-2 mt-2">
-                        <div className="font-bold text-white text-sm">{direction} Lane</div>
+                        <div className="font-bold text-white text-sm">{direction} Road</div>
 
                         {/* Signal Light */}
                         <div className="flex items-center justify-center gap-2">

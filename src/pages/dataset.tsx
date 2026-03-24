@@ -72,8 +72,8 @@ export default function Dataset() {
     return state.roads.flatMap((road, roadIndex) =>
       road.vehicles.map((vehicle) => ({
         id: vehicle.id,
-        laneLabel: road.label,
-        laneIndex: roadIndex,
+        roadLabel: road.label,
+        roadIndex: roadIndex,
         signal: road.signal,
         type: vehicle.type,
         progress: Number(vehicle.progress.toFixed(3)),

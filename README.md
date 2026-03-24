@@ -79,7 +79,7 @@ Steps:
 1.  CCTV camera captures intersection video.
 2.  Video frames are processed using **OpenCV**.
 3.  **YOLOv8 object detection model** identifies vehicles.
-4.  Vehicles are counted lane-wise.
+4.  Vehicles are counted road-wise.
 5.  Traffic density score is calculated.
 
 This score determines signal timing decisions.

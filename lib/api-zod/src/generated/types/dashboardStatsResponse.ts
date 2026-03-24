@@ -9,7 +9,7 @@
 export interface DashboardStatsResponse {
   totalVehicles: number;
   activeIntersections: number;
-  congestedLanes: number;
+  congestedRoads: number;
   emergencyAlerts: number;
   avgSpeed: number;
   systemStatus: string;

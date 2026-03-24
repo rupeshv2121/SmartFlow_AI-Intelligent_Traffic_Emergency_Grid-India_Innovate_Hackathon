@@ -2,18 +2,22 @@
 
 import { motion } from 'framer-motion';
 import bhomikVarshneyImage from '../../../assets/bhomik-varshney.jpg';
+import austinVarshneyImage from '../../../assets/austin-varshney.png';
+import aryanParasharImage from '../../../assets/aryan-parashar.jpeg';
+import prakharSaxenaImage from '../../../assets/prakhar-saxena.jpeg';
+import rupeshVarshneyImage from '../../../assets/rupesh-varshney.jpeg';
 import { ScrollReveal } from '../ScrollReveal';
 
 const teamMembers = [
   {
     name: 'Rupesh Varshney',
-    role: 'Team Lead',
-    avatar: '/placeholder-user.jpg',
+    role: 'Full Stack Developer',
+    avatar: rupeshVarshneyImage,
   },
   {
     name: 'Austin Varshney',
     role: 'Full Stack Developer',
-    avatar: '/placeholder-user.jpg',
+    avatar: austinVarshneyImage,
   },
   {
     name: 'Bhomik Varshney',
@@ -23,12 +27,12 @@ const teamMembers = [
   {
     name: 'Prakhar Saxena',
     role: 'ML Developer',
-    avatar: '/placeholder-user.jpg',
+    avatar: prakharSaxenaImage,
   },
    {
     name: 'Aryan Parashar',
     role: 'AI Developer',
-    avatar: '/placeholder-user.jpg',
+    avatar: aryanParasharImage,
   },
 ];
 

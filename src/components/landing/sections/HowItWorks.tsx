@@ -20,7 +20,7 @@ const steps = [
   {
     icon: Sparkles,
     title: 'AI Analysis',
-    description: 'Computer vision detects vehicles, lanes, and traffic patterns.',
+    description: 'Computer vision detects vehicles, roads, and traffic patterns.',
   },
   {
     icon: BarChart3,

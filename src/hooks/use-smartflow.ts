@@ -6,7 +6,7 @@ import {
   useGetEmergencyEvents,
   useGetIntersections,
   useGetIntersectionVideo,
-  useGetLaneDensity,
+  useGetRoadDensity,
   useGetSignalTiming,
   useGetTrafficDensity,
   useGetTrafficDensityHistory,
@@ -52,8 +52,8 @@ export function useLiveTrafficDensity() {
   });
 }
 
-export function useLiveLaneDensity() {
-  return useGetLaneDensity({
+export function useLiveRoadDensity() {
+  return useGetRoadDensity({
     query: { refetchInterval: LIVE_INTERVAL },
   });
 }

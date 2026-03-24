@@ -33,7 +33,7 @@ export function Hero() {
             className="inline-flex items-center gap-2 px-4 py-2 rounded-full glow-border bg-slate-900/60"
           >
             <Activity className="w-4 h-4 text-cyan-300" />
-            <span className="text-sm font-medium text-cyan-300">Hackathon Innovation</span>
+            <span className="text-sm font-medium text-cyan-300">India Innovates 2026</span>
           </motion.div>
 
           {/* Main headline */}
@@ -115,13 +115,13 @@ export function Hero() {
               <div className="w-3 h-3 rounded-full bg-cyan-300 animate-pulse" />
             </div>
 
-            {/* Lane Status */}
+            {/* Road Status */}
             <div className="space-y-3">
-              <p className="text-sm text-slate-400 font-medium">Lane Density Analysis</p>
-              {['Lane 1 - Heavy', 'Lane 2 - Moderate', 'Lane 3 - Light'].map((lane, i) => (
+              <p className="text-sm text-slate-400 font-medium">Road Density Analysis</p>
+              {['Road 1 - Heavy', 'Road 2 - Moderate', 'Road 3 - Light'].map((road, i) => (
                 <div key={i} className="space-y-1">
                   <div className="flex justify-between text-sm">
-                    <span className="text-slate-300">{lane}</span>
+                    <span className="text-slate-300">{road}</span>
                     <span className="text-cyan-300">{70 - i * 20}%</span>
                   </div>
                   <div className="h-2 bg-slate-700/70 rounded-full overflow-hidden">

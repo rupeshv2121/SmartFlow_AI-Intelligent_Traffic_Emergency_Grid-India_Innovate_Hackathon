@@ -28,8 +28,8 @@ interface TrafficSimContextValue {
   state: TrafficSimState;
   selectedIntersection: SimIntersection | null;
   setIntersectionsFromApi: (intersections: Intersection[]) => void;
-  updateLaneDetectionCount: (laneIndex: number, count: number) => void;
-  updateLaneEmergencyDetected: (laneIndex: number, detected: boolean) => void;
+  updateRoadDetectionCount: (roadIndex: number, count: number) => void;
+  updateRoadEmergencyDetected: (roadIndex: number, detected: boolean) => void;
   selectIntersection: (intersectionId: string) => void;
   backToMap: () => void;
   algorithmConfig: AlgorithmConfig;
@@ -86,8 +86,8 @@ const DEFAULT_ALGORITHM_CONFIG: AlgorithmConfig = {
 const STOP_LINE = 0.85;  // Where vehicles must stop (z = -1.8 in world coords)
 const DETECTION_ZONE = 0.62; // Where we count vehicles as "entered"
 
-const INCOMING_LANES = [1, 3];
-const OUTGOING_LANES = [-3, -1];
+const INCOMING_ROADS = [1, 3];
+const OUTGOING_ROADS = [-3, -1];
 
 const VEHICLE_CONFIG: Record<VehicleType, { speed: number; length: number; width: number }> = {
   car: { speed: 0.082, length: 1.9, width: 1 },
@@ -108,7 +108,7 @@ const SPAWN_MIN_HEADWAY = 0.16;
 const INCOMING_MIN_GAP = 0.1;
 const OUTGOING_MIN_GAP = 0.18;
 
-const LANE_POSITIONS = [-3, -1, 1, 3];
+const ROAD_POSITIONS = [-3, -1, 1, 3];
 const MAX_REASONABLE_SIGNAL_SECONDS = 300;
 
 function clamp(value: number, min: number, max: number) {
@@ -141,24 +141,24 @@ function normalizeAlgorithmConfig(nextConfig: AlgorithmConfig): AlgorithmConfig 
   };
 }
 
-function nearestLaneCenter(offset: number) {
-  let nearest = LANE_POSITIONS[0];
+function nearestRoadCenter(offset: number) {
+  let nearest = ROAD_POSITIONS[0];
   let best = Number.POSITIVE_INFINITY;
-  for (const lane of LANE_POSITIONS) {
-    const d = Math.abs(offset - lane);
+  for (const road of ROAD_POSITIONS) {
+    const d = Math.abs(offset - road);
     if (d < best) {
       best = d;
-      nearest = lane;
+      nearest = road;
     }
   }
   return nearest;
 }
 
-function isSpawnLaneBlocked(vehicles: SimVehicle[], laneCenter: number) {
+function isSpawnRoadBlocked(vehicles: SimVehicle[], roadCenter: number) {
   return vehicles.some(
     (vehicle) =>
       !vehicle.isOutgoing &&
-      Math.abs(nearestLaneCenter(vehicle.laneOffset) - laneCenter) < 0.6 &&
+      Math.abs(nearestRoadCenter(vehicle.roadOffset) - roadCenter) < 0.6 &&
       vehicle.progress <= SPAWN_BLOCK_PROGRESS,
   );
 }
@@ -176,7 +176,7 @@ function randomVehicleType(): VehicleType {
 function createVehicle(): SimVehicle {
   const type = randomVehicleType();
   const cfg = VEHICLE_CONFIG[type];
-  const baseLane = LANE_POSITIONS[Math.floor(Math.random() * LANE_POSITIONS.length)] ?? 1;
+  const baseRoad = ROAD_POSITIONS[Math.floor(Math.random() * ROAD_POSITIONS.length)] ?? 1;
   return {
     id: `${type}-${Math.random().toString(16).slice(2)}`,
     type,
@@ -185,32 +185,32 @@ function createVehicle(): SimVehicle {
     speed: cfg.speed,
     length: cfg.length,
     width: cfg.width,
-    laneOffset: baseLane + (Math.random() - 0.5) * 0.18,
+    roadOffset: baseRoad + (Math.random() - 0.5) * 0.18,
     isOutgoing: false,
   };
 }
 
-function createVehicleInLane(laneCenter: number, isOutgoing = false): SimVehicle {
+function createVehicleInRoad(roadCenter: number, isOutgoing = false): SimVehicle {
   const vehicle = createVehicle();
-  vehicle.laneOffset = laneCenter + (Math.random() - 0.5) * 0.12;
+  vehicle.roadOffset = roadCenter + (Math.random() - 0.5) * 0.12;
   vehicle.isOutgoing = isOutgoing;
   return vehicle;
 }
 
 function createSeedVehicles(count: number): SimVehicle[] {
   const vehicles: SimVehicle[] = [];
-  const laneCounts = new Map<number, number>();
+  const roadCounts = new Map<number, number>();
 
   const incomingCount = count;
 
   for (let i = 0; i < incomingCount; i += 1) {
-    const laneCenter = INCOMING_LANES[i % INCOMING_LANES.length] ?? 1;
-    const vehicle = createVehicleInLane(laneCenter, false);
-    const laneIndex = laneCounts.get(laneCenter) ?? 0;
-    laneCounts.set(laneCenter, laneIndex + 1);
+    const roadCenter = INCOMING_ROADS[i % INCOMING_ROADS.length] ?? 1;
+    const vehicle = createVehicleInRoad(roadCenter, false);
+    const roadIndex = roadCounts.get(roadCenter) ?? 0;
+    roadCounts.set(roadCenter, roadIndex + 1);
 
-    // Seed with queue-like spacing so vehicles start one behind another in each lane.
-    const progress = Math.min(0.8, SPAWN_ENTRY_PROGRESS + laneIndex * 0.18 + Math.random() * 0.015);
+    // Seed with queue-like spacing so vehicles start one behind another in each road.
+    const progress = Math.min(0.8, SPAWN_ENTRY_PROGRESS + roadIndex * 0.18 + Math.random() * 0.015);
     vehicle.progress = progress;
     vehicle.enteredZone = progress >= DETECTION_ZONE;
     vehicles.push(vehicle);
@@ -228,7 +228,7 @@ function createSignalController(): SignalControllerState {
 }
 
 function createRoads(): SimRoadState[] {
-  return ["Lane 1", "Lane 2", "Lane 3", "Lane 4"].map((label, index) => {
+  return ["Road 1", "Road 2", "Road 3", "Road 4"].map((label, index) => {
     const vehicles = createSeedVehicles(6 + Math.floor(Math.random() * 3));
     return {
       id: `road-${index + 1}`,
@@ -352,7 +352,7 @@ function computePriority(road: SimRoadState, config: AlgorithmConfig) {
   return road.detectionCount * config.w1 + scaledWait * config.w2;
 }
 
-function selectNextLaneEnhanced(roads: SimRoadState[], currentActiveIndex: number, config: AlgorithmConfig) {
+function selectNextRoadEnhanced(roads: SimRoadState[], currentActiveIndex: number, config: AlgorithmConfig) {
   const starvingCandidates = roads
     .map((road, index) => ({ road, index }))
     .filter(({ road }) => road.detectionCount > 0 && road.waitingTime >= config.starvationThreshold);
@@ -386,7 +386,7 @@ function estimateTimeUntilGreen(targetRoadIndex: number, controller: SignalContr
   let simController: SignalControllerState = { ...controller };
   let simRoads = roads.map((road) => ({ ...road }));
 
-  // Small bounded simulation horizon is enough for 4-lane intersection.
+  // Small bounded simulation horizon is enough for 4-road intersection.
   const maxTransitions = roads.length * 8;
 
   for (let step = 0; step < maxTransitions; step += 1) {
@@ -405,7 +405,7 @@ function estimateTimeUntilGreen(targetRoadIndex: number, controller: SignalContr
         return { ...road, waitingTime: Math.min(config.maxWait, road.waitingTime + dt) };
       });
 
-      const nextRoadIndex = selectNextLaneEnhanced(simRoads, simController.activeRoadIndex, config);
+      const nextRoadIndex = selectNextRoadEnhanced(simRoads, simController.activeRoadIndex, config);
       const nextGreenDuration = computeGreenDurationByDetections(simRoads[nextRoadIndex]?.detectionCount ?? 0, config);
       simController = {
         activeRoadIndex: nextRoadIndex,
@@ -424,7 +424,7 @@ function estimateTimeUntilGreen(targetRoadIndex: number, controller: SignalContr
       return { ...road, waitingTime: Math.min(config.maxWait, road.waitingTime + normalizeSeconds(simController.timeLeft, 0)) };
     });
 
-    const nextRoadIndex = selectNextLaneEnhanced(simRoads, simController.activeRoadIndex, config);
+    const nextRoadIndex = selectNextRoadEnhanced(simRoads, simController.activeRoadIndex, config);
     const nextGreenDuration = computeGreenDurationByDetections(simRoads[nextRoadIndex]?.detectionCount ?? 0, config);
     simController = {
       activeRoadIndex: nextRoadIndex,
@@ -465,7 +465,7 @@ function applySignalController(roads: SimRoadState[], controller: SignalControll
   });
 }
 
-function tickSignalController(controller: SignalControllerState, dt: number, laneCount: number): SignalControllerState {
+function tickSignalController(controller: SignalControllerState, dt: number, roadCount: number): SignalControllerState {
   let timeLeft = controller.timeLeft - dt;
 
   // If time is not up, just count down
@@ -484,7 +484,7 @@ function tickSignalController(controller: SignalControllerState, dt: number, lan
   }
 
   // Yellow -> Next road gets green
-  const nextRoadIndex = (controller.activeRoadIndex + 1) % laneCount;
+  const nextRoadIndex = (controller.activeRoadIndex + 1) % roadCount;
   return {
     activeRoadIndex: nextRoadIndex,
     phase: "green",
@@ -507,7 +507,7 @@ function tickSignalControllerEnhanced(controller: SignalControllerState, dt: num
     };
   }
 
-  const nextRoadIndex = selectNextLaneEnhanced(roads, controller.activeRoadIndex, config);
+  const nextRoadIndex = selectNextRoadEnhanced(roads, controller.activeRoadIndex, config);
   const nextGreenDuration = computeGreenDurationByDetections(roads[nextRoadIndex]?.detectionCount ?? 0, config);
 
   return {
@@ -541,15 +541,15 @@ function vehicleTurnBucket(vehicleId: string) {
   return hash % 10;
 }
 
-function selectOutgoingLane(vehicleId: string) {
+function selectOutgoingRoad(vehicleId: string) {
   const bucket = vehicleTurnBucket(vehicleId);
-  const laneCenter = OUTGOING_LANES[bucket % OUTGOING_LANES.length] ?? -1;
-  return laneCenter + ((bucket % 5) - 2) * 0.02;
+  const roadCenter = OUTGOING_ROADS[bucket % OUTGOING_ROADS.length] ?? -1;
+  return roadCenter + ((bucket % 5) - 2) * 0.02;
 }
 
 function transferStartProgress(vehicleId: string, overflowProgress: number) {
   const bucket = vehicleTurnBucket(vehicleId);
-  // Continue from near outgoing lane entry after completing the turn.
+  // Continue from near outgoing road entry after completing the turn.
   const baseProgress = bucket >= 8 ? 0.12 : 0.1;
   return Math.min(0.24, baseProgress + overflowProgress * 0.45);
 }
@@ -560,18 +560,18 @@ function outgoingSpeedFactor(progress: number) {
   return OUTGOING_CRUISE_SPEED_FACTOR;
 }
 
-function routeTargetRoadIndex(sourceRoadIndex: number, vehicleId: string, laneCount: number) {
+function routeTargetRoadIndex(sourceRoadIndex: number, vehicleId: string, roadCount: number) {
   const bucket = vehicleTurnBucket(vehicleId);
   // 0-1 left turn, 2-7 straight, 8-9 right turn.
-  if (bucket <= 1) return (sourceRoadIndex + laneCount - 1) % laneCount;
-  if (bucket <= 7) return (sourceRoadIndex + 2) % laneCount;
-  return (sourceRoadIndex + 1) % laneCount;
+  if (bucket <= 1) return (sourceRoadIndex + roadCount - 1) % roadCount;
+  if (bucket <= 7) return (sourceRoadIndex + 2) % roadCount;
+  return (sourceRoadIndex + 1) % roadCount;
 }
 
 function updateRoad(
   road: SimRoadState,
   roadIndex: number,
-  laneCount: number,
+  roadCount: number,
   dt: number,
   density: SimIntersection["density"],
 ): RoadUpdateResult {
@@ -595,17 +595,17 @@ function updateRoad(
   };
 
   // Deterministic sequential spawning for incoming vehicles ONLY.
-  // Vehicles are injected when lane entry headway permits, which avoids bursty/batch movement.
-  for (const lane of INCOMING_LANES) {
-    const nearestInLane = vehicles
-      .filter((v) => !v.isOutgoing && Math.abs(nearestLaneCenter(v.laneOffset) - lane) < 0.6)
+  // Vehicles are injected when road entry headway permits, which avoids bursty/batch movement.
+  for (const road of INCOMING_ROADS) {
+    const nearestInRoad = vehicles
+      .filter((v) => !v.isOutgoing && Math.abs(nearestRoadCenter(v.roadOffset) - road) < 0.6)
       .reduce<number>((min, v) => Math.min(min, v.progress), Number.POSITIVE_INFINITY);
 
     if (
-      !isSpawnLaneBlocked(vehicles, lane) &&
-      (!Number.isFinite(nearestInLane) || nearestInLane >= SPAWN_ENTRY_PROGRESS + spawnHeadway)
+      !isSpawnRoadBlocked(vehicles, road) &&
+      (!Number.isFinite(nearestInRoad) || nearestInRoad >= SPAWN_ENTRY_PROGRESS + spawnHeadway)
     ) {
-      const newVehicle = createVehicleInLane(lane, false);
+      const newVehicle = createVehicleInRoad(road, false);
       newVehicle.progress = SPAWN_ENTRY_PROGRESS;
       vehicles.push(newVehicle);
     }
@@ -617,21 +617,21 @@ function updateRoad(
   const outgoingVehicles = vehicles.filter((v) => v.isOutgoing);
 
   // Process incoming traffic (signal-controlled)
-  const incomingLaneBuckets = new Map<number, SimVehicle[]>();
+  const incomingRoadBuckets = new Map<number, SimVehicle[]>();
   for (const vehicle of incomingVehicles) {
-    const lane = nearestLaneCenter(vehicle.laneOffset);
-    const bucket = incomingLaneBuckets.get(lane) || [];
+    const road = nearestRoadCenter(vehicle.roadOffset);
+    const bucket = incomingRoadBuckets.get(road) || [];
     bucket.push(vehicle);
-    incomingLaneBuckets.set(lane, bucket);
+    incomingRoadBuckets.set(road, bucket);
   }
 
-  for (const laneVehicles of incomingLaneBuckets.values()) {
-    if (laneVehicles.length === 0) continue;
+  for (const roadVehicles of incomingRoadBuckets.values()) {
+    if (roadVehicles.length === 0) continue;
 
-    laneVehicles.sort((a, b) => b.progress - a.progress);
+    roadVehicles.sort((a, b) => b.progress - a.progress);
     let vehicleAheadPosition = Infinity;
 
-    for (const vehicle of laneVehicles) {
+    for (const vehicle of roadVehicles) {
       const safeGap = INCOMING_MIN_GAP + vehicle.length * 0.01 + headwayJitter(vehicle.id);
 
       let targetSpeed = 0;
@@ -669,21 +669,21 @@ function updateRoad(
   }
 
   // Process outgoing traffic (free-flow away from intersection)
-  const outgoingLaneBuckets = new Map<number, SimVehicle[]>();
+  const outgoingRoadBuckets = new Map<number, SimVehicle[]>();
   for (const vehicle of outgoingVehicles) {
-    const lane = nearestLaneCenter(vehicle.laneOffset);
-    const bucket = outgoingLaneBuckets.get(lane) || [];
+    const road = nearestRoadCenter(vehicle.roadOffset);
+    const bucket = outgoingRoadBuckets.get(road) || [];
     bucket.push(vehicle);
-    outgoingLaneBuckets.set(lane, bucket);
+    outgoingRoadBuckets.set(road, bucket);
   }
 
-  for (const laneVehicles of outgoingLaneBuckets.values()) {
-    if (laneVehicles.length === 0) continue;
+  for (const roadVehicles of outgoingRoadBuckets.values()) {
+    if (roadVehicles.length === 0) continue;
 
-    laneVehicles.sort((a, b) => b.progress - a.progress);
+    roadVehicles.sort((a, b) => b.progress - a.progress);
     let vehicleAheadPosition = Infinity;
 
-    for (const vehicle of laneVehicles) {
+    for (const vehicle of roadVehicles) {
       const safeGap = OUTGOING_MIN_GAP + vehicle.length * 0.008 + headwayJitter(vehicle.id);
       const speedFactor = outgoingSpeedFactor(vehicle.progress);
       let newProgress = vehicle.progress + vehicle.speed * speedFactor * dt;
@@ -716,11 +716,11 @@ function updateRoad(
         isOutgoing: true,
         progress: transferStartProgress(vehicle.id, overflowProgress),
         enteredZone: false,
-        laneOffset: selectOutgoingLane(vehicle.id),
+        roadOffset: selectOutgoingRoad(vehicle.id),
       };
 
       transfers.push({
-        targetRoadIndex: routeTargetRoadIndex(roadIndex, vehicle.id, laneCount),
+        targetRoadIndex: routeTargetRoadIndex(roadIndex, vehicle.id, roadCount),
         vehicle: transferred,
       });
       continue;
@@ -752,21 +752,21 @@ function applyRoadTransfers(roads: SimRoadState[], transfers: RoadTransfer[]): S
     const targetRoad = nextRoads[transfer.targetRoadIndex];
     if (!targetRoad) continue;
 
-    const preferredLane = nearestLaneCenter(transfer.vehicle.laneOffset);
-    const fallbackLane = preferredLane === OUTGOING_LANES[0] ? OUTGOING_LANES[1] : OUTGOING_LANES[0];
-    const candidateLanes = [preferredLane, fallbackLane].filter((lane): lane is number => typeof lane === "number");
+    const preferredRoad = nearestRoadCenter(transfer.vehicle.roadOffset);
+    const fallbackRoad = preferredRoad === OUTGOING_ROADS[0] ? OUTGOING_ROADS[1] : OUTGOING_ROADS[0];
+    const candidateRoads = [preferredRoad, fallbackRoad].filter((road): road is number => typeof road === "number");
 
-    let bestLane = preferredLane;
+    let bestRoad = preferredRoad;
     let bestProgress = 0.01;
 
-    for (const lane of candidateLanes) {
-      const sameLaneOutgoing = targetRoad.vehicles.filter(
-        (vehicle) => vehicle.isOutgoing && Math.abs(vehicle.laneOffset - lane) < 0.62,
+    for (const road of candidateRoads) {
+      const sameRoadOutgoing = targetRoad.vehicles.filter(
+        (vehicle) => vehicle.isOutgoing && Math.abs(vehicle.roadOffset - road) < 0.62,
       );
 
       const safeGap = SPAWN_MIN_HEADWAY + transfer.vehicle.length * 0.02;
-      const nearestStartProgress = sameLaneOutgoing.length > 0
-        ? Math.min(...sameLaneOutgoing.map((vehicle) => vehicle.progress))
+      const nearestStartProgress = sameRoadOutgoing.length > 0
+        ? Math.min(...sameRoadOutgoing.map((vehicle) => vehicle.progress))
         : Number.POSITIVE_INFINITY;
 
       const candidateProgress = Number.isFinite(nearestStartProgress)
@@ -775,12 +775,12 @@ function applyRoadTransfers(roads: SimRoadState[], transfers: RoadTransfer[]): S
 
       if (candidateProgress > bestProgress) {
         bestProgress = candidateProgress;
-        bestLane = lane;
+        bestRoad = road;
       }
     }
 
-    // Never drop transfers. If this lane is saturated, keep the transfer close to
-    // its computed continuation point instead of snapping to lane entry.
+    // Never drop transfers. If this road is saturated, keep the transfer close to
+    // its computed continuation point instead of snapping to road entry.
     if (bestProgress <= SPAWN_ENTRY_PROGRESS + SPAWN_MIN_HEADWAY * 0.8) {
       bestProgress = transfer.vehicle.progress;
     }
@@ -788,7 +788,7 @@ function applyRoadTransfers(roads: SimRoadState[], transfers: RoadTransfer[]): S
     targetRoad.vehicles.push({
       ...transfer.vehicle,
       progress: bestProgress,
-      laneOffset: bestLane + (Math.random() - 0.5) * 0.05,
+      roadOffset: bestRoad + (Math.random() - 0.5) * 0.05,
     });
   }
 
@@ -801,7 +801,7 @@ function applyRoadTransfers(roads: SimRoadState[], transfers: RoadTransfer[]): S
 export function TrafficSimProvider({ children }: { children: ReactNode }) {
   const [algorithmConfig, setAlgorithmConfig] = useState<AlgorithmConfig>(DEFAULT_ALGORITHM_CONFIG);
   const settingsAlgorithmConfigRef = useRef<AlgorithmConfig>(DEFAULT_ALGORITHM_CONFIG);
-  const emergencyPriorityLaneRef = useRef<number | null>(null);
+  const emergencyPriorityRoadRef = useRef<number | null>(null);
   const dynamicMetricsRef = useRef<DynamicMetricsState>({
     prevQueueLength: 0,
     variationEma: 0,
@@ -864,11 +864,11 @@ export function TrafficSimProvider({ children }: { children: ReactNode }) {
     }));
   }, []);
 
-  const updateLaneDetectionCount = useCallback((laneIndex: number, count: number) => {
+  const updateRoadDetectionCount = useCallback((roadIndex: number, count: number) => {
     setState((prev) => ({
       ...prev,
       roads: prev.roads.map((road, index) => {
-        if (index !== laneIndex) return road;
+        if (index !== roadIndex) return road;
         return {
           ...road,
           detectionCount: Math.max(0, count),
@@ -877,17 +877,17 @@ export function TrafficSimProvider({ children }: { children: ReactNode }) {
     }));
   }, []);
 
-  const updateLaneEmergencyDetected = useCallback((laneIndex: number, detected: boolean) => {
+  const updateRoadEmergencyDetected = useCallback((roadIndex: number, detected: boolean) => {
     if (detected) {
-      emergencyPriorityLaneRef.current = laneIndex;
-    } else if (emergencyPriorityLaneRef.current === laneIndex) {
-      emergencyPriorityLaneRef.current = null;
+      emergencyPriorityRoadRef.current = roadIndex;
+    } else if (emergencyPriorityRoadRef.current === roadIndex) {
+      emergencyPriorityRoadRef.current = null;
     }
 
     setState((prev) => ({
       ...prev,
       roads: prev.roads.map((road, index) => {
-        if (index !== laneIndex) return road;
+        if (index !== roadIndex) return road;
         return {
           ...road,
           ambulanceDetected: detected,
@@ -967,10 +967,10 @@ export function TrafficSimProvider({ children }: { children: ReactNode }) {
           for (let i = 0; i < steps; i += 1) {
             const baseConfig = settingsAlgorithmConfigRef.current;
             const emergencyRoadIndex = baseConfig.emergencyOverride
-              ? getEmergencyRoadIndex(next.roads, emergencyPriorityLaneRef.current)
+              ? getEmergencyRoadIndex(next.roads, emergencyPriorityRoadRef.current)
               : -1;
 
-            // Emergency mode: pause normal adaptive lane algorithm and force ambulance corridor.
+            // Emergency mode: pause normal adaptive road algorithm and force ambulance corridor.
             const cfg = emergencyRoadIndex >= 0
               ? baseConfig
               : deriveDynamicAlgorithmConfig(baseConfig, next.roads, dynamicMetricsRef);
@@ -991,8 +991,8 @@ export function TrafficSimProvider({ children }: { children: ReactNode }) {
             const roadsWithSignals = applySignalController(roadsWithWait, nextController, cfg);
             const density = currentSelected?.density || "medium";
 
-            const laneCount = roadsWithSignals.length || 4;
-            const roadUpdates = roadsWithSignals.map((road, index) => updateRoad(road, index, laneCount, fixedStep, density));
+            const roadCount = roadsWithSignals.length || 4;
+            const roadUpdates = roadsWithSignals.map((road, index) => updateRoad(road, index, roadCount, fixedStep, density));
             const updatedRoads = roadUpdates.map((result) => result.road);
             const transfers = roadUpdates.flatMap((result) => result.transfers);
 
@@ -1027,13 +1027,13 @@ export function TrafficSimProvider({ children }: { children: ReactNode }) {
       state,
       selectedIntersection,
       setIntersectionsFromApi,
-      updateLaneDetectionCount,
-      updateLaneEmergencyDetected,
+      updateRoadDetectionCount,
+      updateRoadEmergencyDetected,
       selectIntersection,
       backToMap,
       algorithmConfig,
     }),
-    [state, selectedIntersection, setIntersectionsFromApi, updateLaneDetectionCount, updateLaneEmergencyDetected, selectIntersection, backToMap, algorithmConfig],
+    [state, selectedIntersection, setIntersectionsFromApi, updateRoadDetectionCount, updateRoadEmergencyDetected, selectIntersection, backToMap, algorithmConfig],
   );
 
   return <TrafficSimContext.Provider value={value}>{children}</TrafficSimContext.Provider>;

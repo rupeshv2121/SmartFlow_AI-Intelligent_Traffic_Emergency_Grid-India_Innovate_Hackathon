@@ -22,7 +22,7 @@ import type {
   HeatmapResponse,
   IntersectionVideoResponse,
   IntersectionsResponse,
-  LaneDensityResponse,
+  RoadDensityResponse,
   SignalTimingResponse,
   TrafficDensityResponse,
   TrafficHistoryResponse,
@@ -114,7 +114,7 @@ export function useHealthCheck<
 }
 
 /**
- * @summary Get current traffic density across all lanes
+ * @summary Get current traffic density across all roads
  */
 export const getGetTrafficDensityUrl = () => {
   return `/api/traffic-density`;
@@ -165,7 +165,7 @@ export type GetTrafficDensityQueryResult = NonNullable<
 export type GetTrafficDensityQueryError = ErrorType<unknown>;
 
 /**
- * @summary Get current traffic density across all lanes
+ * @summary Get current traffic density across all roads
  */
 
 export function useGetTrafficDensity<
@@ -893,31 +893,31 @@ export function useGetIntersectionVideo<
 }
 
 /**
- * @summary Get lane-by-lane traffic density
+ * @summary Get road-by-road traffic density
  */
-export const getGetLaneDensityUrl = () => {
-  return `/api/lane-density`;
+export const getGetRoadDensityUrl = () => {
+  return `/api/road-density`;
 };
 
-export const getLaneDensity = async (
+export const getRoadDensity = async (
   options?: RequestInit,
-): Promise<LaneDensityResponse> => {
-  return customFetch<LaneDensityResponse>(getGetLaneDensityUrl(), {
+): Promise<RoadDensityResponse> => {
+  return customFetch<RoadDensityResponse>(getGetRoadDensityUrl(), {
     ...options,
     method: "GET",
   });
 };
 
-export const getGetLaneDensityQueryKey = () => {
-  return [`/api/lane-density`] as const;
+export const getGetRoadDensityQueryKey = () => {
+  return [`/api/road-density`] as const;
 };
 
-export const getGetLaneDensityQueryOptions = <
-  TData = Awaited<ReturnType<typeof getLaneDensity>>,
+export const getGetRoadDensityQueryOptions = <
+  TData = Awaited<ReturnType<typeof getRoadDensity>>,
   TError = ErrorType<unknown>,
 >(options?: {
   query?: (Omit<UseQueryOptions<
-    Awaited<ReturnType<typeof getLaneDensity>>,
+    Awaited<ReturnType<typeof getRoadDensity>>,
     TError,
     TData
   >, 'queryKey'> & { queryKey?: QueryKey });
@@ -925,40 +925,40 @@ export const getGetLaneDensityQueryOptions = <
 }) => {
   const { query: queryOptions, request: requestOptions } = options ?? {};
 
-  const queryKey = queryOptions?.queryKey ?? getGetLaneDensityQueryKey();
+  const queryKey = queryOptions?.queryKey ?? getGetRoadDensityQueryKey();
 
-  const queryFn: QueryFunction<Awaited<ReturnType<typeof getLaneDensity>>> = ({
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getRoadDensity>>> = ({
     signal,
-  }) => getLaneDensity({ signal, ...requestOptions });
+  }) => getRoadDensity({ signal, ...requestOptions });
 
   return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
-    Awaited<ReturnType<typeof getLaneDensity>>,
+    Awaited<ReturnType<typeof getRoadDensity>>,
     TError,
     TData
   > & { queryKey: QueryKey };
 };
 
-export type GetLaneDensityQueryResult = NonNullable<
-  Awaited<ReturnType<typeof getLaneDensity>>
+export type GetRoadDensityQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getRoadDensity>>
 >;
-export type GetLaneDensityQueryError = ErrorType<unknown>;
+export type GetRoadDensityQueryError = ErrorType<unknown>;
 
 /**
- * @summary Get lane-by-lane traffic density
+ * @summary Get road-by-road traffic density
  */
 
-export function useGetLaneDensity<
-  TData = Awaited<ReturnType<typeof getLaneDensity>>,
+export function useGetRoadDensity<
+  TData = Awaited<ReturnType<typeof getRoadDensity>>,
   TError = ErrorType<unknown>,
 >(options?: {
   query?: (Omit<UseQueryOptions<
-    Awaited<ReturnType<typeof getLaneDensity>>,
+    Awaited<ReturnType<typeof getRoadDensity>>,
     TError,
     TData
   >, 'queryKey'> & { queryKey?: QueryKey });
   request?: SecondParameter<typeof customFetch>;
 }): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
-  const queryOptions = getGetLaneDensityQueryOptions(options);
+  const queryOptions = getGetRoadDensityQueryOptions(options);
 
   const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
     queryKey: QueryKey;

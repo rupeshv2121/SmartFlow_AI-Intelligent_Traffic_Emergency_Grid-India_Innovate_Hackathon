@@ -332,7 +332,7 @@ export default function Settings() {
                     thumbClassName="[&::-webkit-slider-thumb]:bg-rose-400 [&::-moz-range-thumb]:bg-rose-400"
                     valueClassName="text-rose-300 bg-rose-500/12 border border-rose-400/20"
                     formatValue={(v) => `${Math.round(v)}%`}
-                    description="Trigger critical alerts when lane congestion exceeds this percentage"
+                    description="Trigger critical alerts when road congestion exceeds this percentage"
                     onChange={(v) => updateFormData('alerts', 'congestionThreshold', Math.round(v))}
                   />
                 </div>

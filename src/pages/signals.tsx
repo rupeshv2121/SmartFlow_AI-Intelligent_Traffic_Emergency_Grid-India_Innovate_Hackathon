@@ -31,7 +31,7 @@ export default function Signals() {
 
     return {
       id: road.id,
-      lane: road.label,
+      road: road.label,
       signal: road.signal,
       vehicles: road.detectionCount,
       density,
@@ -48,8 +48,8 @@ export default function Signals() {
   // Calculate overall intersection metrics
   const totalVehicles = state.roads.reduce((sum, road) => sum + road.detectionCount, 0);
   const avgWaitTime = state.roads.reduce((sum, road) => sum + road.waitingTime, 0) / state.roads.length;
-  const emergencyLanes = state.roads.filter(road => road.ambulanceDetected).length;
-  const activeLane = state.roads[state.signalController.activeRoadIndex];
+  const emergencyRoads = state.roads.filter(road => road.ambulanceDetected).length;
+  const activeRoad = state.roads[state.signalController.activeRoadIndex];
 
   return (
     <AppLayout>
@@ -77,10 +77,10 @@ export default function Signals() {
         </GlassPanel>
 
         <GlassPanel className="p-4">
-          <div className="text-xs text-muted-foreground font-mono mb-1">ACTIVE LANE</div>
+          <div className="text-xs text-muted-foreground font-mono mb-1">ACTIVE ROAD</div>
           <div className="text-2xl font-display font-bold flex items-center gap-2 text-success">
             <div className="w-3 h-3 rounded-full bg-success animate-pulse" />
-            {activeLane?.label}
+            {activeRoad?.label}
           </div>
         </GlassPanel>
 
@@ -88,7 +88,7 @@ export default function Signals() {
           <div className="text-xs text-muted-foreground font-mono mb-1">EMERGENCY ALERTS</div>
           <div className="text-2xl font-display font-bold flex items-center gap-2 text-destructive">
             <AlertTriangle className="w-5 h-5" />
-            {emergencyLanes}
+            {emergencyRoads}
           </div>
         </GlassPanel>
       </div>
@@ -112,7 +112,7 @@ export default function Signals() {
             <table className="w-full text-sm text-left">
               <thead className="text-xs font-mono text-muted-foreground border-b border-border">
                 <tr>
-                  <th className="pb-4 font-medium pl-2">LANE</th>
+                  <th className="pb-4 font-medium pl-2">ROAD</th>
                   <th className="pb-4 font-medium">LIGHT</th>
                   <th className="pb-4 font-medium">VEHICLES</th>
                   <th className="pb-4 font-medium">SIGNAL TIME</th>
@@ -128,7 +128,7 @@ export default function Signals() {
                   )}>
                     <td className="py-5 pl-2">
                       <div className="font-medium text-white flex items-center gap-2">
-                        {sig.lane}
+                        {sig.road}
                         {sig.signal === 'green' && (
                           <div className="w-2 h-2 rounded-full bg-success animate-pulse" />
                         )}
@@ -232,7 +232,7 @@ export default function Signals() {
             <ResponsiveContainer width="100%" height="100%">
               <BarChart
                 data={liveSignals.map(sig => ({
-                  lane: sig.lane,
+                  road: sig.road,
                   congestion: Math.round((sig.vehicles / 20) * 100),
                 }))}
                 layout="vertical"
@@ -253,13 +253,13 @@ export default function Signals() {
                   }}
                 />
                 <YAxis
-                  dataKey="lane"
+                  dataKey="road"
                   type="category"
                   axisLine={false}
                   tickLine={false}
                   tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 11 }}
                   label={{
-                    value: "Lane",
+                    value: "Road",
                     angle: -90,
                     position: "insideLeft",
                     offset: -40,
@@ -295,7 +295,7 @@ export default function Signals() {
             <div className="text-[10px] font-mono text-muted-foreground">LIVE CAMERA METRICS</div>
             {liveSignals.map((sig) => (
               <div key={sig.id} className="flex items-center justify-between text-xs">
-                <span className="text-muted-foreground font-mono">{sig.lane}</span>
+                <span className="text-muted-foreground font-mono">{sig.road}</span>
                 <span className={cn(
                   "font-mono font-bold",
                   sig.vehicles >= 15 ? "text-destructive" :

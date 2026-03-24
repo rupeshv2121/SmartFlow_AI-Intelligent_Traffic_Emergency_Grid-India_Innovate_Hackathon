@@ -1,8 +1,8 @@
 import type { SimRoadState } from "@/types/traffic-sim";
 
-type LaneId = "N" | "S" | "E" | "W";
+type RoadId = "N" | "S" | "E" | "W";
 
-const LANE_ROTATION_STEPS: Record<LaneId, number> = {
+const ROAD_ROTATION_STEPS: Record<RoadId, number> = {
   S: 0,
   W: 1,
   N: 2,
@@ -10,9 +10,9 @@ const LANE_ROTATION_STEPS: Record<LaneId, number> = {
 };
 
 function rotationIndexForRoad(road: SimRoadState, fallback: number) {
-  const laneId = road?.id as LaneId | undefined;
-  if (laneId && LANE_ROTATION_STEPS[laneId] !== undefined) {
-    return LANE_ROTATION_STEPS[laneId];
+  const roadId = road?.id as RoadId | undefined;
+  if (roadId && ROAD_ROTATION_STEPS[roadId] !== undefined) {
+    return ROAD_ROTATION_STEPS[roadId];
   }
   return fallback;
 }
@@ -48,8 +48,8 @@ export function SUMOIntersectionView({ roads }: SUMOIntersectionViewProps) {
     return "#4b5563";
   }
 
-  function laneMagnitude(laneOffset: number) {
-    return Math.abs(laneOffset) > 2 ? 18 : 10;
+  function roadMagnitude(roadOffset: number) {
+    return Math.abs(roadOffset) > 2 ? 18 : 10;
   }
 
   function rotatePoint(x: number, y: number, roadIndex: number) {
@@ -116,15 +116,15 @@ export function SUMOIntersectionView({ roads }: SUMOIntersectionViewProps) {
     };
   }
 
-  function incomingVehiclePose(progress: number, laneOffset: number, turnType: TurnType): LocalPose {
-    const laneX = CENTER_X + laneOffset;
+  function incomingVehiclePose(progress: number, roadOffset: number, turnType: TurnType): LocalPose {
+    const roadX = CENTER_X + roadOffset;
     const approachEndY = STOP_LINE_Y - 3;
     const t = clamp(progress, 0, 1);
 
     if (t <= STOP_PROGRESS) {
       const approachT = smoothStep(t / STOP_PROGRESS);
       const y = APPROACH_START + approachT * (approachEndY - APPROACH_START);
-      return { x: laneX, y, angleDeg: 0 };
+      return { x: roadX, y, angleDeg: 0 };
     }
 
     const insideRaw = clamp((t - STOP_PROGRESS) / (1 - STOP_PROGRESS), 0, 1);
@@ -132,7 +132,7 @@ export function SUMOIntersectionView({ roads }: SUMOIntersectionViewProps) {
 
     if (turnType === "straight") {
       const y = lerp(approachEndY, VIEW_H - APPROACH_START, insideT);
-      return { x: laneX, y, angleDeg: 0 };
+      return { x: roadX, y, angleDeg: 0 };
     }
 
     if (turnType === "left") {
@@ -140,55 +140,55 @@ export function SUMOIntersectionView({ roads }: SUMOIntersectionViewProps) {
       if (insideRaw < TURN_DELAY) {
         const preTurnT = smoothStep(insideRaw / TURN_DELAY);
         const y = lerp(approachEndY, turnStartY, preTurnT);
-        return { x: laneX, y, angleDeg: 0 };
+        return { x: roadX, y, angleDeg: 0 };
       }
 
       const turnT = smoothStep(clamp((insideRaw - TURN_DELAY) / (1 - TURN_DELAY), 0, 1));
       const pivotPhase = 0.55;
-      const laneTargetY = CENTER_Y + laneOffset * 0.35;
+      const roadTargetY = CENTER_Y + roadOffset * 0.35;
 
       if (turnT < pivotPhase) {
         const t1 = smoothStep(turnT / pivotPhase);
-        const y = lerp(turnStartY, laneTargetY, t1);
+        const y = lerp(turnStartY, roadTargetY, t1);
         const angleDeg = lerp(0, 90, t1);
-        return { x: laneX, y, angleDeg };
+        return { x: roadX, y, angleDeg };
       }
 
       const t2 = smoothStep((turnT - pivotPhase) / (1 - pivotPhase));
-      const x = lerp(laneX, APPROACH_START - 8, t2);
-      return { x, y: laneTargetY, angleDeg: 90 };
+      const x = lerp(roadX, APPROACH_START - 8, t2);
+      return { x, y: roadTargetY, angleDeg: 90 };
     }
 
     const turnStartY = lerp(approachEndY, CENTER_Y + 8, TURN_DELAY);
     if (insideRaw < TURN_DELAY) {
       const preTurnT = smoothStep(insideRaw / TURN_DELAY);
       const y = lerp(approachEndY, turnStartY, preTurnT);
-      return { x: laneX, y, angleDeg: 0 };
+      return { x: roadX, y, angleDeg: 0 };
     }
 
     const turnT = smoothStep(clamp((insideRaw - TURN_DELAY) / (1 - TURN_DELAY), 0, 1));
     const pivotPhase = 0.55;
-    const laneTargetY = CENTER_Y - laneOffset * 0.35;
+    const roadTargetY = CENTER_Y - roadOffset * 0.35;
 
     if (turnT < pivotPhase) {
       const t1 = smoothStep(turnT / pivotPhase);
-      const y = lerp(turnStartY, laneTargetY, t1);
+      const y = lerp(turnStartY, roadTargetY, t1);
       const angleDeg = lerp(0, -90, t1);
-      return { x: laneX, y, angleDeg };
+      return { x: roadX, y, angleDeg };
     }
 
     const t2 = smoothStep((turnT - pivotPhase) / (1 - pivotPhase));
-    const x = lerp(laneX, VIEW_W - APPROACH_START + 8, t2);
-    return { x, y: laneTargetY, angleDeg: -90 };
+    const x = lerp(roadX, VIEW_W - APPROACH_START + 8, t2);
+    return { x, y: roadTargetY, angleDeg: -90 };
   }
 
-  function outgoingVehiclePose(progress: number, laneOffset: number): LocalPose {
-    const laneX = CENTER_X + laneOffset;
+  function outgoingVehiclePose(progress: number, roadOffset: number): LocalPose {
+    const roadX = CENTER_X + roadOffset;
     const fromY = CENTER_Y - HALF_INTERSECTION + 4;
     const toY = APPROACH_START;
     const t = clamp(progress, 0, 1);
     const y = lerp(fromY, toY, t);
-    return { x: laneX, y, angleDeg: 0 };
+    return { x: roadX, y, angleDeg: 0 };
   }
 
   return (
@@ -269,11 +269,11 @@ export function SUMOIntersectionView({ roads }: SUMOIntersectionViewProps) {
                 })()}
 
                 {(road?.vehicles ?? []).map((vehicle, idx) => {
-                  const laneOffset = laneMagnitude(vehicle.laneOffset);
+                  const roadOffset = roadMagnitude(vehicle.roadOffset);
                   const turnType = vehicleTurnType(vehicle.id);
                   const localPose = vehicle.isOutgoing
-                    ? outgoingVehiclePose(vehicle.progress, -laneOffset)
-                    : incomingVehiclePose(vehicle.progress, laneOffset, turnType);
+                    ? outgoingVehiclePose(vehicle.progress, -roadOffset)
+                    : incomingVehiclePose(vehicle.progress, roadOffset, turnType);
 
                   const p = rotatePoint(localPose.x, localPose.y, rotationIndex);
                   const rotation = localPose.angleDeg + rotationIndex * 90;
@@ -297,10 +297,10 @@ export function SUMOIntersectionView({ roads }: SUMOIntersectionViewProps) {
             );
           })}
 
-          <text x={CENTER_X} y="16" fontSize="12" fill="#ffffff" textAnchor="middle" fontFamily="monospace">Lane 1</text>
-          <text x={VIEW_W - 20} y={CENTER_Y + 4} fontSize="12" fill="#ffffff" textAnchor="middle" fontFamily="monospace">Lane 2</text>
-          <text x={CENTER_X} y={VIEW_H - 8} fontSize="12" fill="#ffffff" textAnchor="middle" fontFamily="monospace">Lane 3</text>
-          <text x="20" y={CENTER_Y + 4} fontSize="12" fill="#ffffff" textAnchor="middle" fontFamily="monospace">Lane 4</text>
+          <text x={CENTER_X} y="16" fontSize="12" fill="#ffffff" textAnchor="middle" fontFamily="monospace">Road 1</text>
+          <text x={VIEW_W - 20} y={CENTER_Y + 4} fontSize="12" fill="#ffffff" textAnchor="middle" fontFamily="monospace">Road 2</text>
+          <text x={CENTER_X} y={VIEW_H - 8} fontSize="12" fill="#ffffff" textAnchor="middle" fontFamily="monospace">Road 3</text>
+          <text x="20" y={CENTER_Y + 4} fontSize="12" fill="#ffffff" textAnchor="middle" fontFamily="monospace">Road 4</text>
 
           <rect x="10" y={VIEW_H - 22} width="10" height="10" fill="#6db3ff" rx="2" />
           <text x="26" y={VIEW_H - 13} fontSize="10" fill="#d1d5db" fontFamily="monospace">Incoming</text>

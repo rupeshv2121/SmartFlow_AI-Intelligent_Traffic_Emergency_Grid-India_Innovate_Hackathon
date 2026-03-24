@@ -11,9 +11,9 @@ interface Intersection3DEnvironmentProps {
   roads: SimRoadState[];
 }
 
-type LaneId = "N" | "S" | "E" | "W";
+type RoadId = "N" | "S" | "E" | "W";
 
-const LANE_ROTATIONS: Record<LaneId, number> = {
+const ROAD_ROTATIONS: Record<RoadId, number> = {
   N: Math.PI,
   S: 0,
   E: -Math.PI / 2,
@@ -27,16 +27,16 @@ export interface IntersectionCameraPose {
 
 export const INTERSECTION_CAMERA_POSES: IntersectionCameraPose[] = [
   { position: [42, 30, 42], lookAt: [0, 1.8, 0] },       // Overview camera
-  { position: [0, 24, 46], lookAt: [0, 1.4, -20] },      // Lane 1: approach from +Z, rear-follow view
-  { position: [46, 24, 0], lookAt: [-20, 1.4, 0] },      // Lane 2: approach from +X, rear-follow view
-  { position: [0, 24, -46], lookAt: [0, 1.4, 20] },      // Lane 3: approach from -Z, rear-follow view
-  { position: [-46, 24, 0], lookAt: [20, 1.4, 0] },      // Lane 4: approach from -X, rear-follow view
+  { position: [0, 24, 46], lookAt: [0, 1.4, -20] },      // Road 1: approach from +Z, rear-follow view
+  { position: [46, 24, 0], lookAt: [-20, 1.4, 0] },      // Road 2: approach from +X, rear-follow view
+  { position: [0, 24, -46], lookAt: [0, 1.4, 20] },      // Road 3: approach from -Z, rear-follow view
+  { position: [-46, 24, 0], lookAt: [20, 1.4, 0] },      // Road 4: approach from -X, rear-follow view
 ];
 
 const STOP_PROGRESS = 0.85;
 const TURN_DELAY = 0.52;
-const INNER_LANE_WORLD_OFFSET = 3.4;
-const OUTER_LANE_WORLD_OFFSET = 5.4;
+const INNER_ROAD_WORLD_OFFSET = 3.4;
+const OUTER_ROAD_WORLD_OFFSET = 5.4;
 const TURN_EXIT_DISTANCE = 56;
 
 const VEHICLE_STYLE: Record<
@@ -206,30 +206,30 @@ function rotateXZ(x: number, z: number, angle: number) {
   };
 }
 
-function laneRotationFromId(road: SimRoadState, fallbackIndex: number) {
-  const laneId = road?.id as LaneId | undefined;
-  if (laneId && LANE_ROTATIONS[laneId] !== undefined) {
-    return LANE_ROTATIONS[laneId];
+function roadRotationFromId(road: SimRoadState, fallbackIndex: number) {
+  const roadId = road?.id as RoadId | undefined;
+  if (roadId && ROAD_ROTATIONS[roadId] !== undefined) {
+    return ROAD_ROTATIONS[roadId];
   }
   return fallbackIndex * (Math.PI / 2);
 }
 
-function laneWorldOffset(vehicle: SimVehicle) {
-  return Math.abs(vehicle.laneOffset) > 2 ? OUTER_LANE_WORLD_OFFSET : INNER_LANE_WORLD_OFFSET;
+function roadWorldOffset(vehicle: SimVehicle) {
+  return Math.abs(vehicle.roadOffset) > 2 ? OUTER_ROAD_WORLD_OFFSET : INNER_ROAD_WORLD_OFFSET;
 }
 
 function getLocalVehiclePose(vehicle: SimVehicle): VehiclePose {
-  const laneMagnitude = laneWorldOffset(vehicle);
+  const roadMagnitude = roadWorldOffset(vehicle);
 
   if (vehicle.isOutgoing) {
     return {
-      x: laneMagnitude,
+      x: roadMagnitude,
       z: lerp(72, -8, clamp(vehicle.progress, 0, 1)),
       yaw: Math.PI,
     };
   }
 
-  const x = -laneMagnitude;
+  const x = -roadMagnitude;
   const approachStartZ = 68;
   // Keep the queue stopped near boundary edge instead of inside junction core.
   const approachEndZ = 12.6;
@@ -262,10 +262,10 @@ function getLocalVehiclePose(vehicle: SimVehicle): VehiclePose {
   }
 
   const turnT = smoothStep(clamp((insideRaw - TURN_DELAY) / (1 - TURN_DELAY), 0, 1));
-  const laneTargetZ = laneMagnitude * 0.9;
+  const roadTargetZ = roadMagnitude * 0.9;
   const targetYaw = turnType === "left" ? Math.PI / 2 : -Math.PI / 2;
   const targetX = turnType === "left" ? -TURN_EXIT_DISTANCE : TURN_EXIT_DISTANCE;
-  const pivotZ = turnType === "left" ? laneTargetZ : -laneTargetZ;
+  const pivotZ = turnType === "left" ? roadTargetZ : -roadTargetZ;
   const pivotPhase = 0.55;
 
   if (turnT < pivotPhase) {
@@ -420,19 +420,19 @@ function Crosswalk({ rotationY = 0 }: { rotationY?: number }) {
   );
 }
 
-function LaneMarks({ rotationY = 0 }: { rotationY?: number }) {
+function RoadMarks({ rotationY = 0 }: { rotationY?: number }) {
   const segments = Array.from({ length: 22 }, (_, i) => -58 + i * 5.2);
 
   return (
     <group rotation={[0, rotationY, 0]}>
       {segments.map((z) => (
-        <mesh key={`lane-r-${z}`} position={[3.7, 0.1, z]}>
+        <mesh key={`road-r-${z}`} position={[3.7, 0.1, z]}>
           <boxGeometry args={[0.3, 0.02, 2.7]} />
           <meshStandardMaterial color="#ffffff" />
         </mesh>
       ))}
       {segments.map((z) => (
-        <mesh key={`lane-l-${z}`} position={[-3.7, 0.1, z]}>
+        <mesh key={`road-l-${z}`} position={[-3.7, 0.1, z]}>
           <boxGeometry args={[0.3, 0.02, 2.7]} />
           <meshStandardMaterial color="#ffffff" />
         </mesh>
@@ -472,8 +472,8 @@ function Vehicles({ roads }: { roads: SimRoadState[] }) {
   return (
     <>
       {roads.map((road, roadIndex) => {
-        const roadAngle = laneRotationFromId(road, roadIndex);
-        // Fix vehicle orientation for East/West lanes (indices 1 and 3)
+        const roadAngle = roadRotationFromId(road, roadIndex);
+        // Fix vehicle orientation for East/West roads (indices 1 and 3)
         const yawCorrection = (roadIndex === 1 || roadIndex === 3) ? -Math.PI : 0;
 
         return road.vehicles.map((vehicle) => {
@@ -499,11 +499,11 @@ function SignalHeads({ roads }: { roads: SimRoadState[] }) {
   return (
     <>
       {roads.map((road, roadIndex) => {
-        const roadAngle = laneRotationFromId(road, roadIndex);
+        const roadAngle = roadRotationFromId(road, roadIndex);
         // Exactly one signal per approach, placed on the roadside shoulder.
         const sidePole = rotateXZ(13.2, -10.8, roadAngle);
 
-        // Point each signal toward its own incoming lane traffic.
+        // Point each signal toward its own incoming road traffic.
         const incomingViewPoint = rotateXZ(3, -30, roadAngle);
         const faceDx = incomingViewPoint.x - sidePole.x;
         const faceDz = incomingViewPoint.z - sidePole.z;
@@ -563,7 +563,7 @@ export function IntersectionWorld({ roads, cameraPose = INTERSECTION_CAMERA_POSE
 
       {Array.from({ length: 4 }).map((_, i) => {
         const rotationY = i * (Math.PI / 2);
-        return <LaneMarks key={`lane-${i}`} rotationY={rotationY} />;
+        return <RoadMarks key={`road-${i}`} rotationY={rotationY} />;
       })}
 
       <mesh position={[0, 0.1, 0]}>

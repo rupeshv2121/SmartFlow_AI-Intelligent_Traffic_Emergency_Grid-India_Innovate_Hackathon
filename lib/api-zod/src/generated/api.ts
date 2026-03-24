@@ -15,10 +15,10 @@ export const HealthCheckResponse = zod.object({
 });
 
 /**
- * @summary Get current traffic density across all lanes
+ * @summary Get current traffic density across all roads
  */
 export const GetTrafficDensityResponse = zod.object({
-  lanes: zod.array(
+  roads: zod.array(
     zod.object({
       id: zod.string(),
       name: zod.string(),
@@ -61,7 +61,7 @@ export const GetVehicleCountsResponse = zod.object({
 export const GetDashboardStatsResponse = zod.object({
   totalVehicles: zod.number(),
   activeIntersections: zod.number(),
-  congestedLanes: zod.number(),
+  congestedRoads: zod.number(),
   emergencyAlerts: zod.number(),
   avgSpeed: zod.number(),
   systemStatus: zod.string(),
@@ -196,10 +196,10 @@ export const GetIntersectionVideoResponse = zod.object({
 });
 
 /**
- * @summary Get lane-by-lane traffic density
+ * @summary Get road-by-road traffic density
  */
-export const GetLaneDensityResponse = zod.object({
-  lanes: zod.array(
+export const GetRoadDensityResponse = zod.object({
+  roads: zod.array(
     zod.object({
       id: zod.string(),
       name: zod.string(),

@@ -197,6 +197,14 @@ export default function Analytics() {
     return filtered;
   }, [congestionData, selectedIntersection]);
 
+  // Normalize intersection labels: replace 'Lane' with 'Road' for chart axes
+  const displayData = useMemo(() => {
+    return filteredData.map(d => ({
+      ...d,
+      intersection: String(d.intersection).replace(/Lane/g, 'Road'),
+    }));
+  }, [filteredData]);
+
   // Chart colors
   const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4'];
 
@@ -421,7 +429,7 @@ export default function Analytics() {
             {filteredData.length > 0 ? (
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart
-                  data={filteredData}
+                  data={displayData}
                   margin={{ top: 10, right: 16, left: 8, bottom: 56 }}
                 >
                   <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} />
@@ -489,7 +497,7 @@ export default function Analytics() {
             <ResponsiveContainer width="100%" height="100%">
               <PieChart margin={{ top: 16, right: 72, bottom: 16, left: 72 }}>
                 <Pie
-                  data={filteredData}
+                  data={displayData}
                   cx="50%"
                   cy="50%"
                   labelLine
@@ -498,7 +506,7 @@ export default function Analytics() {
                   fill="#8884d8"
                   dataKey="vehicles"
                 >
-                  {filteredData.map((entry, index) => (
+                  {displayData.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>
@@ -521,7 +529,7 @@ export default function Analytics() {
           <div className="h-[300px]">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart
-                data={filteredData}
+                data={displayData}
                 margin={{ top: 10, right: 16, left: 8, bottom: 44 }}
               >
                 <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
@@ -530,6 +538,10 @@ export default function Analytics() {
                   stroke="hsl(var(--muted-foreground))"
                   fontSize={10}
                   padding={{ left: 8, right: 8 }}
+                  interval={0}
+                  angle={-20}
+                  textAnchor="end"
+                  height={70}
                   label={{
                     value: 'Intersections',
                     position: 'insideBottom',
@@ -580,7 +592,7 @@ export default function Analytics() {
               </tr>
             </thead>
             <tbody>
-              {filteredData.map((node, i) => {
+              {displayData.map((node, i) => {
                 const efficiency = Math.max(0, 100 - node.congestion + (node.avgSpeed - 20));
                 const predictedChange = predictions[0] ? ((predictions[0].vehicles - node.vehicles) / node.vehicles * 100) : 0;
 

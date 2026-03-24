@@ -37,7 +37,7 @@ paths:
     get:
       operationId: getTrafficDensity
       tags: [traffic]
-      summary: Get current traffic density across all lanes
+      summary: Get current traffic density across all roads
       responses:
         "200":
           description: Traffic density data
@@ -169,18 +169,18 @@ paths:
               schema:
                 $ref: "#/components/schemas/IntersectionVideoResponse"
 
-  /lane-density:
+  /road-density:
     get:
-      operationId: getLaneDensity
+      operationId: getRoadDensity
       tags: [traffic]
-      summary: Get lane-by-lane traffic density
+      summary: Get road-by-road traffic density
       responses:
         "200":
-          description: Lane density data
+          description: Road density data
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/LaneDensityResponse"
+                $ref: "#/components/schemas/RoadDensityResponse"
 
   /heatmap:
     get:
@@ -207,15 +207,15 @@ components:
     TrafficDensityResponse:
       type: object
       properties:
-        lanes:
+        roads:
           type: array
           items:
-            $ref: "#/components/schemas/LaneDensityItem"
+            $ref: "#/components/schemas/RoadDensityItem"
         timestamp:
           type: string
-      required: [lanes, timestamp]
+      required: [roads, timestamp]
 
-    LaneDensityItem:
+    RoadDensityItem:
       type: object
       properties:
         id:
@@ -275,7 +275,7 @@ components:
           type: integer
         activeIntersections:
           type: integer
-        congestedLanes:
+        congestedRoads:
           type: integer
         emergencyAlerts:
           type: integer
@@ -283,7 +283,7 @@ components:
           type: number
         systemStatus:
           type: string
-      required: [totalVehicles, activeIntersections, congestedLanes, emergencyAlerts, avgSpeed, systemStatus]
+      required: [totalVehicles, activeIntersections, congestedRoads, emergencyAlerts, avgSpeed, systemStatus]
 
     SignalTimingResponse:
       type: object
@@ -512,14 +512,14 @@ components:
           type: number
       required: [id, type, x, y, width, height, confidence]
 
-    LaneDensityResponse:
+    RoadDensityResponse:
       type: object
       properties:
-        lanes:
+        roads:
           type: array
           items:
-            $ref: "#/components/schemas/LaneDensityItem"
-      required: [lanes]
+            $ref: "#/components/schemas/RoadDensityItem"
+      required: [roads]
 
     HeatmapResponse:
       type: object

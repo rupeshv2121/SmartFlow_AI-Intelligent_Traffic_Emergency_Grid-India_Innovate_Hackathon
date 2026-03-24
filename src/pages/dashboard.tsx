@@ -75,7 +75,7 @@ export default function Dashboard() {
     firstSeen: number;
     lastSeen: number;
     completed: boolean;
-    lane: string;
+    road: string;
   }>>(() => {
     try {
       const stored = sessionStorage.getItem(AMBULANCE_TRACKING_KEY);
@@ -88,7 +88,7 @@ export default function Dashboard() {
             firstSeen: val.firstSeen,
             lastSeen: val.lastSeen,
             completed: val.completed,
-            lane: val.lane,
+            road: val.road,
           }
         ]));
       }
@@ -133,12 +133,12 @@ export default function Dashboard() {
     }
 
     // Track ambulances directly from simulation
-    const currentAmbulances = new Map<string, { lane: string; progress: number }>();
+    const currentAmbulances = new Map<string, { road: string; progress: number }>();
     state.roads.forEach((road, roadIndex) => {
       road.vehicles.forEach(vehicle => {
         if (vehicle.type === 'ambulance') {
           currentAmbulances.set(vehicle.id, {
-            lane: road.label,
+            road: road.label,
             progress: vehicle.progress,
           });
         }
@@ -158,7 +158,7 @@ export default function Dashboard() {
             firstSeen: now,
             lastSeen: now,
             completed: false,
-            lane: ambulanceData.lane,
+            road: ambulanceData.road,
           });
         } else {
           // Update existing ambulance
@@ -166,7 +166,7 @@ export default function Dashboard() {
           newHistory.set(ambulanceId, {
             ...existing,
             lastSeen: now,
-            lane: ambulanceData.lane,
+            road: ambulanceData.road,
             completed: false, // Still active
           });
         }
@@ -200,7 +200,7 @@ export default function Dashboard() {
 
   // Calculate live stats from TrafficSimContext - recalculated on every render
   const totalVehicles = state.roads.reduce((sum, road) => sum + road.detectionCount, 0);
-  const congestedLanes = state.roads.filter(road => road.detectionCount >= 8).length;
+  const congestedRoads = state.roads.filter(road => road.detectionCount >= 8).length;
   const emergencyAlerts = state.roads.filter(road => road.ambulanceDetected).length;
   const activeIntersections = state.intersections.length || 4; // Default to 4 if no intersections loaded
 
@@ -211,7 +211,7 @@ export default function Dashboard() {
       id: vehicleId,
       vehicleId: formatVehicleNumber(vehicleId),
       timestamp: new Date(data.firstSeen).toISOString(),
-      route: data.completed ? 'Cleared intersection' : `Active in ${data.lane}`,
+      route: data.completed ? 'Cleared intersection' : `Active in ${data.road}`,
       status: data.completed ? 'completed' : 'pending',
       duration: Math.round((data.lastSeen - data.firstSeen) / 1000),
     }))
@@ -242,12 +242,12 @@ export default function Dashboard() {
           glow="success"
         />
         <StatCard
-          key={`congested-${congestedLanes}`}
-          title="Congested Lanes"
-          value={congestedLanes}
+          key={`congested-${congestedRoads}`}
+          title="Congested Roads"
+          value={congestedRoads}
           icon={<Activity className="w-6 h-6" />}
-          trend={{ value: congestedLanes > 0 ? `${congestedLanes}/4` : "0", isPositive: false }}
-          glow={congestedLanes > 2 ? "warning" : "none"}
+          trend={{ value: congestedRoads > 0 ? `${congestedRoads}/4` : "0", isPositive: false }}
+          glow={congestedRoads > 2 ? "warning" : "none"}
         />
         <StatCard
           key={`emergency-${emergencyAlerts}`}
@@ -340,11 +340,11 @@ export default function Dashboard() {
         </GlassPanel> */}
       </div>
 
-      {/* Lane Status Summary - Synced with Camera Feeds */}
+      {/* Road Status Summary - Synced with Camera Feeds */}
       <GlassPanel className="p-6 mb-8">
         <h2 className="text-lg font-display font-semibold mb-6 flex items-center gap-2">
           <Activity className="w-4 h-4 text-primary" />
-          LIVE LANE STATUS - ALGORITHM VERIFICATION
+          LIVE ROAD STATUS - ALGORITHM VERIFICATION
           <span className="text-xs font-mono text-primary/80">(Camera Feed Sync + Priority Calculation)</span>
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -439,12 +439,12 @@ export default function Dashboard() {
         </div>
       </GlassPanel>
 
-      {/* Ambulance Events Log - Only Showing Lane-to-Lane Movement */}
+      {/* Ambulance Events Log - Only Showing Road-to-Road Movement */}
       <GlassPanel className="p-6">
         <h2 className="text-lg font-display font-semibold mb-6 flex items-center gap-2">
           <AlertTriangle className="w-4 h-4 text-destructive" />
           AMBULANCE TRACKING
-          <span className="text-xs font-mono text-primary/80">(Live Lane Movement)</span>
+          <span className="text-xs font-mono text-primary/80">(Live Road Movement)</span>
         </h2>
         <div className="overflow-x-auto">
           <table className="w-full text-sm text-left">
@@ -452,7 +452,7 @@ export default function Dashboard() {
               <tr>
                 <th className="pb-3 font-medium">TIMESTAMP</th>
                 <th className="pb-3 font-medium">VEHICLE NO.</th>
-                <th className="pb-3 font-medium">LANE MOVEMENT</th>
+                <th className="pb-3 font-medium">ROAD MOVEMENT</th>
                 <th className="pb-3 font-medium">STATUS</th>
                 <th className="pb-3 font-medium">DURATION</th>
               </tr>

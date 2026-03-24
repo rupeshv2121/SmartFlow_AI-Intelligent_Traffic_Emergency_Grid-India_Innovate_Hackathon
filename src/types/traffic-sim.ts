@@ -20,7 +20,7 @@ export interface SimVehicle {
   speed: number;
   length: number;
   width: number;
-  laneOffset: number;
+  roadOffset: number;
   isOutgoing: boolean;
 }
 

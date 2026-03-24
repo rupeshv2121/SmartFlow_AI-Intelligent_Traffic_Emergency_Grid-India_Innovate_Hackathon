@@ -9,25 +9,25 @@ export interface HealthStatus {
   status: string;
 }
 
-export type LaneDensityItemDensity =
-  (typeof LaneDensityItemDensity)[keyof typeof LaneDensityItemDensity];
+export type RoadDensityItemDensity =
+  (typeof RoadDensityItemDensity)[keyof typeof RoadDensityItemDensity];
 
-export const LaneDensityItemDensity = {
+export const RoadDensityItemDensity = {
   low: "low",
   medium: "medium",
   high: "high",
 } as const;
 
-export interface LaneDensityItem {
+export interface RoadDensityItem {
   id: string;
   name: string;
-  density: LaneDensityItemDensity;
+  density: RoadDensityItemDensity;
   vehicleCount: number;
   speed: number;
 }
 
 export interface TrafficDensityResponse {
-  lanes: LaneDensityItem[];
+  roads: RoadDensityItem[];
   timestamp: string;
 }
 
@@ -53,7 +53,7 @@ export interface VehicleCountsResponse {
 export interface DashboardStatsResponse {
   totalVehicles: number;
   activeIntersections: number;
-  congestedLanes: number;
+  congestedRoads: number;
   emergencyAlerts: number;
   avgSpeed: number;
   systemStatus: string;
@@ -237,8 +237,8 @@ export interface IntersectionVideoResponse {
   resolution: string;
 }
 
-export interface LaneDensityResponse {
-  lanes: LaneDensityItem[];
+export interface RoadDensityResponse {
+  roads: RoadDensityItem[];
 }
 
 export interface HeatmapCell {

@@ -37,7 +37,7 @@ export default function Traffic() {
     return () => window.removeEventListener('message', handleMessage);
   }, [selectIntersection]);
 
-  const activeAmbulanceLanes = state.roads.filter((road) => road.ambulanceDetected).length;
+  const activeAmbulanceRoads = state.roads.filter((road) => road.ambulanceDetected).length;
   const totalEnteredVehicles = state.roads.reduce((sum, road) => sum + road.vehicleCount, 0);
 
   return (
@@ -70,10 +70,10 @@ export default function Traffic() {
             </div>
           </GlassPanel>
           <GlassPanel className="p-4">
-            <div className="text-xs text-muted-foreground font-mono mb-1">ACTIVE EMERGENCY LANES</div>
+            <div className="text-xs text-muted-foreground font-mono mb-1">ACTIVE EMERGENCY ROADS</div>
             <div className="text-2xl font-display font-bold flex items-center gap-2 text-destructive">
               <AlertTriangle className="w-5 h-5" />
-              {activeAmbulanceLanes}
+              {activeAmbulanceRoads}
             </div>
           </GlassPanel>
         </div>

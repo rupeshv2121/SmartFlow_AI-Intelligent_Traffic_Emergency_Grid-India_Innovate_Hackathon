@@ -15,7 +15,7 @@ interface IntersectionDetailViewProps {
 
 export function IntersectionDetailView({ intersection, roads, onBack, mlDetectionApiUrl = "http://localhost:8000" }: IntersectionDetailViewProps) {
   const emergencyActive = roads.some((road) => road.ambulanceDetected);
-  const { updateLaneDetectionCount, updateLaneEmergencyDetected, algorithmConfig } = useTrafficSim();
+  const { updateRoadDetectionCount, updateRoadEmergencyDetected, algorithmConfig } = useTrafficSim();
   const enableMLDetection = true; // AI Detection always enabled
   const [detectionCounts, setDetectionCounts] = useState<Map<number, number>>(new Map());
   const [detectionOverlays, setDetectionOverlays] = useState<
@@ -109,7 +109,7 @@ export function IntersectionDetailView({ intersection, roads, onBack, mlDetectio
                 });
 
                 setTimeout(() => {
-                  updateLaneEmergencyDetected(cameraIndex, emergencyDetected);
+                  updateRoadEmergencyDetected(cameraIndex, emergencyDetected);
                 }, 0);
 
                 setDetectionCounts((prev) => {
@@ -117,9 +117,9 @@ export function IntersectionDetailView({ intersection, roads, onBack, mlDetectio
                   const frameCount = result.detection_count ?? 0;
                   newMap.set(cameraIndex, frameCount);
 
-                  // Update lane detection count asynchronously to avoid render conflicts
+                  // Update road detection count asynchronously to avoid render conflicts
                   setTimeout(() => {
-                    updateLaneDetectionCount(cameraIndex, frameCount);
+                    updateRoadDetectionCount(cameraIndex, frameCount);
                   }, 0);
 
                   return newMap;
@@ -153,7 +153,7 @@ export function IntersectionDetailView({ intersection, roads, onBack, mlDetectio
       clearInterval(interval);
       processingRef.current = false;
     };
-  }, [enableMLDetection, mlDetectionApiUrl, updateLaneDetectionCount, updateLaneEmergencyDetected]);
+  }, [enableMLDetection, mlDetectionApiUrl, updateRoadDetectionCount, updateRoadEmergencyDetected]);
   // const totalQueueVehicles = roads.reduce((sum, road) => sum + road.vehicles.length, 0);
   // const totalEnteredVehicles = roads.reduce((sum, road) => sum + road.vehicleCount, 0);
 
@@ -232,7 +232,7 @@ export function IntersectionDetailView({ intersection, roads, onBack, mlDetectio
                 <TrafficCameraScene
                   roads={roads}
                   cameraIndex={index}
-                  cameraLabel={`Lane ${index + 1}`}
+                  cameraLabel={`Road ${index + 1}`}
                   showDetectionOverlay={enableMLDetection}
                   detectionOverlay={detectionOverlays.get(index)}
                   ambulanceDetected={road.ambulanceDetected}

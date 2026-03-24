@@ -41,10 +41,10 @@ interface TrafficCameraSceneProps {
 }
 
 const CAMERA_POSES: IntersectionCameraPose[] = [
-  { position: [0, 24, -46], lookAt: [0, 1.4, 20] },    // Lane 1: approach from +Z, rear-follow view
-  { position: [46, 24, 0], lookAt: [-20, 1.4, 0] },    // Lane 2: approach from +X, rear-follow view
-  { position: [0, 24, 46], lookAt: [0, 1.4, -20] },    // Lane 3: approach from -Z, rear-follow view
-  { position: [-46, 24, 0], lookAt: [20, 1.4, 0] },    // Lane 4: approach from -X, rear-follow view
+  { position: [0, 24, -46], lookAt: [0, 1.4, 20] },    // Road 1: approach from +Z, rear-follow view
+  { position: [46, 24, 0], lookAt: [-20, 1.4, 0] },    // Road 2: approach from +X, rear-follow view
+  { position: [0, 24, 46], lookAt: [0, 1.4, -20] },    // Road 3: approach from -Z, rear-follow view
+  { position: [-46, 24, 0], lookAt: [20, 1.4, 0] },    // Road 4: approach from -X, rear-follow view
 ];
 
 function lampClass(lamp: SignalState, current: SignalState) {
@@ -130,7 +130,7 @@ export function TrafficCameraScene({
       </div>
 
       <div className="absolute bottom-3 left-3 right-3 z-30 flex flex-col gap-1.5 rounded-md border border-cyan-300/20 bg-slate-950/75 px-3 py-2 font-mono text-[11px] text-slate-200 backdrop-blur-sm">
-        {/* Top Row: Lane Info */}
+        {/* Top Row: Road Info */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <span className="text-slate-400">FEED</span>
@@ -229,7 +229,7 @@ export function TrafficCameraScene({
         </div>
 
         {/* Algorithm Formula Explanation */}
-        <div className="text-[8px] text-slate-500 border-t border-cyan-300/10 pt-1 mt-1">
+        {/* <div className="text-[8px] text-slate-500 border-t border-cyan-300/10 pt-1 mt-1">
           <div className="flex justify-between">
             <div>
               <span className="text-orange-300">P</span> = ({focusRoad.detectionCount} × <span className="text-orange-400">{algorithmConfig?.w1?.toFixed(1) ?? "1.0"}</span>) + ({(Math.min(focusRoad.waitingTime, algorithmConfig?.maxWait ?? 300) * (algorithmConfig?.waitScale ?? 0.1)).toFixed(1)} × <span className="text-purple-400">{algorithmConfig?.w2?.toFixed(1) ?? "1.0"}</span>)
@@ -238,7 +238,7 @@ export function TrafficCameraScene({
               <span className="text-emerald-300">G</span> = {algorithmConfig?.baseTime ?? "10"} + ({focusRoad.detectionCount} × <span className="text-cyan-400">{algorithmConfig?.factor?.toFixed(1) ?? "2.0"}</span>)
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
 
       <div className="absolute left-4 top-14 z-30 w-14.5 rounded-md border border-zinc-500/45 bg-zinc-900/80 p-1.5 shadow-[0_8px_20px_rgba(0,0,0,0.45)] backdrop-blur-sm">
