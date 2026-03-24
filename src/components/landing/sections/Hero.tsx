@@ -69,14 +69,11 @@ export function Hero() {
             className="flex flex-wrap gap-4 pt-4"
           >
             <Link to="/dashboard">
-            <GlowButton variant="primary">
+            <GlowButton variant="glow">
               Get Started
               <ArrowRight className="w-4 h-4 ml-2 inline" />
             </GlowButton>
             </Link>
-            <GlowButton variant="outline">
-              Explore Features
-            </GlowButton>
           </motion.div>
 
           {/* Stats */}

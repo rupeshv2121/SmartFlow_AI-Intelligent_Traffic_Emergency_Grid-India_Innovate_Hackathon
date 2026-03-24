@@ -260,7 +260,7 @@ export default function Dashboard() {
 
       <div className="grid grid-cols-1 gap-6 mb-8">
         {/* Main Chart - Recent 10 Data Points Only */}
-        <GlassPanel className="lg:col-span-2 p-6 flex flex-col">
+        {/* <GlassPanel className="lg:col-span-2 p-6 flex flex-col">
           <div className="flex justify-between items-center mb-6">
             <div>
               <h2 className="text-lg font-display font-semibold flex items-center gap-2">
@@ -320,7 +320,7 @@ export default function Dashboard() {
               </AreaChart>
             </ResponsiveContainer>
           </div>
-        </GlassPanel>
+        </GlassPanel> */}
 
         {/* Live Map Preview
         <GlassPanel className="p-6 flex flex-col">

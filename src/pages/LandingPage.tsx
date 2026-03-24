@@ -1,6 +1,5 @@
 import { Comparison } from '../components/landing/sections/Comparison';
 import { CTA } from '../components/landing/sections/CTA';
-import { Emergency } from '../components/landing/sections/Emergency';
 import { Footer } from '../components/landing/sections/Footer';
 import { Hero } from '../components/landing/sections/Hero';
 import { HowItWorks } from '../components/landing/sections/HowItWorks';
@@ -31,7 +30,6 @@ export default function Home() {
       <Solution />
       <HowItWorks />
       <Metrics />
-      <Emergency />
       <Comparison />
       <UseCases />
       <Team />
