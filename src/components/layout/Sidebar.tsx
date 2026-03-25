@@ -35,23 +35,22 @@ export function Sidebar({ onExpandedChange, isExpanded = true }: SidebarProps) {
         isExpanded ? "w-64" : "w-20"
       )}
     >
-          <Link to="/">
-      <div className="p-5 flex items-center justify-center h-22">
-        <div className="flex items-center gap-3 w-full">
-          <div className="relative flex items-center justify-center w-10 h-10 rounded-lg bg-primary/10 border border-primary/30 shrink-0">
-       
-            <Hexagon className="w-6 h-6 text-primary absolute animate-pulse-border" />
-            <div className="w-2 h-2 bg-primary rounded-full animate-pulse" />
-          </div>
-          {isExpanded && (
+      <Link to="/">
+        <div className="p-5 flex items-center justify-center h-22">
+          <div className="flex items-center gap-3 w-full">
+            <div className="relative flex items-center justify-center w-10 h-10 rounded-lg bg-primary/10 border border-primary/30 shrink-0">
+              <Hexagon className="w-6 h-6 text-primary absolute animate-pulse-border" />
+              <div className="w-2 h-2 bg-primary rounded-full animate-pulse" />
+            </div>
+            {isExpanded && (
               <div className="overflow-hidden whitespace-nowrap">
                 <h1 className="font-display font-bold text-lg tracking-widest text-glow leading-none">SMARTFLOW</h1>
                 <p className="text-[10px] text-primary/60 font-mono tracking-widest">AI OPTIMIZER</p>
               </div>
-          )}
+            )}
+          </div>
         </div>
-      </div>
-          </Link>
+      </Link>
 
       <nav className="flex-1 px-3 py-4 space-y-2">
         {NAV_ITEMS.map((item) => {

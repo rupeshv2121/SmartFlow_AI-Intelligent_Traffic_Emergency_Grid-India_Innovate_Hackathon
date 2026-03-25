@@ -265,7 +265,65 @@ export function SUMOIntersectionView({ roads }: SUMOIntersectionViewProps) {
                 {/* Signal for incoming side */}
                 {(() => {
                   const s = rotatePoint(CENTER_X + ROAD_HALF_WIDTH + 8, STOP_LINE_Y - 8, rotationIndex);
-                  return <circle cx={s.x} cy={s.y} r="5" fill={signalColor} />;
+                  return (
+                    <>
+                      {/* Outer glow ring for visibility */}
+                      <circle cx={s.x} cy={s.y} r={10} fill={signalColor} opacity={0.12} />
+                      <circle cx={s.x} cy={s.y} r={8} fill="none" stroke={signalColor} opacity={0.22} strokeWidth={2} />
+                      {/* Main signal (with thin white outline for contrast) */}
+                      <circle cx={s.x} cy={s.y} r={6} fill={signalColor} stroke="#ffffff" strokeWidth={1} />
+                      {/* Signal timer (seconds) placed inside a highlighted box
+                          positioned slightly outward into the green area and clamped
+                          to remain within the view. */}
+                      {typeof road?.signalTimeLeft === "number" && (() => {
+                        const timerText = `${Math.max(0, Math.round(road.signalTimeLeft))}s`;
+                        const BOX_W = 44; // box width in px
+                        const BOX_H = 20; // box height in px
+
+                        // direction from center to signal; push outward into grass
+                        const dirX = s.x - CENTER_X;
+                        const dirY = s.y - CENTER_Y;
+                        const len = Math.hypot(dirX, dirY) || 1;
+                        const normX = dirX / len;
+                        const normY = dirY / len;
+                        const OUTER_PUSH = 22;
+
+                        let boxCx = s.x + normX * OUTER_PUSH;
+                        let boxCy = s.y + normY * OUTER_PUSH;
+
+                        // Clamp inside view area with small margin
+                        const MARGIN = 6;
+                        boxCx = clamp(boxCx, MARGIN + BOX_W / 2, VIEW_W - MARGIN - BOX_W / 2);
+                        boxCy = clamp(boxCy, MARGIN + BOX_H / 2, VIEW_H - MARGIN - BOX_H / 2);
+
+                        return (
+                          <g>
+                            <rect
+                              x={boxCx - BOX_W / 2}
+                              y={boxCy - BOX_H / 2}
+                              width={BOX_W}
+                              height={BOX_H}
+                              rx={6}
+                              fill="#064e3b"
+                              opacity={0.9}
+                              stroke="#10b981"
+                              strokeWidth={1}
+                            />
+                            <text
+                              x={boxCx}
+                              y={boxCy + 4}
+                              fontSize="11"
+                              fill="#ecfeff"
+                              fontFamily="monospace"
+                              textAnchor="middle"
+                            >
+                              {timerText}
+                            </text>
+                          </g>
+                        );
+                      })()}
+                    </>
+                  );
                 })()}
 
                 {(road?.vehicles ?? []).map((vehicle, idx) => {
@@ -297,10 +355,26 @@ export function SUMOIntersectionView({ roads }: SUMOIntersectionViewProps) {
             );
           })}
 
-          <text x={CENTER_X} y="16" fontSize="12" fill="#ffffff" textAnchor="middle" fontFamily="monospace">Road 1</text>
-          <text x={VIEW_W - 20} y={CENTER_Y + 4} fontSize="12" fill="#ffffff" textAnchor="middle" fontFamily="monospace">Road 2</text>
-          <text x={CENTER_X} y={VIEW_H - 8} fontSize="12" fill="#ffffff" textAnchor="middle" fontFamily="monospace">Road 3</text>
-          <text x="20" y={CENTER_Y + 4} fontSize="12" fill="#ffffff" textAnchor="middle" fontFamily="monospace">Road 4</text>
+          {/* Road labels with semi-transparent background boxes for readability */}
+          <g>
+            <rect x={CENTER_X - 36} y={4} width={72} height={22} rx={6} fill="#0b1220" opacity={0.6} stroke="#ffffff" strokeWidth={0.6} />
+            <text x={CENTER_X} y={20} fontSize="13" fill="#ffffff" textAnchor="middle" fontFamily="monospace" fontWeight={700}>Road 1</text>
+          </g>
+
+          <g>
+            <rect x={VIEW_W - 20 - 36} y={CENTER_Y - 8} width={72} height={22} rx={6} fill="#0b1220" opacity={0.6} stroke="#ffffff" strokeWidth={0.6} />
+            <text x={VIEW_W - 20} y={CENTER_Y + 8} fontSize="13" fill="#ffffff" textAnchor="middle" fontFamily="monospace" fontWeight={700}>Road 2</text>
+          </g>
+
+          <g>
+            <rect x={CENTER_X - 36} y={VIEW_H - 28} width={72} height={22} rx={6} fill="#0b1220" opacity={0.6} stroke="#ffffff" strokeWidth={0.6} />
+            <text x={CENTER_X} y={VIEW_H - 12} fontSize="13" fill="#ffffff" textAnchor="middle" fontFamily="monospace" fontWeight={700}>Road 3</text>
+          </g>
+
+          <g>
+            <rect x={20 - 36} y={CENTER_Y - 8} width={72} height={22} rx={6} fill="#0b1220" opacity={0.6} stroke="#ffffff" strokeWidth={0.6} />
+            <text x={20} y={CENTER_Y + 8} fontSize="13" fill="#ffffff" textAnchor="middle" fontFamily="monospace" fontWeight={700}>Road 4</text>
+          </g>
 
           <rect x="10" y={VIEW_H - 22} width="10" height="10" fill="#6db3ff" rx="2" />
           <text x="26" y={VIEW_H - 13} fontSize="10" fill="#d1d5db" fontFamily="monospace">Incoming</text>

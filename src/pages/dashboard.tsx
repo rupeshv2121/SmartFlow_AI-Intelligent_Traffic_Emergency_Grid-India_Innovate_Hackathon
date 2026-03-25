@@ -219,43 +219,166 @@ export default function Dashboard() {
 
   return (
     <AppLayout>
-      <div className="mb-8">
-        <h1 className="text-3xl font-display font-bold text-foreground mb-2">COMMAND CENTER</h1>
-        <p className="text-muted-foreground font-mono text-sm">REAL-TIME CITY TRAFFIC OVERVIEW - SYNCED WITH LIVE CAMERA FEEDS</p>
+      {/* Hero Section with Gradient Background */}
+      <div className="mb-10 relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary/20 via-primary/5 to-transparent border border-primary/30 p-8">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-primary/10 rounded-full blur-3xl -mr-48 -mt-48"></div>
+        <div className="relative z-10">
+          <div className="flex items-center gap-3 mb-3">
+            <div className="w-3 h-3 rounded-full bg-success animate-pulse shadow-lg shadow-success/50"></div>
+            <span className="text-xs font-mono text-success font-bold tracking-wider">SYSTEM ONLINE</span>
+          </div>
+          <h1 className="text-5xl font-display font-bold text-foreground mb-3 tracking-tight">
+            TRAFFIC COMMAND CENTER
+          </h1>
+          <p className="text-muted-foreground font-mono text-sm tracking-wide">
+            Real-time monitoring and adaptive signal control powered by AI
+          </p>
+        </div>
       </div>
 
-      {/* Stats Row - Synced with Live Camera Feeds */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <StatCard
-          key={`total-${totalVehicles}`}
-          title="Total Vehicles"
-          value={formatNumber(totalVehicles)}
-          icon={<Car className="w-6 h-6" />}
-          trend={{ value: "LIVE", isPositive: true }}
-          glow="primary"
-        />
-        <StatCard
-          key={`nodes-${activeIntersections}`}
-          title="Active Nodes"
-          value={activeIntersections}
-          icon={<MapPin className="w-6 h-6" />}
-          glow="success"
-        />
-        <StatCard
-          key={`congested-${congestedRoads}`}
-          title="Congested Roads"
-          value={congestedRoads}
-          icon={<Activity className="w-6 h-6" />}
-          trend={{ value: congestedRoads > 0 ? `${congestedRoads}/4` : "0", isPositive: false }}
-          glow={congestedRoads > 2 ? "warning" : "none"}
-        />
-        <StatCard
-          key={`emergency-${emergencyAlerts}`}
-          title="Emergency Alerts"
-          value={emergencyAlerts}
-          icon={<AlertTriangle className="w-6 h-6" />}
-          glow={emergencyAlerts > 0 ? "destructive" : "none"}
-        />
+      {/* Enhanced Stats Row with Mini Visualizations */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+        <GlassPanel className="p-6 relative overflow-hidden group hover:scale-[1.02] transition-all duration-300" glowColor="primary">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-2xl -mr-16 -mt-16 group-hover:bg-primary/10 transition-colors"></div>
+          <div className="relative z-10">
+            <div className="flex justify-between items-start mb-4">
+              <div className="p-3 rounded-xl bg-primary/10 text-primary group-hover:bg-primary/20 transition-colors">
+                <Car className="w-7 h-7" />
+              </div>
+              <span className="text-xs font-mono px-3 py-1.5 rounded-full bg-success/10 text-success border border-success/20 font-bold">
+                LIVE
+              </span>
+            </div>
+            <div>
+              <h3 className="text-muted-foreground text-xs font-medium tracking-wider mb-2 uppercase font-display">
+                Total Vehicles
+              </h3>
+              <p className="text-5xl font-bold font-display text-glow text-foreground mb-3 tracking-tight">
+                {formatNumber(totalVehicles)}
+              </p>
+              <div className="flex items-center gap-2 text-xs">
+                <div className="flex-1 h-1.5 bg-primary/20 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-gradient-to-r from-primary to-primary/50 rounded-full transition-all duration-500"
+                    style={{ width: `${Math.min((totalVehicles / 40) * 100, 100)}%` }}
+                  ></div>
+                </div>
+                <span className="text-primary font-mono font-bold">{Math.round((totalVehicles / 40) * 100)}%</span>
+              </div>
+            </div>
+          </div>
+        </GlassPanel>
+
+        <GlassPanel className="p-6 relative overflow-hidden group hover:scale-[1.02] transition-all duration-300" glowColor="success">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-success/5 rounded-full blur-2xl -mr-16 -mt-16 group-hover:bg-success/10 transition-colors"></div>
+          <div className="relative z-10">
+            <div className="flex justify-between items-start mb-4">
+              <div className="p-3 rounded-xl bg-success/10 text-success group-hover:bg-success/20 transition-colors">
+                <MapPin className="w-7 h-7" />
+              </div>
+              <div className="flex flex-col items-end gap-1">
+                {[...Array(4)].map((_, i) => (
+                  <div key={i} className={cn("w-1 h-1 rounded-full", i < activeIntersections ? "bg-success animate-pulse" : "bg-muted")}></div>
+                ))}
+              </div>
+            </div>
+            <div>
+              <h3 className="text-muted-foreground text-xs font-medium tracking-wider mb-2 uppercase font-display">
+                Active Nodes
+              </h3>
+              <p className="text-5xl font-bold font-display text-glow-success text-foreground mb-1 tracking-tight">
+                {activeIntersections}
+              </p>
+              <p className="text-xs text-success font-mono">All systems operational</p>
+            </div>
+          </div>
+        </GlassPanel>
+
+        <GlassPanel className="p-6 relative overflow-hidden group hover:scale-[1.02] transition-all duration-300" glowColor={congestedRoads > 2 ? "warning" : "none"}>
+          <div className="absolute top-0 right-0 w-32 h-32 bg-warning/5 rounded-full blur-2xl -mr-16 -mt-16 group-hover:bg-warning/10 transition-colors"></div>
+          <div className="relative z-10">
+            <div className="flex justify-between items-start mb-4">
+              <div className={cn(
+                "p-3 rounded-xl transition-colors",
+                congestedRoads > 2 ? "bg-warning/10 text-warning group-hover:bg-warning/20" : "bg-muted/10 text-muted-foreground group-hover:bg-muted/20"
+              )}>
+                <Activity className="w-7 h-7" />
+              </div>
+              {congestedRoads > 0 && (
+                <span className={cn(
+                  "text-xs font-mono px-3 py-1.5 rounded-full border font-bold",
+                  congestedRoads > 2 ? "bg-warning/10 text-warning border-warning/20 animate-pulse" : "bg-muted/10 text-muted-foreground border-muted/20"
+                )}>
+                  {congestedRoads}/4
+                </span>
+              )}
+            </div>
+            <div>
+              <h3 className="text-muted-foreground text-xs font-medium tracking-wider mb-2 uppercase font-display">
+                Congested Roads
+              </h3>
+              <p className={cn(
+                "text-5xl font-bold font-display mb-3 tracking-tight",
+                congestedRoads > 2 ? "text-warning text-glow-warning" : "text-foreground"
+              )}>
+                {congestedRoads}
+              </p>
+              <div className="grid grid-cols-4 gap-2">
+                {state.roads.map((road, i) => (
+                  <div
+                    key={i}
+                    className={cn(
+                      "w-10 h-8 rounded-lg flex items-center justify-center text-xs font-mono font-semibold transition-all",
+                      road.detectionCount >= 8
+                        ? "bg-warning/40 border-warning/60 border-2 text-warning shadow-[0_6px_16px_rgba(255,159,67,0.12)] animate-pulse"
+                        : "bg-muted/40 border-muted/50 border text-muted-foreground"
+                    )}
+                    title={`Road ${i + 1} — ${road.detectionCount} detections`}
+                  >
+                    <span>{i + 1}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </GlassPanel>
+
+        <GlassPanel className="p-6 relative overflow-hidden group hover:scale-[1.02] transition-all duration-300" glowColor={emergencyAlerts > 0 ? "destructive" : "none"}>
+          <div className="absolute top-0 right-0 w-32 h-32 bg-destructive/5 rounded-full blur-2xl -mr-16 -mt-16 group-hover:bg-destructive/10 transition-colors"></div>
+          <div className="relative z-10">
+            <div className="flex justify-between items-start mb-4">
+              <div className={cn(
+                "p-3 rounded-xl transition-colors",
+                emergencyAlerts > 0 ? "bg-destructive/10 text-destructive group-hover:bg-destructive/20 animate-pulse" : "bg-muted/10 text-muted-foreground group-hover:bg-muted/20"
+              )}>
+                <AlertTriangle className={cn("w-7 h-7", emergencyAlerts > 0 && "animate-bounce")} />
+              </div>
+              {emergencyAlerts > 0 && (
+                <div className="flex items-center gap-1">
+                  <div className="w-2 h-2 rounded-full bg-destructive animate-ping"></div>
+                  <div className="w-2 h-2 rounded-full bg-destructive absolute"></div>
+                </div>
+              )}
+            </div>
+            <div>
+              <h3 className="text-muted-foreground text-xs font-medium tracking-wider mb-2 uppercase font-display">
+                Emergency Alerts
+              </h3>
+              <p className={cn(
+                "text-5xl font-bold font-display mb-1 tracking-tight",
+                emergencyAlerts > 0 ? "text-destructive text-glow-danger" : "text-foreground"
+              )}>
+                {emergencyAlerts}
+              </p>
+              <p className={cn(
+                "text-xs font-mono",
+                emergencyAlerts > 0 ? "text-destructive font-bold" : "text-muted-foreground"
+              )}>
+                {emergencyAlerts > 0 ? "PRIORITY CORRIDOR ACTIVE" : "No active emergencies"}
+              </p>
+            </div>
+          </div>
+        </GlassPanel>
       </div>
 
       <div className="grid grid-cols-1 gap-6 mb-8">
@@ -340,14 +463,29 @@ export default function Dashboard() {
         </GlassPanel> */}
       </div>
 
-      {/* Road Status Summary - Synced with Camera Feeds */}
-      <GlassPanel className="p-6 mb-8">
-        <h2 className="text-lg font-display font-semibold mb-6 flex items-center gap-2">
-          <Activity className="w-4 h-4 text-primary" />
-          LIVE ROAD STATUS - ALGORITHM VERIFICATION
-          <span className="text-xs font-mono text-primary/80">(Camera Feed Sync + Priority Calculation)</span>
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      {/* Enhanced Road Status Grid */}
+      <GlassPanel className="p-8 mb-10">
+        <div className="flex justify-between items-center mb-8">
+          <div>
+            <h2 className="text-2xl font-display font-bold mb-2 flex items-center gap-3">
+              <div className="p-2 rounded-lg bg-primary/10">
+                <Activity className="w-5 h-5 text-primary" />
+              </div>
+              INTERSECTION STATUS
+            </h2>
+            <p className="text-xs text-muted-foreground font-mono">
+              Real-time traffic monitoring with adaptive signal control
+            </p>
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 rounded-full bg-success animate-pulse"></div>
+              <span className="text-xs font-mono text-success">LIVE</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
           {state.roads.map((road, index) => {
             // Calculate priority using the same formula from TrafficSimContext
             const ENHANCED_W1 = 1.0;
@@ -357,143 +495,358 @@ export default function Dashboard() {
 
             const scaledWait = Math.min(road.waitingTime, ENHANCED_MAX_WAIT) * ENHANCED_WAIT_SCALE;
             const priority = road.detectionCount * ENHANCED_W1 + scaledWait * ENHANCED_W2;
+            const congestionLevel = Math.min((road.detectionCount / 12) * 100, 100);
 
             return (
-              <div
+              <GlassPanel
                 key={road.id}
                 className={cn(
-                  "p-4 rounded-lg border transition-all",
-                  road.signal === 'green' ? "border-success/50 bg-success/5" :
-                  road.signal === 'yellow' ? "border-warning/50 bg-warning/5" :
-                  "border-destructive/50 bg-destructive/5"
+                  "p-5 relative overflow-hidden transition-all duration-300 hover:scale-[1.02]",
+                  road.signal === 'green' && "border-success/40 shadow-success/10",
+                  road.signal === 'yellow' && "border-warning/40 shadow-warning/10",
+                  road.signal === 'red' && "border-destructive/30 shadow-destructive/5"
                 )}
+                glowColor={road.ambulanceDetected ? "destructive" : road.signal === 'green' ? "success" : "none"}
               >
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-mono font-bold text-white">{road.label}</span>
-                  <div className={cn(
-                    "w-3 h-3 rounded-full",
-                    road.signal === 'green' ? "bg-success animate-pulse" :
-                    road.signal === 'yellow' ? "bg-warning animate-pulse" :
-                    "bg-destructive"
-                  )} />
-                </div>
-                <div className="space-y-1 text-xs font-mono">
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Vehicles:</span>
-                    <span className="text-white font-bold">{road.detectionCount}</span>
+                {/* Background gradient based on signal */}
+                <div className={cn(
+                  "absolute top-0 right-0 w-32 h-32 rounded-full blur-3xl -mr-16 -mt-16 transition-all",
+                  road.signal === 'green' && "bg-success/10",
+                  road.signal === 'yellow' && "bg-warning/10",
+                  road.signal === 'red' && "bg-destructive/5"
+                )}></div>
+
+                {/* Emergency Alert Banner */}
+                {road.ambulanceDetected && (
+                  <div className="absolute top-0 left-0 right-0 bg-destructive/20 border-b border-destructive/30 px-3 py-1 flex items-center gap-2">
+                    <AlertTriangle className="w-3 h-3 text-destructive animate-pulse" />
+                    <span className="text-xs font-mono font-bold text-destructive">EMERGENCY VEHICLE</span>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Queue:</span>
-                    <span className="text-white">{road.vehicles.filter(v => !v.isOutgoing && v.progress < 0.85).length}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Signal:</span>
-                    <span className={cn(
-                      "font-bold uppercase",
-                      road.signal === 'green' ? "text-success" :
-                      road.signal === 'yellow' ? "text-warning" :
-                      "text-destructive"
-                    )}>{road.signal}</span>
+                )}
+
+                <div className={cn("relative z-10", road.ambulanceDetected && "mt-7")}>
+                  {/* Header */}
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-2">
+                      <div className={cn(
+                        "w-10 h-10 rounded-lg flex items-center justify-center font-bold font-display text-lg border-2 transition-all",
+                        road.signal === 'green' && "bg-success/10 border-success/30 text-success",
+                        road.signal === 'yellow' && "bg-warning/10 border-warning/30 text-warning",
+                        road.signal === 'red' && "bg-destructive/10 border-destructive/20 text-destructive/70"
+                      )}>
+                        {road.label.split(' ')[1]}
+                      </div>
+                      <div>
+                        <h3 className="text-sm font-mono font-bold text-white">{road.label}</h3>
+                        <p className="text-xs text-muted-foreground font-mono">ID: {road.id}</p>
+                      </div>
+                    </div>
+                    <div className={cn(
+                      "w-4 h-4 rounded-full shadow-lg transition-all",
+                      road.signal === 'green' && "bg-success animate-pulse shadow-success/50",
+                      road.signal === 'yellow' && "bg-warning animate-pulse shadow-warning/50",
+                      road.signal === 'red' && "bg-destructive shadow-destructive/30"
+                    )} />
                   </div>
 
-                  {/* NEW: Priority Value */}
-                  <div className="flex justify-between items-center pt-1 mt-1 border-t border-primary/20">
-                    <span className="text-primary/90">Priority:</span>
-                    <span className="text-primary font-bold">{priority.toFixed(2)}</span>
-                  </div>
-
-                  {/* NEW: Waiting Time */}
-                  <div className="flex justify-between items-center">
-                    <span className="text-cyan-400/80">Wait Time:</span>
-                    <span className={cn(
-                      "font-bold",
-                      road.waitingTime > 180 ? "text-destructive animate-pulse" :
-                      road.waitingTime > 60 ? "text-warning" :
-                      "text-cyan-400"
-                    )}>{road.waitingTime.toFixed(1)}s</span>
-                  </div>
-
-                  {road.ambulanceDetected && (
-                    <div className="pt-1 mt-1 border-t border-destructive/30">
-                      <span className="text-destructive font-bold flex items-center gap-1">
-                        <AlertTriangle className="w-3 h-3" />
-                        AMBULANCE
+                  {/* Congestion Gauge */}
+                  <div className="mb-4">
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="text-xs font-mono text-muted-foreground">Traffic Density</span>
+                      <span className={cn(
+                        "text-xs font-mono font-bold",
+                        congestionLevel > 66 ? "text-destructive" :
+                        congestionLevel > 33 ? "text-warning" :
+                        "text-success"
+                      )}>
+                        {congestionLevel.toFixed(0)}%
                       </span>
                     </div>
-                  )}
+                    <div className="h-2 bg-muted/20 rounded-full overflow-hidden">
+                      <div
+                        className={cn(
+                          "h-full rounded-full transition-all duration-500",
+                          congestionLevel > 66 ? "bg-gradient-to-r from-destructive to-destructive/50" :
+                          congestionLevel > 33 ? "bg-gradient-to-r from-warning to-warning/50" :
+                          "bg-gradient-to-r from-success to-success/50"
+                        )}
+                        style={{ width: `${congestionLevel}%` }}
+                      ></div>
+                    </div>
+                  </div>
+
+                  {/* Stats Grid */}
+                  <div className="grid grid-cols-2 gap-3 mb-4">
+                    <div className="bg-card/50 rounded-lg p-3 border border-border/50">
+                      <div className="flex items-center gap-2 mb-1">
+                        <Car className="w-3 h-3 text-primary" />
+                        <span className="text-xs text-muted-foreground font-mono">Vehicles</span>
+                      </div>
+                      <p className="text-2xl font-bold font-display text-primary">{road.detectionCount}</p>
+                    </div>
+                    <div className="bg-card/50 rounded-lg p-3 border border-border/50">
+                      <div className="flex items-center gap-2 mb-1">
+                        <Zap className="w-3 h-3 text-cyan-400" />
+                        <span className="text-xs text-muted-foreground font-mono">Queue</span>
+                      </div>
+                      <p className="text-2xl font-bold font-display text-cyan-400">
+                        {road.vehicles.filter(v => !v.isOutgoing && v.progress < 0.85).length}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Priority and Wait Time */}
+                  <div className="space-y-2 pb-3 border-b border-border/30 mb-3">
+                    <div className="flex justify-between items-center">
+                      <span className="text-xs text-primary/70 font-mono">Priority Score</span>
+                      <span className="text-sm font-bold font-mono text-primary">{priority.toFixed(1)}</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-xs text-muted-foreground font-mono">Wait Time</span>
+                      <span className={cn(
+                        "text-sm font-bold font-mono",
+                        road.waitingTime > 180 ? "text-destructive animate-pulse" :
+                        road.waitingTime > 60 ? "text-warning" :
+                        "text-cyan-400"
+                      )}>
+                        {road.waitingTime.toFixed(0)}s
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Signal Status */}
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs text-muted-foreground font-mono">Signal</span>
+                    <div className="flex items-center gap-2">
+                      <div className="flex gap-1">
+                        <div className={cn("w-2 h-2 rounded-full", road.signal === 'red' ? "bg-destructive" : "bg-muted/30")}></div>
+                        <div className={cn("w-2 h-2 rounded-full", road.signal === 'yellow' ? "bg-warning" : "bg-muted/30")}></div>
+                        <div className={cn("w-2 h-2 rounded-full", road.signal === 'green' ? "bg-success" : "bg-muted/30")}></div>
+                      </div>
+                      <span className={cn(
+                        "text-xs font-bold uppercase font-mono px-2 py-0.5 rounded",
+                        road.signal === 'green' && "text-success bg-success/10",
+                        road.signal === 'yellow' && "text-warning bg-warning/10",
+                        road.signal === 'red' && "text-destructive/70 bg-destructive/5"
+                      )}>
+                        {road.signal}
+                      </span>
+                    </div>
+                  </div>
                 </div>
-              </div>
+              </GlassPanel>
             );
           })}
         </div>
 
-        {/* Algorithm Explanation */}
-        <div className="mt-4 p-3 rounded-lg bg-primary/5 border border-primary/20">
-          <div className="text-xs font-mono text-primary/90">
-            <strong className="text-primary">Algorithm:</strong> Priority = (Vehicles × 1.0) + (Wait Time × 0.1)
-            <br />
-            <span className="text-muted-foreground">
-              Higher priority = selected next for green signal. Emergency vehicles get +1000 boost. Starvation prevention at 180s.
-            </span>
+        {/* Algorithm Info Card */}
+        <div className="bg-gradient-to-br from-primary/10 via-primary/5 to-transparent rounded-xl p-6 border border-primary/20">
+          <div className="flex items-start gap-4">
+            <div className="p-3 rounded-lg bg-primary/10 border border-primary/20">
+              <Zap className="w-5 h-5 text-primary" />
+            </div>
+            <div className="flex-1">
+              <h3 className="text-sm font-display font-bold text-primary mb-2">ADAPTIVE SIGNAL ALGORITHM</h3>
+              <p className="text-xs font-mono text-muted-foreground mb-3">
+                Priority = (Vehicle Count × 1.0) + (Wait Time × 0.1)
+              </p>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs font-mono">
+                <div className="flex items-center gap-2">
+                  <div className="w-1.5 h-1.5 rounded-full bg-primary"></div>
+                  <span className="text-muted-foreground">Real-time density analysis</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-1.5 h-1.5 rounded-full bg-destructive"></div>
+                  <span className="text-muted-foreground">Emergency priority +1000</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-1.5 h-1.5 rounded-full bg-warning"></div>
+                  <span className="text-muted-foreground">Starvation prevention at 180s</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </GlassPanel>
 
-      {/* Ambulance Events Log - Only Showing Road-to-Road Movement */}
-      <GlassPanel className="p-6">
-        <h2 className="text-lg font-display font-semibold mb-6 flex items-center gap-2">
-          <AlertTriangle className="w-4 h-4 text-destructive" />
-          AMBULANCE TRACKING
-          <span className="text-xs font-mono text-primary/80">(Live Road Movement)</span>
-        </h2>
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm text-left">
-            <thead className="text-xs font-mono text-muted-foreground border-b border-border">
+      {/* Enhanced Ambulance Tracking Section */}
+      <GlassPanel className="p-8" glowColor={emergencyAlerts > 0 ? "destructive" : "none"}>
+        <div className="flex justify-between items-center mb-8">
+          <div>
+            <h2 className="text-2xl font-display font-bold mb-2 flex items-center gap-3">
+              <div className={cn(
+                "p-2 rounded-lg transition-all",
+                emergencyAlerts > 0 ? "bg-destructive/10 animate-pulse" : "bg-muted/10"
+              )}>
+                <AlertTriangle className={cn(
+                  "w-5 h-5",
+                  emergencyAlerts > 0 ? "text-destructive" : "text-muted-foreground"
+                )} />
+              </div>
+              EMERGENCY VEHICLE TRACKING
+            </h2>
+            <p className="text-xs text-muted-foreground font-mono">
+              Real-time ambulance detection and priority corridor monitoring
+            </p>
+          </div>
+          {emergencyAlerts > 0 && (
+            <div className="flex items-center gap-3 px-4 py-2 rounded-lg bg-destructive/10 border border-destructive/20">
+              <div className="flex space-x-1">
+                <div className="w-2 h-2 rounded-full bg-destructive animate-ping"></div>
+                <div className="w-2 h-2 rounded-full bg-destructive absolute"></div>
+              </div>
+              <span className="text-sm font-mono font-bold text-destructive">
+                {emergencyAlerts} ACTIVE CORRIDOR{emergencyAlerts > 1 ? 'S' : ''}
+              </span>
+            </div>
+          )}
+        </div>
+
+        {/* Stats Summary */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          <div className="bg-gradient-to-br from-destructive/10 to-transparent rounded-xl p-5 border border-destructive/20">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs font-mono text-muted-foreground uppercase">Active Now</span>
+              <div className="w-2 h-2 rounded-full bg-destructive animate-pulse"></div>
+            </div>
+            <p className="text-3xl font-bold font-display text-destructive">
+              {ambulanceEvents.filter(e => e.status === 'pending').length}
+            </p>
+          </div>
+          <div className="bg-gradient-to-br from-success/10 to-transparent rounded-xl p-5 border border-success/20">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs font-mono text-muted-foreground uppercase">Completed Today</span>
+              <div className="w-2 h-2 rounded-full bg-success"></div>
+            </div>
+            <p className="text-3xl font-bold font-display text-success">
+              {ambulanceEvents.filter(e => e.status === 'completed').length}
+            </p>
+          </div>
+          <div className="bg-gradient-to-br from-primary/10 to-transparent rounded-xl p-5 border border-primary/20">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs font-mono text-muted-foreground uppercase">Avg. Duration</span>
+              <Zap className="w-3 h-3 text-primary" />
+            </div>
+            <p className="text-3xl font-bold font-display text-primary">
+              {ambulanceEvents.length > 0
+                ? Math.round(ambulanceEvents.reduce((sum, e) => sum + e.duration, 0) / ambulanceEvents.length)
+                : 0}s
+            </p>
+          </div>
+        </div>
+
+        {/* Enhanced Table */}
+        <div className="overflow-hidden rounded-xl border border-border/50">
+          <table className="w-full text-sm">
+            <thead className="bg-card/50 border-b border-border">
               <tr>
-                <th className="pb-3 font-medium">TIMESTAMP</th>
-                <th className="pb-3 font-medium">VEHICLE NO.</th>
-                <th className="pb-3 font-medium">ROAD MOVEMENT</th>
-                <th className="pb-3 font-medium">STATUS</th>
-                <th className="pb-3 font-medium">DURATION</th>
+                <th className="px-4 py-4 text-left">
+                  <span className="text-xs font-mono font-medium text-muted-foreground uppercase tracking-wider">Timestamp</span>
+                </th>
+                <th className="px-4 py-4 text-left">
+                  <span className="text-xs font-mono font-medium text-muted-foreground uppercase tracking-wider">Vehicle ID</span>
+                </th>
+                <th className="px-4 py-4 text-left">
+                  <span className="text-xs font-mono font-medium text-muted-foreground uppercase tracking-wider">Route Status</span>
+                </th>
+                <th className="px-4 py-4 text-left">
+                  <span className="text-xs font-mono font-medium text-muted-foreground uppercase tracking-wider">Status</span>
+                </th>
+                <th className="px-4 py-4 text-right">
+                  <span className="text-xs font-mono font-medium text-muted-foreground uppercase tracking-wider">Duration</span>
+                </th>
               </tr>
             </thead>
-            <tbody>
+            <tbody className="divide-y divide-border/30">
               {ambulanceEvents.length > 0 ? (
-                ambulanceEvents.slice(0, 5).map((ev) => (
-                  <tr key={ev.id} className="border-b border-border/50 hover:bg-white/5 transition-colors">
-                    <td className="py-3 font-mono text-muted-foreground">{format(new Date(ev.timestamp), "HH:mm:ss")}</td>
-                    <td className="py-3 font-medium text-destructive font-mono">
-                      {ev.vehicleId}
+                ambulanceEvents.slice(0, 5).map((ev, idx) => (
+                  <tr
+                    key={ev.id}
+                    className={cn(
+                      "transition-all hover:bg-card/30",
+                      ev.status === "pending" && "bg-destructive/5"
+                    )}
+                  >
+                    <td className="px-4 py-4">
+                      <div className="flex items-center gap-2">
+                        <div className={cn(
+                          "w-1.5 h-1.5 rounded-full",
+                          idx === 0 ? "bg-primary animate-pulse" : "bg-muted"
+                        )}></div>
+                        <span className="font-mono text-muted-foreground text-xs">
+                          {format(new Date(ev.timestamp), "HH:mm:ss")}
+                        </span>
+                      </div>
                     </td>
-                    <td className="py-3 text-white font-mono">{ev.route}</td>
-                    <td className="py-3">
+                    <td className="px-4 py-4">
+                      <div className="flex items-center gap-2">
+                        <div className="p-1.5 rounded bg-destructive/10 border border-destructive/20">
+                          <Car className="w-3 h-3 text-destructive" />
+                        </div>
+                        <span className="font-mono font-bold text-destructive text-sm">
+                          {ev.vehicleId}
+                        </span>
+                      </div>
+                    </td>
+                    <td className="px-4 py-4">
+                      <div className="flex items-center gap-2">
+                        <MapPin className="w-3 h-3 text-primary" />
+                        <span className="text-white font-mono text-sm">{ev.route}</span>
+                      </div>
+                    </td>
+                    <td className="px-4 py-4">
                       <span className={cn(
-                        "px-2 py-1 rounded text-xs font-mono border font-bold",
-                        ev.status === "pending" ? "bg-warning/10 text-warning border-warning/20 animate-pulse" :
-                        ev.status === "completed" ? "bg-success/10 text-success border-success/20" :
-                        "bg-muted/50 text-muted-foreground border-border"
+                        "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-mono font-bold border",
+                        ev.status === "pending"
+                          ? "bg-warning/10 text-warning border-warning/20 animate-pulse"
+                          : "bg-success/10 text-success border-success/20"
                       )}>
+                        <div className={cn(
+                          "w-1.5 h-1.5 rounded-full",
+                          ev.status === "pending" ? "bg-warning" : "bg-success"
+                        )}></div>
                         {ev.status.toUpperCase()}
                       </span>
                     </td>
-                    <td className="py-3 font-mono text-muted-foreground">{ev.duration}s</td>
+                    <td className="px-4 py-4 text-right">
+                      <div className="flex items-center justify-end gap-2">
+                        <Zap className="w-3 h-3 text-cyan-400" />
+                        <span className="font-mono text-cyan-400 font-bold">{ev.duration}s</span>
+                      </div>
+                    </td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan={5} className="py-8 text-center text-muted-foreground font-mono text-sm">
-                    NO AMBULANCE ACTIVITY
+                  <td colSpan={5} className="px-4 py-12">
+                    <div className="flex flex-col items-center justify-center gap-4 text-center">
+                      <div className="p-4 rounded-full bg-muted/10 border border-muted/20">
+                        <AlertTriangle className="w-8 h-8 text-muted-foreground" />
+                      </div>
+                      <div>
+                        <p className="text-muted-foreground font-mono text-sm font-bold mb-1">
+                          NO EMERGENCY ACTIVITY
+                        </p>
+                        <p className="text-muted-foreground/60 font-mono text-xs">
+                          System monitoring for emergency vehicles
+                        </p>
+                      </div>
+                    </div>
                   </td>
                 </tr>
               )}
             </tbody>
           </table>
-          {ambulanceEvents.length === 0 && (emergency?.events?.length || 0) > 0 && (
-            <div className="mt-4 text-xs text-muted-foreground font-mono text-center">
-              {(emergency?.events || []).length} other events (filtered for ambulances only)
-            </div>
-          )}
         </div>
+
+        {/* Additional Info */}
+        {ambulanceEvents.length > 5 && (
+          <div className="mt-4 text-center">
+            <p className="text-xs text-muted-foreground font-mono">
+              Showing 5 of {ambulanceEvents.length} events
+            </p>
+          </div>
+        )}
       </GlassPanel>
     </AppLayout>
   );

@@ -1,7 +1,8 @@
 import { motion } from "framer-motion";
-import { Menu, User, X } from "lucide-react";
+import { Menu, User } from "lucide-react";
 import { ReactNode, useEffect, useState } from "react";
 import { Sidebar } from "./Sidebar";
+import { Link } from "wouter";
 
 export function AppLayout({ children }: { children: ReactNode }) {
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(() => {
@@ -34,7 +35,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
               title={isSidebarExpanded ? "Collapse sidebar" : "Expand sidebar"}
             >
               {isSidebarExpanded ? (
-                <X className="w-5 h-5" />
+                <Menu className="w-5 h-5" />
               ) : (
                 <Menu className="w-5 h-5" />
               )}
@@ -57,9 +58,11 @@ export function AppLayout({ children }: { children: ReactNode }) {
               <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-destructive rounded-full shadow-[0_0_8px_rgba(255,42,42,0.8)]" />
             </button> */}
             <div className="w-8 h-8 rounded-full bg-linear-to-tr from-primary to-secondary p-px">
-              <div className="w-full h-full bg-background rounded-full flex items-center justify-center">
-                <User className="w-4 h-4 text-foreground" />
-              </div>
+              <Link to="/">
+                <div className="w-full h-full bg-background rounded-full flex items-center justify-center">
+                  <User className="w-4 h-4 text-foreground" />
+                </div>
+              </Link>
             </div>
           </div>
         </header>
