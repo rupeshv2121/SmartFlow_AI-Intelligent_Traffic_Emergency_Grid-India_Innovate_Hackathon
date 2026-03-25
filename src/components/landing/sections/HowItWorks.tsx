@@ -59,14 +59,14 @@ const steps = [
 
 const HowItWorks = () => (
   <SectionWrapper id="how-it-works">
-    <div className="text-center mb-16 space-y-4">
+    <div className="text-center mt-20 mb-16 space-y-4">
       <p className="text-xs uppercase tracking-[0.25em] text-primary font-medium">Process</p>
       <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold font-display">
         How It <span className="gradient-text text-cyan-300">Works</span>
       </h2>
     </div>
 
-    <div className="max-w-4xl mx-auto">
+    <div className="max-w-4xl mx-auto mb-20">
       <div className="space-y-12">
         {steps.map((s, i) => (
           <motion.div

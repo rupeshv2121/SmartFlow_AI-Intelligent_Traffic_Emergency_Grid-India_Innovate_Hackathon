@@ -28,7 +28,7 @@ const useCases = [
     icon: Zap,
     title: 'Emergency Services',
     description:
-      'Critical response time improvement for ambulances and fire departments.',
+      'Critical response time improvement for emergency vehicles.',
   },
   {
     icon: Smartphone,

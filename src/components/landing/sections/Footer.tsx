@@ -16,7 +16,7 @@ export function Footer() {
             transition={{ duration: 0.6 }}
           >
             <h3 className="text-2xl font-bold text-slate-200 mb-2">
-              Smart Traffic
+              SmartFlow AI
               <span className="text-cyan-300">.</span>
             </h3>
             <p className="text-slate-400 text-sm">
@@ -103,7 +103,7 @@ export function Footer() {
             className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-slate-400"
           >
             <p>
-              © 2025 Smart Traffic. Built by{' '}
+              © 2026 Smart Traffic. Built by{' '}
               <span className="text-cyan-300">Commit & Conquer Team</span>.
             </p>
             <div className="flex gap-6">
@@ -112,9 +112,6 @@ export function Footer() {
               </a>
               <a href="#" className="hover:text-cyan-300 transition-colors">
                 Terms
-              </a>
-              <a href="#" className="hover:text-cyan-300 transition-colors">
-                Cookies
               </a>
             </div>
           </motion.div>
