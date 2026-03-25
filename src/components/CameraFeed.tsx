@@ -1,7 +1,7 @@
+import { cn } from "@/lib/utils";
+import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { GlassPanel } from "./GlassPanel";
-import { motion, AnimatePresence } from "framer-motion";
-import { cn } from "@/lib/utils";
 
 export interface DetectedObject {
   id: string;
@@ -141,7 +141,7 @@ export function CameraFeed({
       </div>
 
       {/* Overlay UI */}
-      <div className="absolute top-0 left-0 right-0 p-3 flex justify-between items-start bg-gradient-to-b from-black/80 to-transparent pointer-events-none">
+      <div className="absolute top-0 left-0 right-0 p-3 flex justify-between items-start bg-linear-to-b from-black/80 to-transparent pointer-events-none">
         <div>
           <div className="font-display font-semibold text-white flex items-center gap-2">
             <div className="w-2 h-2 rounded-full bg-destructive animate-pulse" />

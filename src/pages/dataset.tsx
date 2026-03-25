@@ -50,7 +50,7 @@ function VehiclePreviewMesh({ type }: { type: VehicleType }) {
 
 function Vehicle3DPhoto({ type }: { type: VehicleType }) {
   return (
-    <div className="h-[170px] w-full overflow-hidden rounded-lg border border-white/10 bg-gradient-to-b from-[#27466d] via-[#4f76a8] to-[#7ea0cb]">
+    <div className="h-42.5 w-full overflow-hidden rounded-lg border border-white/10 bg-linear-to-b from-[#27466d] via-[#4f76a8] to-[#7ea0cb]">
       <Canvas dpr={[0.8, 1.2]} camera={{ position: [2.8, 1.7, 3], fov: 35 }}>
         <color attach="background" args={["#7ea0cb"]} />
         <hemisphereLight intensity={0.55} color="#d9ecff" groundColor="#35557d" />
@@ -162,7 +162,7 @@ export default function Dataset() {
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
           {VEHICLE_CLASSES.map((cls) => (
-            <div key={`preview-${cls.type}`} className="rounded-lg border border-white/10 bg-white/[0.03] p-3">
+            <div key={`preview-${cls.type}`} className="rounded-lg border border-white/10 bg-white/3 p-3">
               <Vehicle3DPhoto type={cls.type} />
               <div className="mt-3 flex items-center justify-between">
                 <div className="text-sm font-semibold">{cls.label}</div>

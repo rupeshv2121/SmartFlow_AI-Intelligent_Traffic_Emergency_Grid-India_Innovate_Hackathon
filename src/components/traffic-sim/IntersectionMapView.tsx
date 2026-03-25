@@ -53,7 +53,7 @@ export function IntersectionMapView({ roads, onRoadClick }: IntersectionMapViewP
 
       {/* Map Container */}
       <div className="relative h-full w-full flex items-center justify-center pt-16 pb-8">
-        <div className="relative w-[600px] h-[600px]">
+        <div className="relative w-150 h-150">
           {/* Center Circle */}
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 rounded-full bg-slate-800/80 border-2 border-cyan-400/40 flex items-center justify-center">
             <div className="text-center">
@@ -106,7 +106,7 @@ export function IntersectionMapView({ roads, onRoadClick }: IntersectionMapViewP
                 >
                   <div className="relative">
                     {/* Road Card */}
-                    <div className="bg-gradient-to-br from-slate-800/95 to-slate-900/95 border-2 border-cyan-400/40 rounded-lg px-6 py-4 min-w-[180px] transition-all duration-300 group-hover:border-cyan-300 group-hover:shadow-[0_0_25px_rgba(34,211,238,0.4)] group-hover:scale-105">
+                    <div className="bg-linear-to-br from-slate-800/95 to-slate-900/95 border-2 border-cyan-400/40 rounded-lg px-6 py-4 min-w-45 transition-all duration-300 group-hover:border-cyan-300 group-hover:shadow-[0_0_25px_rgba(34,211,238,0.4)] group-hover:scale-105">
                       {/* Direction Arrow */}
                       <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-slate-700 border-2 border-cyan-400/60 flex items-center justify-center">
                         <ArrowUp

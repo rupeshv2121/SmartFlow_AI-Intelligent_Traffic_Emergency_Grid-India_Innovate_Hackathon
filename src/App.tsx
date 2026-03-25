@@ -4,15 +4,14 @@ import { Toaster } from "./components/ui/toaster";
 import { TooltipProvider } from "./components/ui/tooltip";
 import { TrafficSimProvider } from "./context/TrafficSimContext";
 
-import Dashboard from "./pages/dashboard";
-import Signals from "./pages/signals";
-import Traffic from "./pages/traffic";
-// import Simulations from "./pages/simulations";
 import Analytics from "./pages/analytics";
+import Dashboard from "./pages/dashboard";
 import Dataset from "./pages/dataset";
 import LandingPage from "./pages/LandingPage";
 import NotFound from "./pages/not-found";
 import Settings from "./pages/settings";
+import Signals from "./pages/signals";
+import Traffic from "./pages/traffic";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -30,8 +29,6 @@ function Router() {
       <Route path="/dashboard" component={Dashboard} />
       <Route path="/traffic" component={Traffic} />
       <Route path="/signals" component={Signals} />
-      {/* <Route path="/emergency" component={Emergency} /> */}
-      {/* <Route path="/simulations" component={Simulations} /> */}
       <Route path="/analytics" component={Analytics} />
       <Route path="/dataset" component={Dataset} />
       <Route path="/settings" component={Settings} />

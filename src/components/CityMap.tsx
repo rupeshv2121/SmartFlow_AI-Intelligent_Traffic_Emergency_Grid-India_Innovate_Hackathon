@@ -120,7 +120,7 @@ export function CityMap({ intersections = [], roads = [], activeRoute = [] }: Ci
       </div>
 
       <Dialog open={!!selectedNode} onOpenChange={(open) => !open && setSelectedNode(null)}>
-        <DialogContent className="sm:max-w-[700px] bg-background border-primary/20 p-0 overflow-hidden">
+        <DialogContent className="sm:max-w-175 bg-background border-primary/20 p-0 overflow-hidden">
           <DialogHeader className="p-4 pb-0">
             <DialogTitle className="font-display tracking-widest text-primary flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />

@@ -1,7 +1,7 @@
-import { ArrowLeft, AlertTriangle } from "lucide-react";
-import type { SimRoadState } from "@/types/traffic-sim";
 import { TrafficCameraScene } from "@/components/traffic-sim/TrafficCameraScene";
 import { useTrafficSim } from "@/context/TrafficSimContext";
+import type { SimRoadState } from "@/types/traffic-sim";
+import { AlertTriangle, ArrowLeft } from "lucide-react";
 
 interface RoadDetailViewProps {
   roads: SimRoadState[];
@@ -51,7 +51,7 @@ export function RoadDetailView({ roads, roadIndex, onBack }: RoadDetailViewProps
       <div className="grid grid-cols-1 xl:grid-cols-[2fr_1fr] gap-4 items-start">
         {/* Camera Feed */}
         <div className="space-y-4">
-          <div className="h-[400px] md:h-[500px] lg:h-[600px]">
+          <div className="h-100 md:h-125 lg:h-150">
             <TrafficCameraScene
               roads={roads}
               cameraIndex={roadIndex}
@@ -66,7 +66,7 @@ export function RoadDetailView({ roads, roadIndex, onBack }: RoadDetailViewProps
             {road.vehicles.length === 0 ? (
               <p className="text-xs text-muted-foreground font-mono">No vehicles in queue</p>
             ) : (
-              <div className="space-y-2 max-h-[300px] overflow-y-auto">
+              <div className="space-y-2 max-h-75 overflow-y-auto">
                 {road.vehicles.slice(0, 20).map((vehicle, idx) => (
                   <div
                     key={vehicle.id}

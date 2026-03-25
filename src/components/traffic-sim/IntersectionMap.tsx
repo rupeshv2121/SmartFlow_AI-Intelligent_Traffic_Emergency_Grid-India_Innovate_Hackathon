@@ -1,6 +1,6 @@
-import { MapContainer, TileLayer, CircleMarker, Tooltip } from "react-leaflet";
-import "leaflet/dist/leaflet.css";
 import type { SimIntersection } from "@/types/traffic-sim";
+import "leaflet/dist/leaflet.css";
+import { CircleMarker, MapContainer, TileLayer, Tooltip } from "react-leaflet";
 
 interface IntersectionMapProps {
   intersections: SimIntersection[];
@@ -24,7 +24,7 @@ function toLatLng(intersection: SimIntersection): [number, number] {
 
 export function IntersectionMap({ intersections, onSelect }: IntersectionMapProps) {
   return (
-    <div className="w-full h-[560px] rounded-xl overflow-hidden border border-white/15">
+    <div className="w-full h-140 rounded-xl overflow-hidden border border-white/15">
       <MapContainer center={CITY_CENTER} zoom={12} className="h-full w-full" scrollWheelZoom>
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

@@ -68,7 +68,7 @@ export function Problem() {
             return (
               <GlassCard key={i} delay={i * 0.1}>
                 <div className="flex items-start gap-4">
-                  <div className="p-3 rounded-lg bg-slate-800/80 border border-cyan-400/25 text-cyan-300 flex-shrink-0 shadow-[0_0_18px_rgba(34,211,238,0.1)]">
+                  <div className="p-3 rounded-lg bg-slate-800/80 border border-cyan-400/25 text-cyan-300 shrink-0 shadow-[0_0_18px_rgba(34,211,238,0.1)]">
                     <Icon className="w-6 h-6" />
                   </div>
                   <div>

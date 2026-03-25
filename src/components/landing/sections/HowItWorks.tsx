@@ -80,7 +80,7 @@ const HowItWorks = () => (
             {/* Left side: Step number and title */}
             <div className="md:col-span-4">
               <div className="flex items-center gap-4">
-                <div className="flex-shrink-0 w-12 h-12 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center">
+                <div className="shrink-0 w-12 h-12 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center">
                   <s.icon className="w-6 h-6 text-primary" />
                 </div>
                 <div>
@@ -97,7 +97,7 @@ const HowItWorks = () => (
                 <ul className="space-y-2">
                   {s.features.map((f) => (
                     <li key={f.text} className="flex items-center gap-3">
-                      <Check className="w-4 h-4 text-green-400 flex-shrink-0" />
+                      <Check className="w-4 h-4 text-green-400 shrink-0" />
                       <span className="text-sm text-slate-300">{f.text}</span>
                     </li>
                   ))}

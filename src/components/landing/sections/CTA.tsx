@@ -50,7 +50,7 @@ export function CTA() {
             className="flex flex-col sm:flex-row justify-center gap-4 pt-8"
           >
             <Link to='/dashboard'>
-            <GlowButton variant="primary" className="text-lg px-8 py-4">
+            <GlowButton variant="glow" className="text-lg px-8 py-4">
               Get Started
               <ArrowRight className="w-5 h-5 ml-2 inline" />
             </GlowButton>
