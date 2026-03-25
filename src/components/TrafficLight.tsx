@@ -41,19 +41,19 @@ export function TrafficLight({ phase, className, size = "md", horizontal = false
       className
     )}>
       <div className={cn(
-        "rounded-full transition-all duration-300 flex-shrink-0", sz,
+        "rounded-full transition-all duration-300 shrink-0", sz,
         phase === "red" 
           ? "bg-destructive shadow-[0_0_12px_rgba(255,42,42,0.8)] opacity-100" 
           : "bg-destructive/20 opacity-40"
       )} />
       <div className={cn(
-        "rounded-full transition-all duration-300 flex-shrink-0", sz,
+        "rounded-full transition-all duration-300 shrink-0", sz,
         phase === "yellow" 
           ? "bg-warning shadow-[0_0_12px_rgba(255,184,0,0.8)] opacity-100" 
           : "bg-warning/20 opacity-40"
       )} />
       <div className={cn(
-        "rounded-full transition-all duration-300 flex-shrink-0", sz,
+        "rounded-full transition-all duration-300 shrink-0", sz,
         phase === "green" 
           ? "bg-success shadow-[0_0_12px_rgba(0,255,136,0.8)] opacity-100" 
           : "bg-success/20 opacity-40"

@@ -356,7 +356,7 @@ export default function Analytics() {
               </button>
             </div>
           </div>
-          <div className="h-[300px]">
+          <div className="h-75">
             {chartDataWithUniformTime.length > 0 ? (
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={chartDataWithUniformTime} margin={{ top: 10, right: 30, left: 5, bottom: 40 }}>
@@ -425,7 +425,7 @@ export default function Analytics() {
             <MapPin className="w-5 h-5 text-warning" />
             INTERSECTION PERFORMANCE
           </h2>
-          <div className="h-[320px]">
+          <div className="h-80">
             {filteredData.length > 0 ? (
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart
@@ -493,7 +493,7 @@ export default function Analytics() {
             <Activity className="w-5 h-5 text-success" />
             CONGESTION DISTRIBUTION
           </h2>
-          <div className="h-[300px]">
+          <div className="h-75">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart margin={{ top: 16, right: 72, bottom: 16, left: 72 }}>
                 <Pie
@@ -526,7 +526,7 @@ export default function Analytics() {
             <Brain className="w-5 h-5 text-purple-400" />
             SPEED-CONGESTION ANALYSIS
           </h2>
-          <div className="h-[300px]">
+          <div className="h-75">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart
                 data={displayData}

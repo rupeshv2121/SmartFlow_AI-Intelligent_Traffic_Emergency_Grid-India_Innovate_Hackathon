@@ -4,7 +4,6 @@ import { useTrafficSim } from "@/context/TrafficSimContext";
 import type { SimIntersection, SimRoadState } from "@/types/traffic-sim";
 import { ArrowLeft, Zap } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { cn } from "@/lib/utils";
 
 interface IntersectionDetailViewProps {
   intersection: SimIntersection;
@@ -226,7 +225,7 @@ export function IntersectionDetailView({ intersection, roads, onBack, mlDetectio
           {roads.map((road, index) => (
             <div
               key={`camera-${road.id}`}
-              className="relative h-[300px] transition-[height] duration-300 group-data-[sidebar-expanded=false]/app:h-[370px]"
+              className="relative h-75 transition-[height] duration-300 group-data-[sidebar-expanded=false]/app:h-92.5"
             >
               <div className="absolute inset-0 z-0">
                 <TrafficCameraScene
@@ -244,7 +243,7 @@ export function IntersectionDetailView({ intersection, roads, onBack, mlDetectio
               </div>
 
               {enableMLDetection && (
-                <div className="absolute top-2 right-2 z-20 rounded border border-cyan-400/40 bg-cyan-500/15 px-2 py-0.5 text-[10px] font-mono text-cyan-100 pointer-events-none mt-[40px] mr-[10px]">
+                <div className="absolute top-2 right-2 z-20 rounded border border-cyan-400/40 bg-cyan-500/15 px-2 py-0.5 text-[10px] font-mono text-cyan-100 pointer-events-none mt-10 mr-2.5">
                   AI LIVE
                 </div>
               )}

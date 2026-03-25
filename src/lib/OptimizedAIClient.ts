@@ -1,18 +1,3 @@
-/**
- * OPTIMIZED AI DETECTION INTEGRATION
- * ===================================
- *
- * ✅ NEW ARCHITCTURE:
- *  1. Capture canvas frame → POST to backend (non-blocking)
- *  2. Poll for detection results independently (lightweight JSON)
- *  3. Render detections on Three.js canvas
- *
- * ⚡ Benefits:
- *  - Response time: <50ms (vs 500ms+ synchronous approach)
- *  - Bandwidth: ~5KB polling (vs 500KB image transmission)
- *  - No blocking: UI stays responsive while processing continues
- */
-
 export interface Detection {
   x1: number;
   y1: number;
@@ -81,7 +66,7 @@ export class OptimizedAIDetectionClient {
    */
   startPollingDetections(
     onDetectionsUpdate: (detections: DetectionFrame) => void,
-    onError?: (error: Error) => void
+    onError?: (error: Error) => void,
   ): () => void {
     if (this.isPollActive) return () => {};
 
@@ -98,7 +83,7 @@ export class OptimizedAIDetectionClient {
             headers: { "Content-Type": "application/json" },
             // Abort after 5 seconds if no response
             signal: AbortSignal.timeout(5000),
-          }
+          },
         );
 
         if (!response.ok) {
@@ -192,7 +177,7 @@ export class OptimizedAIDetectionClient {
     ctx: CanvasRenderingContext2D,
     detectionFrame: DetectionFrame,
     canvasWidth: number,
-    canvasHeight: number
+    canvasHeight: number,
   ): void {
     const scaleX = canvasWidth / detectionFrame.frame_width;
     const scaleY = canvasHeight / detectionFrame.frame_height;
@@ -217,7 +202,7 @@ export class OptimizedAIDetectionClient {
       ctx.fillText(
         `${det.class_name} ${det.confidence.toFixed(2)}`,
         x1,
-        y1 - 5
+        y1 - 5,
       );
     }
   }
