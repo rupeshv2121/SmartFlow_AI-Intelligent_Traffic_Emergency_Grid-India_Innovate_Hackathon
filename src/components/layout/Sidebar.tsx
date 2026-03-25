@@ -1,7 +1,6 @@
 import { cn } from "@/lib/utils";
 import {
   Database,
-  Hexagon,
   LayoutDashboard,
   // Boxes,
   LineChart,
@@ -10,6 +9,7 @@ import {
   Video
 } from "lucide-react";
 import { Link, useLocation } from "wouter";
+import smartflow_icon from '../../../public/smartflow_icon.jpeg';
 
 const NAV_ITEMS = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -39,8 +39,7 @@ export function Sidebar({ onExpandedChange, isExpanded = true }: SidebarProps) {
         <div className="p-5 flex items-center justify-center h-22">
           <div className="flex items-center gap-3 w-full">
             <div className="relative flex items-center justify-center w-10 h-10 rounded-lg bg-primary/10 border border-primary/30 shrink-0">
-              <Hexagon className="w-6 h-6 text-primary absolute animate-pulse-border" />
-              <div className="w-2 h-2 bg-primary rounded-full animate-pulse" />
+            <img src={smartflow_icon} alt=""  className="rounded-lg"/>
             </div>
             {isExpanded && (
               <div className="overflow-hidden whitespace-nowrap">

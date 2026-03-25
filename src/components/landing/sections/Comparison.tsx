@@ -1,8 +1,8 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { ScrollReveal } from '../ScrollReveal';
 import { Check, X } from 'lucide-react';
+import { ScrollReveal } from '../ScrollReveal';
 
 const features = [
   { name: 'Real-time Adaptivity', traditional: false, ai: true },
@@ -21,10 +21,11 @@ export function Comparison() {
       <div className="max-w-6xl mx-auto">
         <ScrollReveal className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold text-slate-200 mb-6">
-            Why This Stands Out
+            Why This  
+            <span className='text-cyan-300 pl-2'>Stands OUT</span>
           </h2>
           <p className="text-xl text-slate-400 max-w-2xl mx-auto">
-            A head-to-head comparison of traditional and AI-powered traffic control.
+            A comparison of traditional and AI-powered traffic control.
           </p>
         </ScrollReveal>
 
@@ -62,7 +63,7 @@ export function Comparison() {
                   whileInView={{ opacity: 1 }}
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.05 }}
-                  className="border-b border-white/8 hover:bg-slate-800/35 transition-colors"
+                  className="cursor-pointer border-b border-white/8 hover:bg-slate-800/35 transition-colors"
                 >
                   <td className="py-4 px-6 text-slate-200 font-medium">{feature.name}</td>
                   <td className="py-4 px-6 text-center">
@@ -114,7 +115,7 @@ export function Comparison() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.1 }}
-              className="glass-effect rounded-xl p-6 border-white/10 text-center"
+              className="glass-effect rounded-xl p-6 border-white/10 text-center hover:bg-slate-800/50 transition-colors cursor-pointer"
             >
               <h3 className="text-xl font-bold text-cyan-300 mb-2">{insight.title}</h3>
               <p className="text-slate-400">{insight.desc}</p>

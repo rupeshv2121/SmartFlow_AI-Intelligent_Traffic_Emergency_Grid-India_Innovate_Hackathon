@@ -2,6 +2,7 @@
 
 import {
   AlertTriangle,
+  Car,
   Clock,
   Cpu,
   Eye,
@@ -40,11 +41,17 @@ const problems = [
     description:
       'Inefficient manual monitoring systems with no AI-powered decision support.',
   },
+  {
+    icon: Car,
+    title:"Carbon Emissions",
+    description:
+      'Increased idling times at red lights contribute to higher pollution levels in cities.',
+  }
 ];
 
 export function Problem() {
   return (
-    <section className="relative py-20 px-4">
+    <section className="relative py-30 px-4">
       <div className="max-w-7xl mx-auto">
         {/* Section header */}
         <ScrollReveal className="text-center mb-16">

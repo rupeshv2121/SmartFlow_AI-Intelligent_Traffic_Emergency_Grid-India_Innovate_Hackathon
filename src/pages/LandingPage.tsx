@@ -26,13 +26,21 @@ export default function Home() {
   return (
     <main className="landing-command-center overflow-hidden">
       <Hero />
+      <hr />
       <Problem />
+      <hr />
       <Solution />
+      <hr />
       <HowItWorks />
+      <hr />
       <Metrics />
+      <hr />
       <Comparison />
+      <hr />
       <UseCases />
+      <hr />
       <Team />
+      <hr />
       <CTA />
       <Footer />
     </main>

@@ -52,12 +52,12 @@ const features = [
 
 export function Solution() {
   return (
-    <section className="relative py-20 px-4">
+    <section className="relative py-20 px-4 mb-20">
       <div className="max-w-7xl mx-auto">
         {/* Section header */}
         <ScrollReveal className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold text-slate-200 mb-6">
-            We have the
+           Our
             <span className="text-cyan-300">
               {' '}
               Solution
