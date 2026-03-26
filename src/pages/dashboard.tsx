@@ -1,24 +1,22 @@
 import { GlassPanel } from "@/components/GlassPanel";
 import { AppLayout } from "@/components/layout/AppLayout";
-import { StatCard } from "@/components/StatCard";
 import { useTrafficSim } from "@/context/TrafficSimContext";
 import {
-    useLiveDashboardStats,
-    useLiveEmergencyEvents,
-    useLiveIntersections,
-    useLiveTrafficHistory
+  useLiveDashboardStats,
+  useLiveEmergencyEvents,
+  useLiveIntersections,
+  useLiveTrafficHistory
 } from "@/hooks/use-smartflow";
 import { cn, formatNumber } from "@/lib/utils";
 import { format } from "date-fns";
 import {
-    Activity,
-    AlertTriangle,
-    Car,
-    MapPin,
-    Zap
+  Activity,
+  AlertTriangle,
+  Car,
+  MapPin,
+  Zap
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
 // Persistent storage keys
 const CHART_STORAGE_KEY = 'traffic-density-history';
@@ -227,7 +225,7 @@ export default function Dashboard() {
             <div className="w-3 h-3 rounded-full bg-success animate-pulse shadow-lg shadow-success/50"></div>
             <span className="text-xs font-mono text-success font-bold tracking-wider">SYSTEM ONLINE</span>
           </div>
-          <h1 className="text-5xl font-display font-bold text-foreground mb-3 tracking-tight">
+          <h1 className="text-4xl font-display font-bold text-foreground mb-3 tracking-tight">
             TRAFFIC COMMAND CENTER
           </h1>
           <p className="text-muted-foreground font-mono text-sm tracking-wide">
@@ -253,7 +251,7 @@ export default function Dashboard() {
               <h3 className="text-muted-foreground text-xs font-medium tracking-wider mb-2 uppercase font-display">
                 Total Vehicles
               </h3>
-              <p className="text-5xl font-bold font-display text-glow text-foreground mb-3 tracking-tight">
+              <p className="text-4xl font-bold font-display text-glow text-foreground mb-3 tracking-tight">
                 {formatNumber(totalVehicles)}
               </p>
               <div className="flex items-center gap-2 text-xs">
@@ -286,7 +284,7 @@ export default function Dashboard() {
               <h3 className="text-muted-foreground text-xs font-medium tracking-wider mb-2 uppercase font-display">
                 Active Nodes
               </h3>
-              <p className="text-5xl font-bold font-display text-glow-success text-foreground mb-1 tracking-tight">
+              <p className="text-4xl font-bold font-display text-glow-success text-foreground mb-1 tracking-tight">
                 {activeIntersections}
               </p>
               <p className="text-xs text-success font-mono">All systems operational</p>
@@ -318,7 +316,7 @@ export default function Dashboard() {
                 Congested Roads
               </h3>
               <p className={cn(
-                "text-5xl font-bold font-display mb-3 tracking-tight",
+                "text-4xl font-bold font-display mb-3 tracking-tight",
                 congestedRoads > 2 ? "text-warning text-glow-warning" : "text-foreground"
               )}>
                 {congestedRoads}
@@ -365,7 +363,7 @@ export default function Dashboard() {
                 Emergency Alerts
               </h3>
               <p className={cn(
-                "text-5xl font-bold font-display mb-1 tracking-tight",
+                "text-4xl font-bold font-display mb-1 tracking-tight",
                 emergencyAlerts > 0 ? "text-destructive text-glow-danger" : "text-foreground"
               )}>
                 {emergencyAlerts}

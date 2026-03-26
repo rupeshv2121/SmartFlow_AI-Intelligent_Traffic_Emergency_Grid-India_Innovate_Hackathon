@@ -11,7 +11,7 @@ const features = [
   { name: 'Predictive Analytics', traditional: false, ai: true },
   { name: 'Scalable & Cost-Effective', traditional: false, ai: true },
   { name: 'Fixed Signal Timing', traditional: true, ai: false },
-  { name: 'Manual Monitoring', traditional: true, ai: false },
+  // { name: 'Manual Monitoring', traditional: true, ai: false },
   { name: 'Reactive Responses', traditional: true, ai: false },
 ];
 

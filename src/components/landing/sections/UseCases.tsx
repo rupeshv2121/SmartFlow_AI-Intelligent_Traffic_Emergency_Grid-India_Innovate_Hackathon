@@ -4,9 +4,8 @@ import {
   Building2,
   Gauge,
   Shield,
-  Smartphone,
   Users,
-  Zap,
+  Zap
 } from 'lucide-react';
 import { GlassCard } from '../GlassCard';
 import { ScrollReveal } from '../ScrollReveal';
@@ -29,12 +28,6 @@ const useCases = [
     title: 'Emergency Services',
     description:
       'Critical response time improvement for emergency vehicles.',
-  },
-  {
-    icon: Smartphone,
-    title: 'Commuters & Citizens',
-    description:
-      'Reduced travel times and better route recommendations via apps.',
   },
   {
     icon: Gauge,
@@ -68,8 +61,8 @@ export function UseCases() {
             const Icon = useCase.icon;
             return (
               <GlassCard key={i} delay={i * 0.08}>
-                <div className="space-y-4">
-                  <div className="p-4 rounded-lg bg-slate-800/80 border border-cyan-400/25 w-fit shadow-[0_0_18px_rgba(34,211,238,0.1)]">
+                <div className="cursor-pointer space-y-4">
+                  <div className=" p-4 rounded-lg bg-slate-800/80 border border-cyan-400/25 w-fit shadow-[0_0_18px_rgba(34,211,238,0.1)]">
                     <Icon className="w-6 h-6 text-cyan-300" />
                   </div>
                   <div>

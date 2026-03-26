@@ -3,10 +3,8 @@
 import {
   AlertCircle,
   Brain,
-  Camera,
   Gauge,
-  Navigation,
-  Radio,
+  Radio
 } from 'lucide-react';
 import { GlassCard } from '../GlassCard';
 import { ScrollReveal } from '../ScrollReveal';
@@ -30,24 +28,24 @@ const features = [
     description:
       'Automatic green corridor activation for ambulances and emergency vehicles.',
   },
-  {
-    icon: Camera,
-    title: 'Smart CCTV Integration',
-    description:
-      'Leverages existing city camera infrastructure for cost-effective deployment.',
-  },
+  // {
+  //   icon: Camera,
+  //   title: 'Smart CCTV Integration',
+  //   description:
+  //     'Leverages existing city camera infrastructure for cost-effective deployment.',
+  // },
   {
     icon: Gauge,
     title: 'Real-Time Dashboard',
     description:
       'Live monitoring of all traffic signals, flow metrics, and system health.',
   },
-  {
-    icon: Navigation,
-    title: 'Smart Route Recommendations',
-    description:
-      'Guides drivers through optimal routes to avoid congestion and reduce travel time.',
-  },
+  // {
+  //   icon: Navigation,
+  //   title: 'Smart Route Recommendations',
+  //   description:
+  //     'Guides drivers through optimal routes to avoid congestion and reduce travel time.',
+  // },
 ];
 
 export function Solution() {
@@ -70,7 +68,7 @@ export function Solution() {
         </ScrollReveal>
 
         {/* Features grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
           {features.map((feature, i) => {
             const Icon = feature.icon;
             return (

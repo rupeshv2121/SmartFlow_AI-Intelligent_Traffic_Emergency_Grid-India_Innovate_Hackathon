@@ -108,10 +108,10 @@ export function Footer() {
             </p>
             <div className="flex gap-6">
               <a href="#" className="hover:text-cyan-300 transition-colors">
-                Privacy
+                Privacy Policy
               </a>
               <a href="#" className="hover:text-cyan-300 transition-colors">
-                Terms
+                Terms & Conditions
               </a>
             </div>
           </motion.div>
