@@ -279,10 +279,7 @@ export default function Settings() {
     <AppLayout>
       <div className="mb-8 max-w-4xl">
         <h1 className="text-3xl font-display font-bold text-foreground mb-2">SYSTEM CONFIGURATION</h1>
-        <p className="text-muted-foreground font-mono text-sm">
-          LIVE TRAFFIC MANAGEMENT SETTINGS • 4-CAMERA SYSTEM
-          {hasChanges && <span className="ml-2 text-warning">• UNSAVED CHANGES</span>}
-        </p>
+          {hasChanges && <span className="ml-2 text-xs text-white bg-amber-700 p-1 px-2 font-bold rounded-xl">UNSAVED CHANGES</span>}
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-8 max-w-5xl">
@@ -336,7 +333,6 @@ export default function Settings() {
                     onChange={(v) => updateFormData('alerts', 'congestionThreshold', Math.round(v))}
                   />
                 </div>
-
                 <div>
                   <PullSlider
                     label="Low Speed Alert Threshold"
@@ -351,7 +347,6 @@ export default function Settings() {
                     onChange={(v) => updateFormData('alerts', 'lowSpeedThreshold', Math.round(v))}
                   />
                 </div>
-
                 <div>
                   <PullSlider
                     label="Emergency Vehicle Sensitivity"
@@ -367,7 +362,7 @@ export default function Settings() {
                   />
                 </div>
 
-                <div className="flex items-center justify-between pt-4 border-t border-border">
+                {/* <div className="flex items-center justify-between pt-4 border-t border-border">
                   <div>
                     <div className="font-medium text-white/90">Email Notifications</div>
                     <div className="text-xs text-muted-foreground">Send email alerts for critical events</div>
@@ -381,7 +376,7 @@ export default function Settings() {
                     />
                     <div className="w-11 h-6 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
                   </label>
-                </div>
+                </div> */}
               </div>
             </GlassPanel>
           )}
@@ -551,7 +546,7 @@ export default function Settings() {
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between pt-4 border-t border-border">
+                {/* <div className="flex items-center justify-between pt-4 border-t border-border">
                   <div>
                     <div className="font-medium text-white/90">Emergency Vehicle Override</div>
                     <div className="text-xs text-muted-foreground">Automatically override signals for emergency vehicles</div>
@@ -565,7 +560,7 @@ export default function Settings() {
                     />
                     <div className="w-11 h-6 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-destructive"></div>
                   </label>
-                </div>
+                </div> */}
               </div>
             </GlassPanel>
           )}
@@ -610,7 +605,7 @@ export default function Settings() {
                   </label>
                 </div>
 
-                <div className="flex items-center justify-between pt-4 border-t border-border">
+                {/* <div className="flex items-center justify-between pt-4 border-t border-border">
                   <div>
                     <div className="font-medium text-white/90">Auto-Export Analytics</div>
                     <div className="text-xs text-muted-foreground">Automatically export daily traffic reports</div>
@@ -624,7 +619,7 @@ export default function Settings() {
                     />
                     <div className="w-11 h-6 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
                   </label>
-                </div>
+                </div> */}
               </div>
             </GlassPanel>
           )}

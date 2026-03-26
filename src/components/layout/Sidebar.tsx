@@ -43,8 +43,8 @@ export function Sidebar({ onExpandedChange, isExpanded = true }: SidebarProps) {
             </div>
             {isExpanded && (
               <div className="overflow-hidden whitespace-nowrap">
-                <h1 className="font-display font-bold text-lg tracking-widest text-glow leading-none">SMARTFLOW</h1>
-                <p className="text-[10px] text-primary/60 font-mono tracking-widest">AI OPTIMIZER</p>
+                <h1 className="font-display font-bold text-lg tracking-widest text-glow leading-none">SMARTFLOW AI</h1>
+                <p className="text-[10px] text-primary/60 font-mono tracking-widest"></p>
               </div>
             )}
           </div>

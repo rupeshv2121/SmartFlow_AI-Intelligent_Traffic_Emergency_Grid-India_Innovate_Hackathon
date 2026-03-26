@@ -169,8 +169,8 @@ export function IntersectionDetailView({ intersection, roads, onBack, mlDetectio
 
         <div className="text-right flex items-center gap-4">
           <div>
-            <div className="text-xl font-display font-bold">{intersection.name}</div>
-            <div className="text-xs font-mono text-muted-foreground">Intersection ID: {intersection.id}</div>
+            {/* <div className="text-xl font-display font-bold">{intersection.name}</div> */}
+            <div className="text-[16px] font-mono font-bold">Intersection ID: {intersection.id}</div>
           </div>
           <button
             disabled
@@ -197,7 +197,7 @@ export function IntersectionDetailView({ intersection, roads, onBack, mlDetectio
 
       {/* Top Info Bar: AI Polls and Last Poll */}
       {enableMLDetection && (
-        <div className="rounded-lg border border-purple-500/30 bg-purple-500/5 px-4 py-3 text-[11px] font-mono text-purple-200">
+        <div className="rounded-lg  bg-purple-500/5 px-4 py-3 text-[11px] font-mono text-purple-200">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-6">
               <div className="flex gap-2">

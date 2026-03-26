@@ -2,6 +2,7 @@ import { GlassPanel } from "@/components/GlassPanel";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { useLiveCongestionAnalytics, useLiveDashboardStats, useLiveTrafficHistory } from "@/hooks/use-smartflow";
 import { getSystemSettings, type SystemSettings } from "@/lib/settings-api";
+import { useSettings } from "@/context/SettingsContext";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { Activity, AlertTriangle, Bell, Brain, Clock, Database, MapPin, RefreshCw, Target, TrendingUp, Zap } from "lucide-react";
@@ -35,27 +36,20 @@ export default function Analytics() {
 
   // Filter states
   const [selectedIntersection, setSelectedIntersection] = useState("all");
-  const [showPredictions, setShowPredictions] = useState(true);
+  const { systemSettings } = useSettings();
+
+  const [showPredictions, setShowPredictions] = useState<boolean>(() => {
+    return systemSettings?.display?.showPredictions ?? true;
+  });
   const [autoRefresh, setAutoRefresh] = useState(true);
   const [alerts, setAlerts] = useState<Array<{id: string, type: 'critical' | 'warning' | 'info', message: string, timestamp: Date}>>([]);
   const [lastUpdate, setLastUpdate] = useState(new Date());
-  const [systemSettings, setSystemSettings] = useState<SystemSettings | null>(null);
 
-  // Load system settings for alert thresholds
+  // Sync showPredictions with global system settings (real-time)
   useEffect(() => {
-    const loadSystemSettings = async () => {
-      try {
-        const response = await getSystemSettings();
-        if (response.success) {
-          setSystemSettings(response.data);
-        }
-      } catch (error) {
-        console.error('Failed to load system settings:', error);
-      }
-    };
-
-    loadSystemSettings();
-  }, []);
+    if (!systemSettings) return;
+    setShowPredictions(systemSettings.display.showPredictions);
+  }, [systemSettings]);
 
   // ML Predictions - Enhanced traffic forecasting
   const predictions = useMemo(() => {
@@ -218,7 +212,7 @@ export default function Analytics() {
               ANALYTICS
             </h1>
             <p className="text-muted-foreground font-mono text-sm">
-              REAL-TIME INSIGHTS • ML PREDICTIONS • INTELLIGENT ALERTS
+              REAL-TIME INSIGHTS
               {systemSettings && (
                 <span className="ml-2 text-cyan-400">
                   • REFRESH: {Math.round(systemSettings.display.refreshInterval / 1000)}s
@@ -304,9 +298,9 @@ export default function Analytics() {
               <div className="flex items-center gap-2">
                 <Bell className="w-4 h-4 text-warning" />
                 <h3 className="font-display font-semibold text-warning">Live Alerts</h3>
-                <span className="px-2 py-0.5 bg-warning/20 text-warning text-xs rounded-full font-mono">
+                {/* <span className="px-2 py-0.5 bg-warning/20 text-warning text-xs rounded-full font-mono">
                   {alerts.length}
-                </span>
+                </span> */}
               </div>
               <button
                 onClick={() => setAlerts([])}
@@ -341,8 +335,8 @@ export default function Analytics() {
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-lg font-display font-semibold text-white/90 flex items-center gap-2">
               <TrendingUp className="w-5 h-5 text-primary" />
-              TRAFFIC TRENDS + ML FORECAST
-              <span className="text-xs font-mono text-primary/80">(Recent 30 Min)</span>
+              TRAFFIC TRENDS + FORECAST
+              <span className="text-xs font-mono text-primary/80">(Last 5 hrs)</span>
             </h2>
             <div className="flex items-center gap-2">
               <button
@@ -369,14 +363,14 @@ export default function Analytics() {
                     interval={Math.max(0, Math.floor(chartDataWithUniformTime.length / 6) - 1)}
                     angle={0}
                     textAnchor="middle"
-                    label={{ value: 'Time (1-hrs intervals)', position: 'insideBottom', offset: -8, fill: 'hsl(var(--muted-foreground))', fontSize: 11 }}
+                    label={{ value: 'Time (1-hrs intervals)', position: 'insideBottom', offset: -20, fill: 'hsl(var(--muted-foreground))', fontSize: 15 }}
                   />
                   <YAxis
                     stroke="hsl(var(--muted-foreground))"
                     fontSize={12}
                     tickLine={false}
                     axisLine={false}
-                    label={{ value: 'Vehicle Count', angle: -90, position: 'insideLeft', fill: 'hsl(var(--muted-foreground))', fontSize: 11 }}
+                    label={{ value: 'Vehicle Count', angle: -90, position: 'insideLeft', fill: 'hsl(var(--muted-foreground))', fontSize: 15 }}
                   />
                   <Tooltip
                     contentStyle={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))', borderRadius: '8px' }}
@@ -545,13 +539,13 @@ export default function Analytics() {
                     position: 'insideBottom',
                     offset: -2,
                     fill: 'hsl(var(--muted-foreground))',
-                    fontSize: 11,
+                    fontSize: 15,
                   }}
                 />
                 <YAxis
                   stroke="hsl(var(--muted-foreground))"
                   fontSize={11}
-                  label={{ value: 'Value', angle: -90, position: 'insideLeft', fill: 'hsl(var(--muted-foreground))', fontSize: 11 }}
+                  label={{ value: 'Value', angle: -90, position: 'insideLeft', fill: 'hsl(var(--muted-foreground))', fontSize: 15 }}
                 />
                 <Tooltip contentStyle={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))' }} />
                 <Area type="monotone" dataKey="congestion" stackId="1" stroke="hsl(var(--destructive))" fill="hsl(var(--destructive))" fillOpacity={0.6} name="Congestion %" />
@@ -568,7 +562,7 @@ export default function Analytics() {
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-lg font-display font-semibold flex items-center gap-2">
             <Database className="w-4 h-4 text-primary" />
-            LIVE NODE DATA & ANALYTICS
+            LIVE ANALYTICS
           </h2>
           <div className="flex items-center gap-2 text-xs text-muted-foreground">
             <Clock className="w-3 h-3" />
@@ -580,12 +574,12 @@ export default function Analytics() {
           <table className="w-full text-sm text-left">
             <thead className="text-xs font-mono text-muted-foreground border-b border-border">
               <tr>
-                <th className="pb-3 font-medium">NODE</th>
+                <th className="pb-3 font-medium">INTERSECTION</th>
                 <th className="pb-3 font-medium">CONGESTION</th>
                 <th className="pb-3 font-medium">VEHICLES</th>
                 <th className="pb-3 font-medium">SPEED</th>
                 <th className="pb-3 font-medium">EFFICIENCY</th>
-                <th className="pb-3 font-medium">PREDICTION</th>
+                {/* <th className="pb-3 font-medium">PREDICTION</th> */}
                 <th className="pb-3 font-medium">STATUS</th>
               </tr>
             </thead>
@@ -614,9 +608,9 @@ export default function Analytics() {
                     <td className="py-3 font-mono text-primary">{node.vehicles}</td>
                     <td className="py-3 font-mono">{node.avgSpeed} km/h</td>
                     <td className="py-3 font-mono text-success">{Math.round(efficiency)}%</td>
-                    <td className="py-3 font-mono text-purple-400">
+                    {/* <td className="py-3 font-mono text-purple-400">
                       {predictedChange > 0 ? '+' : ''}{Math.round(predictedChange)}%
-                    </td>
+                    </td> */}
                     <td className="py-3">
                       <span className={cn(
                         "px-2 py-1 rounded text-[10px] font-mono flex items-center gap-1",

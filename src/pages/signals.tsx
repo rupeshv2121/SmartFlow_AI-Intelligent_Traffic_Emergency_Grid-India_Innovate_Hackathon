@@ -56,7 +56,7 @@ export default function Signals() {
   return (
     <AppLayout>
       <div className="mb-8">
-        <h1 className="text-3xl font-display font-bold text-foreground mb-2">SIGNAL OPTIMIZATION</h1>
+        <h1 className="text-3xl font-display font-bold text-foreground mb-2">SIGNAL Control</h1>
         <p className="text-muted-foreground font-mono text-sm">ADAPTIVE TRAFFIC LIGHT CONTROL SYSTEMS - LIVE CAMERA SYNC</p>
       </div>
 
@@ -278,7 +278,7 @@ export default function Signals() {
                   }}
                   labelStyle={{ color: 'hsl(var(--muted-foreground))', fontSize: 11 }}
                   itemStyle={{ color: 'hsl(var(--foreground))', fontSize: 11 }}
-                  formatter={(value) => `${value}% congestion`}
+                  formatter={(value) => `${value}%`}
                 />
                 <Bar dataKey="congestion" radius={[0, 4, 4, 0]} animationDuration={500}>
                   {liveSignals.map((sig, index) => {
@@ -294,7 +294,7 @@ export default function Signals() {
 
           {/* Live Stats */}
           <div className="mt-4 pt-4 border-t border-border/30 space-y-2">
-            <div className="text-[10px] font-mono text-muted-foreground">LIVE CAMERA METRICS</div>
+            <div className="text-[10px] font-mono text-muted-foreground">LIVE CONGESTION INDEX</div>
             {liveSignals.map((sig) => (
               <div key={sig.id} className="flex items-center justify-between text-xs">
                 <span className="text-muted-foreground font-mono">{sig.road}</span>

@@ -3,6 +3,7 @@ import { Route, Switch, Router as WouterRouter } from "wouter";
 import { Toaster } from "./components/ui/toaster";
 import { TooltipProvider } from "./components/ui/tooltip";
 import { TrafficSimProvider } from "./context/TrafficSimContext";
+import { SettingsProvider } from "./context/SettingsContext";
 
 import Analytics from "./pages/analytics";
 import Dashboard from "./pages/dashboard";
@@ -40,14 +41,16 @@ function Router() {
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <TrafficSimProvider>
+      <SettingsProvider>
+        <TrafficSimProvider>
         <TooltipProvider>
           <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "") }>
             <Router />
           </WouterRouter>
           <Toaster />
         </TooltipProvider>
-      </TrafficSimProvider>
+        </TrafficSimProvider>
+      </SettingsProvider>
     </QueryClientProvider>
   );
 }
