@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion';
 import aryanParasharImage from '../../../assets/aryan-parashar.jpeg';
 import austinVarshneyImage from '../../../assets/austin-varshney.png';
-import bhomikVarshneyImage from '../../../assets/bhomik-varshney.jpg';
+import bhomikVarshneyImage from '../../../assets/bhomik-varshney.png';
 import prakharSaxenaImage from '../../../assets/prakhar-saxena.jpeg';
 import rupeshVarshneyImage from '../../../assets/rupesh-varshney.jpeg';
 import { ScrollReveal } from '../ScrollReveal';
