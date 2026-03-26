@@ -28,7 +28,7 @@ export function CityMap({ intersections = [], roads = [], activeRoute = [] }: Ci
 
   return (
     <>
-      <div className="relative w-full aspect-square md:aspect-video rounded-xl overflow-hidden bg-black/40 border border-white/10">
+      <div className="relative w-full aspect-square md:aspect-video rounded-xl overflow-hidden bg-black/40">
         {/* Background Grid */}
         <div className="absolute inset-0" 
              style={{ 

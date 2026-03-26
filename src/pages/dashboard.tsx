@@ -1,24 +1,22 @@
 import { GlassPanel } from "@/components/GlassPanel";
 import { AppLayout } from "@/components/layout/AppLayout";
-import { StatCard } from "@/components/StatCard";
 import { useTrafficSim } from "@/context/TrafficSimContext";
 import {
-    useLiveDashboardStats,
-    useLiveEmergencyEvents,
-    useLiveIntersections,
-    useLiveTrafficHistory
+  useLiveDashboardStats,
+  useLiveEmergencyEvents,
+  useLiveIntersections,
+  useLiveTrafficHistory
 } from "@/hooks/use-smartflow";
 import { cn, formatNumber } from "@/lib/utils";
 import { format } from "date-fns";
 import {
-    Activity,
-    AlertTriangle,
-    Car,
-    MapPin,
-    Zap
+  Activity,
+  AlertTriangle,
+  Car,
+  MapPin,
+  Zap
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
 // Persistent storage keys
 const CHART_STORAGE_KEY = 'traffic-density-history';
@@ -231,7 +229,7 @@ export default function Dashboard() {
             TRAFFIC COMMAND CENTER
           </h1>
           <p className="text-muted-foreground font-mono text-sm tracking-wide">
-            Real-time monitoring and adaptive signal control powered by AI
+            Real-time monitoring and adaptive signal control
           </p>
         </div>
       </div>
@@ -647,7 +645,7 @@ export default function Dashboard() {
             </div>
             <div className="flex-1">
               <h3 className="text-sm font-display font-bold text-primary mb-2">ADAPTIVE SIGNAL ALGORITHM</h3>
-              <p className="text-xs font-mono text-muted-foreground mb-3">
+              <p className="text-xs font-mono font-bold mb-3">
                 Priority = (Vehicle Count × 1.0) + (Wait Time × 0.1)
               </p>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs font-mono">
@@ -843,7 +841,7 @@ export default function Dashboard() {
         {ambulanceEvents.length > 5 && (
           <div className="mt-4 text-center">
             <p className="text-xs text-muted-foreground font-mono">
-              Showing 5 of {ambulanceEvents.length} events
+             Last 5 events shown. Total today: {ambulanceEvents.length}
             </p>
           </div>
         )}

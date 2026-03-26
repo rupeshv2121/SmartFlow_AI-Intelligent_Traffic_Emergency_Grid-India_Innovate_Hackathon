@@ -2,6 +2,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Route, Switch, Router as WouterRouter } from "wouter";
 import { Toaster } from "./components/ui/toaster";
 import { TooltipProvider } from "./components/ui/tooltip";
+import { SettingsProvider } from "./context/SettingsContext.tsx";
 import { TrafficSimProvider } from "./context/TrafficSimContext";
 
 import Analytics from "./pages/analytics";
@@ -40,14 +41,16 @@ function Router() {
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <TrafficSimProvider>
+      <SettingsProvider>
+        <TrafficSimProvider>
         <TooltipProvider>
           <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "") }>
             <Router />
           </WouterRouter>
           <Toaster />
         </TooltipProvider>
-      </TrafficSimProvider>
+        </TrafficSimProvider>
+      </SettingsProvider>
     </QueryClientProvider>
   );
 }

@@ -193,8 +193,8 @@ export function SUMOIntersectionView({ roads }: SUMOIntersectionViewProps) {
 
   return (
     <div className="h-full rounded-lg border border-white/15 bg-black/35 p-4 flex flex-col">
-      <div className="text-xs uppercase tracking-wide text-muted-foreground font-mono mb-3">
-        Intersection Top View (Direction Check)
+      <div className="text-lg uppercase tracking-wide text-muted-foreground font-mono mb-3 font-bold">
+        Intersection Top View
       </div>
 
       <div className="relative w-full flex-1 min-h-0 bg-gray-900 rounded-lg overflow-visible">

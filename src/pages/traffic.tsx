@@ -1,4 +1,3 @@
-import { GlassPanel } from "@/components/GlassPanel";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { IntersectionDetailView } from "@/components/traffic-sim/IntersectionDetailView";
 import { useTrafficSim } from "@/context/TrafficSimContext";
@@ -91,7 +90,7 @@ export default function Traffic() {
         </div>
       )} */}
 
-      <GlassPanel className="p-4 md:p-6">
+      {/* <GlassPanel className="p-4 md:p-6"> */}
         {!selectedIntersection ? (
           <>
             <div className="mb-4 flex items-start justify-between gap-4">
@@ -132,7 +131,7 @@ export default function Traffic() {
             mlDetectionApiUrl={aiApiUrl}
           />
         )}
-      </GlassPanel>
+      {/* </GlassPanel> */}
     </AppLayout>
   );
 }

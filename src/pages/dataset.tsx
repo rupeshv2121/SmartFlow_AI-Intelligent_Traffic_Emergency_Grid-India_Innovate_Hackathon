@@ -8,7 +8,7 @@ import { useTrafficSim } from "@/context/TrafficSimContext";
 import type { VehicleType } from "@/types/traffic-sim";
 import { Environment } from "@react-three/drei";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { Ambulance, Bike, Bus, Camera, CarFront } from "lucide-react";
+import { Ambulance, Bike, Bus, Car, CarFront } from "lucide-react";
 import { useMemo } from "react";
 
 const VEHICLE_CLASSES: Array<{
@@ -148,7 +148,7 @@ export default function Dataset() {
               <div className="space-y-1.5 text-sm font-mono text-muted-foreground">
                 <div>Type: {cls.vehicleType}</div>
                 <div>Size: {cls.sizeHint}</div>
-                <div className="text-foreground">Live Samples: {cls.count}</div>
+                {/* <div className="text-foreground">Live Samples: {cls.count}</div> */}
               </div>
             </GlassPanel>
           );
@@ -157,8 +157,8 @@ export default function Dataset() {
 
       <GlassPanel className="p-6 mb-6">
         <div className="flex items-center gap-2 mb-4">
-          <Camera className="w-4 h-4 text-primary" />
-          <h2 className="text-lg font-display font-semibold">3D Vehicle Photo Samples</h2>
+          <Car className="w-4 h-4 text-primary" />
+          <h2 className="text-lg font-display font-semibold">3D Vehicle Simulation</h2>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
           {VEHICLE_CLASSES.map((cls) => (
