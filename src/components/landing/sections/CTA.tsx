@@ -63,17 +63,6 @@ export function CTA() {
             </GlowButton>
             </a>
           </motion.div>
-
-          {/* Trust statement */}
-          {/* <motion.p
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7, delay: 0.3 }}
-            className="text-slate-400 text-sm pt-8"
-          >
-            Trusted by leading municipalities and smart city initiatives worldwide.
-          </motion.p> */}
         </ScrollReveal>
       </div>
     </section>
