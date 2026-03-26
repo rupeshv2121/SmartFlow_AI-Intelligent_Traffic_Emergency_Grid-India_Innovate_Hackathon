@@ -41,28 +41,22 @@ export default function Traffic() {
 
   return (
     <AppLayout>
-      <div className="mb-8 flex items-end justify-between">
-        <div>
-          <h1 className="text-3xl font-display font-bold text-foreground mb-2">LIVE TRAFFIC DASHBOARD</h1>
-          <p className="text-muted-foreground font-mono text-sm w-[85%]">   Click on the red floating markers at intersections to view 4-way dashcam feeds. Interactive 3D emergency vehicle routing with real-time traffic light control.</p>
-        </div>
-        {/* <div className="flex flex-col items-center gap-4"> */}
-
-        
-        {/* <div className="flex items-center gap-2 bg-primary/10 border border-primary/20 px-3 py-1.5 rounded-full text-xs font-mono text-primary">
-          <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-          REAL-TIME MONITORING ACTIVE
-        </div> */}
-         <a
-                href={simulationUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-xs font-mono text-primary flex items-center justify-center gap-1 hover:text-white transition-colors whitespace-nowrap"
-              >
-                OPEN IN NEW TAB <ExternalLink className="w-3 h-3" />
+      {!selectedIntersection && (
+        <div className="mb-8 flex items-end justify-between">
+          <div>
+            <h1 className="text-3xl font-display font-bold text-foreground mb-2">LIVE TRAFFIC DASHBOARD</h1>
+            <p className="text-muted-foreground font-mono text-sm w-[85%]">   Click on the red floating markers at intersections to view 4-way dashcam feeds. Interactive 3D emergency vehicle routing with real-time traffic light control.</p>
+          </div>
+          <a
+            href={simulationUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-xs font-mono text-primary flex items-center justify-center gap-1 hover:text-white transition-colors whitespace-nowrap"
+          >
+            OPEN IN NEW TAB <ExternalLink className="w-3 h-3" />
           </a>
-          {/* </div> */}
-      </div>
+        </div>
+      )}
 
       {/* {!selectedIntersection && (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
