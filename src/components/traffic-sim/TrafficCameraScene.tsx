@@ -129,7 +129,7 @@ export function TrafficCameraScene({
         <span className="text-slate-300">{timestamp}</span>
       </div>
 
-      <div className="absolute bottom-3 left-3 right-3 z-30 flex flex-col gap-1.5 rounded-md border border-cyan-300/20 bg-slate-950/75 px-3 py-2 font-mono text-[11px] text-slate-200 backdrop-blur-sm">
+      <div className="absolute bottom-3 left-3 right-3 z-30 flex flex-col gap-1 rounded-md border border-cyan-300/20 bg-slate-950/75 px-2 py-1 font-mono text-[10px] text-slate-200 backdrop-blur-sm">
         {/* Top Row: Road Info */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -161,7 +161,7 @@ export function TrafficCameraScene({
         </div>
 
         {/* Bottom Row: Algorithm Data */}
-        <div className="flex items-center justify-between text-[10px] border-t border-cyan-300/15 pt-1.5">
+        <div className="flex items-center justify-between text-[10px] border-t border-cyan-300/15 pt-1">
           <div className="flex items-center gap-3">
             {/* Priority Calculation */}
             <div className="flex items-center gap-1.5">
