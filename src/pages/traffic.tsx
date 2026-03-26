@@ -4,7 +4,7 @@ import { IntersectionDetailView } from "@/components/traffic-sim/IntersectionDet
 import { useTrafficSim } from "@/context/TrafficSimContext";
 import { useLiveIntersections } from "@/hooks/use-smartflow";
 import { SimRoadState } from "@/types/traffic-sim";
-import { AlertTriangle, ExternalLink, MapPinned, Radar } from "lucide-react";
+import { ExternalLink } from "lucide-react";
 import { useEffect, useState } from "react";
 
 interface Intersection3DEnvironmentProps {
@@ -45,15 +45,27 @@ export default function Traffic() {
       <div className="mb-8 flex items-end justify-between">
         <div>
           <h1 className="text-3xl font-display font-bold text-foreground mb-2">LIVE TRAFFIC DASHBOARD</h1>
-          <p className="text-muted-foreground font-mono text-sm">OSM-POWERED INTERSECTION MONITORING & 3D SIGNAL CONTROL</p>
+          <p className="text-muted-foreground font-mono text-sm w-[85%]">   Click on the red floating markers at intersections to view 4-way dashcam feeds. Interactive 3D emergency vehicle routing with real-time traffic light control.</p>
         </div>
-        <div className="flex items-center gap-2 bg-primary/10 border border-primary/20 px-3 py-1.5 rounded-full text-xs font-mono text-primary">
+        {/* <div className="flex flex-col items-center gap-4"> */}
+
+        
+        {/* <div className="flex items-center gap-2 bg-primary/10 border border-primary/20 px-3 py-1.5 rounded-full text-xs font-mono text-primary">
           <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
           REAL-TIME MONITORING ACTIVE
-        </div>
+        </div> */}
+         <a
+                href={simulationUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-xs font-mono text-primary flex items-center justify-center gap-1 hover:text-white transition-colors whitespace-nowrap"
+              >
+                OPEN IN NEW TAB <ExternalLink className="w-3 h-3" />
+          </a>
+          {/* </div> */}
       </div>
 
-      {!selectedIntersection && (
+      {/* {!selectedIntersection && (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
           <GlassPanel className="p-4">
             <div className="text-xs text-muted-foreground font-mono mb-1">INTERSECTIONS ONLINE</div>
@@ -77,26 +89,19 @@ export default function Traffic() {
             </div>
           </GlassPanel>
         </div>
-      )}
+      )} */}
 
       <GlassPanel className="p-4 md:p-6">
         {!selectedIntersection ? (
           <>
             <div className="mb-4 flex items-start justify-between gap-4">
               <div>
-                <h2 className="text-xl font-display font-bold">Live Traffic Intersection</h2>
+                {/* <h2 className="text-xl font-display font-bold">Live Traffic Intersection</h2>
                 <p className="text-sm text-muted-foreground font-mono">
-                  Click on the red floating markers at intersections to view 4-way dashcam feeds. Interactive 3D emergency vehicle routing with real-time traffic light control.
-                </p>
+               
+                </p> */}
               </div>
-              <a
-                href={simulationUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-xs font-mono text-primary flex items-center gap-1 hover:text-white transition-colors whitespace-nowrap"
-              >
-                OPEN IN NEW TAB <ExternalLink className="w-3 h-3" />
-              </a>
+             
             </div>
 
             <div className="bg-black/20 border border-white/10 rounded-lg overflow-hidden relative" style={{ height: "560px" }}>

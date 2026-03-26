@@ -197,11 +197,11 @@ export default function Analytics() {
     return filtered;
   }, [congestionData, selectedIntersection]);
 
-  // Normalize intersection labels: replace 'Lane' with 'Road' for chart axes
+  // Normalize intersection labels: replace 'Lane' with 'Road' and remove 'Control' for chart axes
   const displayData = useMemo(() => {
     return filteredData.map(d => ({
       ...d,
-      intersection: String(d.intersection).replace(/Lane/g, 'Road'),
+      intersection: String(d.intersection).replace(/Lane/g, 'Road').replace(/\s*Control/g, ''),
     }));
   }, [filteredData]);
 
@@ -215,7 +215,7 @@ export default function Analytics() {
           <div>
             <h1 className="text-3xl font-display font-bold text-foreground mb-2 flex items-center gap-3">
               <Activity className="w-8 h-8 text-primary" />
-              ADVANCED ANALYTICS
+              ANALYTICS
             </h1>
             <p className="text-muted-foreground font-mono text-sm">
               REAL-TIME INSIGHTS • ML PREDICTIONS • INTELLIGENT ALERTS
@@ -244,7 +244,7 @@ export default function Analytics() {
             >
               <option value="all">All Intersections</option>
               {congestionData?.data?.map(node => (
-                <option key={node.intersection} value={node.intersection}>{node.intersection}</option>
+                <option key={node.intersection} value={node.intersection}>{String(node.intersection).replace(/Lane/g, 'Road')}</option>
               ))}
             </select>
 
@@ -440,14 +440,14 @@ export default function Analytics() {
                     tickLine={false}
                     angle={-20}
                     textAnchor="end"
-                    height={70}
+                    height={50}
                     interval={0}
                     label={{
                       value: 'Intersections',
                       position: 'insideBottom',
-                      offset: -2,
+                      offset: -25,
                       fill: 'hsl(var(--muted-foreground))',
-                      fontSize: 11,
+                      fontSize: 15,
                     }}
                   />
                   <YAxis
@@ -456,7 +456,7 @@ export default function Analytics() {
                     fontSize={12}
                     tickLine={false}
                     axisLine={false}
-                    label={{ value: 'Vehicles', angle: -90, position: 'insideLeft', fill: 'hsl(var(--muted-foreground))', fontSize: 11 }}
+                    label={{ value: 'Vehicles', angle: -90, position: 'insideLeft', fill: 'hsl(var(--muted-foreground))', fontSize: 15 }}
                   />
                   <YAxis
                     yAxisId="right"
@@ -465,7 +465,7 @@ export default function Analytics() {
                     fontSize={12}
                     tickLine={false}
                     axisLine={false}
-                    label={{ value: 'Speed (km/h)', angle: 90, position: 'insideRight', fill: 'hsl(var(--muted-foreground))', fontSize: 11 }}
+                    label={{ value: 'Speed (km/h)', angle: 90, position: 'insideRight', fill: 'hsl(var(--muted-foreground))', fontSize: 15 }}
                   />
                   <Tooltip
                     contentStyle={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))' }}
@@ -502,18 +502,16 @@ export default function Analytics() {
                   cy="50%"
                   labelLine
                   label={renderPieLabel}
-                  outerRadius={70}
+                  outerRadius={90}
                   fill="#8884d8"
                   dataKey="vehicles"
+                  isAnimationActive={false}
                 >
                   {displayData.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>
-                <Legend
-                  verticalAlign="bottom"
-                  formatter={(value) => `${value} (Vehicle Share)`}
-                />
+            
                 <Tooltip />
               </PieChart>
             </ResponsiveContainer>

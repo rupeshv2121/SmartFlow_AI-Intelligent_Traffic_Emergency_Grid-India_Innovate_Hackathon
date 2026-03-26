@@ -13,8 +13,9 @@ export default function Signals() {
 
   // Transform simulation data to match signal display format
   const liveSignals = state.roads.map((road, index) => {
-    // Calculate density based on vehicle count
+    // Unified density/congestion thresholds
     const density = road.detectionCount >= 15 ? 'high' : road.detectionCount >= 8 ? 'medium' : 'low';
+    const congestion = Math.round((road.detectionCount / 20) * 100); // Normalize to 0-100% based on max 20 vehicles
 
     // Calculate cycle time (total time for complete signal cycle)
     const cycleTime = state.signalController.activeRoadIndex === index
@@ -35,6 +36,7 @@ export default function Signals() {
       signal: road.signal,
       vehicles: road.detectionCount,
       density,
+      congestion,
       signalTimeLeft: road.signalTimeLeft,
       cycleTime: Math.round(cycleTime),
       phaseElapsed: Math.round(phaseElapsed),
@@ -150,8 +152,8 @@ export default function Signals() {
                         <span className="text-xs text-white font-mono font-bold">{sig.vehicles}</span>
                         <span className={cn(
                           "px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase",
-                          sig.density === 'high' ? "bg-destructive/20 text-destructive border border-destructive/30" :
-                          sig.density === 'medium' ? "bg-warning/20 text-warning border border-warning/30" :
+                          sig.congestion > 75 ? "bg-destructive/20 text-destructive border border-destructive/30" :
+                          sig.congestion > 40 ? "bg-warning/20 text-warning border border-warning/30" :
                           "bg-success/20 text-success border border-success/30"
                         )}>
                           {sig.density}
@@ -233,13 +235,12 @@ export default function Signals() {
               <BarChart
                 data={liveSignals.map(sig => ({
                   road: sig.road,
-                  congestion: Math.round((sig.vehicles / 20) * 100),
+                  congestion: sig.congestion,
                 }))}
                 layout="vertical"
-                // Pull chart content closer to the left edge (reduce padding)
-                margin={{ top: 0, right: 0, left: -35, bottom: 0 }}
+                margin={{ top: 0, right: 20, left: -35, bottom: 0 }}
               >
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" horizontal={false} />
+                <CartesianGrid strokeDasharray="3 15" stroke="hsl(var(--border))" horizontal={false} />
                 <XAxis
                   type="number"
                   domain={[0, 100]}
@@ -262,7 +263,7 @@ export default function Signals() {
                     value: "Road",
                     angle: -90,
                     position: "insideLeft",
-                    offset: -40,
+                    offset: -10,
                     fill: "hsl(var(--muted-foreground))",
                     fontSize: 11,
                   }}
@@ -277,12 +278,13 @@ export default function Signals() {
                   }}
                   labelStyle={{ color: 'hsl(var(--muted-foreground))', fontSize: 11 }}
                   itemStyle={{ color: 'hsl(var(--foreground))', fontSize: 11 }}
+                  formatter={(value) => `${value}% congestion`}
                 />
                 <Bar dataKey="congestion" radius={[0, 4, 4, 0]} animationDuration={500}>
                   {liveSignals.map((sig, index) => {
-                    const congestion = Math.round((sig.vehicles / 20) * 100);
-                    const color = congestion > 80 ? 'hsl(var(--destructive))' :
-                                  congestion > 50 ? 'hsl(var(--warning))' : 'hsl(var(--success))';
+                    // Unified color thresholds matching Live Stats: >75% = high, >40% = medium
+                    const color = sig.congestion > 75 ? 'hsl(var(--destructive))' :
+                                  sig.congestion > 40 ? 'hsl(var(--warning))' : 'hsl(var(--success))';
                     return <Cell key={`cell-${index}`} fill={color} />;
                   })}
                 </Bar>
@@ -296,13 +298,18 @@ export default function Signals() {
             {liveSignals.map((sig) => (
               <div key={sig.id} className="flex items-center justify-between text-xs">
                 <span className="text-muted-foreground font-mono">{sig.road}</span>
-                <span className={cn(
-                  "font-mono font-bold",
-                  sig.vehicles >= 15 ? "text-destructive" :
-                  sig.vehicles >= 8 ? "text-warning" : "text-success"
-                )}>
-                  {sig.vehicles} vehicles
-                </span>
+                <div className="flex items-center gap-2">
+                  <span className={cn(
+                    "font-mono font-bold",
+                    sig.congestion > 75 ? "text-destructive" :
+                    sig.congestion > 40 ? "text-warning" : "text-success"
+                  )}>
+                    {sig.congestion}%
+                  </span>
+                  <span className="text-muted-foreground font-mono text-[10px]">
+                    ({sig.vehicles} vehicles)
+                  </span>
+                </div>
               </div>
             ))}
           </div>
