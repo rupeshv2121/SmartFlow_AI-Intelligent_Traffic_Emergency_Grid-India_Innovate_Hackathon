@@ -574,7 +574,7 @@ export default function Dashboard() {
                   </div>
 
                   {/* Stats Grid */}
-                  <div className="grid grid-cols-2 gap-3 mb-4">
+                  <div className="grid grid-cols-1 gap-3 mb-4">
                     <div className="bg-card/50 rounded-lg p-3 border border-border/50">
                       <div className="flex items-center gap-2 mb-1">
                         <Car className="w-3 h-3 text-primary" />
@@ -582,7 +582,7 @@ export default function Dashboard() {
                       </div>
                       <p className="text-2xl font-bold font-display text-primary">{road.detectionCount}</p>
                     </div>
-                    <div className="bg-card/50 rounded-lg p-3 border border-border/50">
+                    {/* <div className="bg-card/50 rounded-lg p-3 border border-border/50">
                       <div className="flex items-center gap-2 mb-1">
                         <Zap className="w-3 h-3 text-cyan-400" />
                         <span className="text-xs text-muted-foreground font-mono">Queue</span>
@@ -590,7 +590,7 @@ export default function Dashboard() {
                       <p className="text-2xl font-bold font-display text-cyan-400">
                         {road.vehicles.filter(v => !v.isOutgoing && v.progress < 0.85).length}
                       </p>
-                    </div>
+                    </div> */}
                   </div>
 
                   {/* Priority and Wait Time */}

@@ -179,7 +179,7 @@ export function IntersectionDetailView({ intersection, roads, onBack, mlDetectio
             <Zap className="w-4 h-4" />
             AI Detection ON
           </button>
-          {enableMLDetection && (
+          {/* {enableMLDetection && (
             <div
               className={`rounded px-2 py-1 text-[11px] font-mono border ${
                 apiStatus === "connected"
@@ -191,7 +191,7 @@ export function IntersectionDetailView({ intersection, roads, onBack, mlDetectio
             >
               {apiStatus === "connected" ? "AI API: CONNECTED" : apiStatus === "checking" ? "AI API: CHECKING" : "AI API: ERROR"}
             </div>
-          )}
+          )} */}
         </div>
       </div>
 
