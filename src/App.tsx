@@ -2,8 +2,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Route, Switch, Router as WouterRouter } from "wouter";
 import { Toaster } from "./components/ui/toaster";
 import { TooltipProvider } from "./components/ui/tooltip";
-import { TrafficSimProvider } from "./context/TrafficSimContext";
 import { SettingsProvider } from "./context/SettingsContext";
+import { TrafficSimProvider } from "./context/TrafficSimContext";
 
 import Analytics from "./pages/analytics";
 import Dashboard from "./pages/dashboard";

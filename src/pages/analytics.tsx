@@ -1,8 +1,7 @@
 import { GlassPanel } from "@/components/GlassPanel";
 import { AppLayout } from "@/components/layout/AppLayout";
-import { useLiveCongestionAnalytics, useLiveDashboardStats, useLiveTrafficHistory } from "@/hooks/use-smartflow";
-import { getSystemSettings, type SystemSettings } from "@/lib/settings-api";
 import { useSettings } from "@/context/SettingsContext";
+import { useLiveCongestionAnalytics, useLiveDashboardStats, useLiveTrafficHistory } from "@/hooks/use-smartflow";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { Activity, AlertTriangle, Bell, Brain, Clock, Database, MapPin, RefreshCw, Target, TrendingUp, Zap } from "lucide-react";

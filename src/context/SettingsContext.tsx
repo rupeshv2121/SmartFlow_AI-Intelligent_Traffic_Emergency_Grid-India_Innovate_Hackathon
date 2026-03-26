@@ -1,6 +1,6 @@
+import { getSystemSettings, type SystemSettings } from "@/lib/settings-api";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { io } from "socket.io-client";
-import { getSystemSettings, type SystemSettings } from "@/lib/settings-api";
 
 type SettingsContextValue = {
   systemSettings: SystemSettings | null;
